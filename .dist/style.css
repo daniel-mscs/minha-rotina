@@ -1,0 +1,530 @@
+:root {
+  --bg: #121212;
+  --card: #1e1e1e;
+  --text: #e5e5e5;
+  --border: #333;
+  --accent: #3b82f6;
+  --gold: #f5c518;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ================================
+   HEADER
+================================ */
+.topbar {
+  width: 100%;
+  max-width: 800px;
+  padding: 30px 20px 10px;
+  text-align: center;
+}
+
+#pageTitle {
+  font-size: 36px;
+  margin: 0 0 8px;
+  outline: none;
+  transition: border-bottom 0.2s;
+}
+
+#pageTitle:empty:before {
+  content: attr(data-placeholder);
+  color: #555;
+}
+
+#pageTitle:focus {
+  outline: none;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 4px;
+}
+
+.subtitle {
+  color: #888;
+  margin: 0 0 16px;
+}
+
+/* ================================
+   DICAS DE OURO
+================================ */
+.tips-section {
+  width: 100%;
+  max-width: 800px;
+  padding: 0 20px;
+  margin-bottom: 30px;
+}
+
+.tips-title {
+  font-size: 20px;
+  color: var(--gold);
+  text-align: center;
+  margin: 0 0 16px;
+  letter-spacing: 0.5px;
+}
+
+.tips-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.tip-card {
+  background: rgba(245, 197, 24, 0.07);
+  border: 1px solid rgba(245, 197, 24, 0.25);
+  padding: 16px 12px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+.tip-card:hover {
+  transform: translateY(-3px);
+  background: rgba(245, 197, 24, 0.12);
+}
+
+.tip-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.tip-card p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #bbb;
+}
+
+/* Calculadora de água */
+.water-section {
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.water-section p {
+  margin: 0;
+  font-size: 14px;
+  color: #bbb;
+}
+
+.water-calc {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.water-calc input {
+  background: #2a2a2a;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  width: 130px;
+}
+
+.water-calc button {
+  padding: 8px 14px;
+  font-size: 13px;
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+  white-space: nowrap;
+}
+
+.water-calc button:hover {
+  background: rgba(59, 130, 246, 0.3);
+}
+
+.water-result {
+  font-size: 14px !important;
+  color: #60a5fa !important;
+  font-weight: bold;
+  margin: 0 !important;
+  width: 100%;
+  text-align: center;
+}
+
+/* ================================
+   3 VITÓRIAS (SÓ VISUAL)
+================================ */
+.victories-container {
+  width: 100%;
+  max-width: 800px;
+  padding: 0 20px 10px;
+  margin-bottom: 10px;
+}
+
+.victories-title {
+  font-size: 18px;
+  margin: 0 0 4px;
+  text-align: center;
+}
+
+.victories-subtitle {
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+  margin: 0 0 16px;
+}
+
+.victories-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.victory-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+}
+
+.victory-icon {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.victory-card label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  font-weight: bold;
+}
+
+.victory-card p {
+  margin: 0;
+  font-size: 12px;
+  color: #888;
+}
+
+/* ================================
+   CONTAINER PRINCIPAL
+================================ */
+.container {
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+}
+
+/* ================================
+   SELETOR DE DATAS
+================================ */
+.date-config {
+  background: var(--card);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  margin-bottom: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+}
+
+.date-config label {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.date-config input[type="date"] {
+  background: #2a2a2a;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ================================
+   DIAS
+================================ */
+#daysContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 100%;
+}
+
+.day-block {
+  background: var(--card);
+  padding: 25px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+}
+
+.day-block h2 {
+  margin: 0 0 16px;
+  font-size: 20px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+}
+
+.period {
+  margin-top: 20px;
+}
+
+.period h3 {
+  color: #888;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0 0 10px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+li:hover {
+  background: #2a2a2a;
+}
+
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.item-text {
+  flex: 1;
+  outline: none;
+  color: var(--text);
+  font-size: 15px;
+}
+
+.item-text.placeholder {
+  color: #555;
+}
+
+/* ================================
+   BOTÕES
+================================ */
+button {
+  background: #2a2a2a;
+  color: white;
+  border: 1px solid var(--border);
+  padding: 8px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #333;
+}
+
+#resetBtn {
+  background: #3a1a1a;
+  border-color: #5a2a2a;
+  color: #ff6b6b;
+}
+
+#resetBtn:hover {
+  background: #4a2020;
+}
+
+#generateDays {
+  background: #1a2a3a;
+  border-color: #2a4a6a;
+  color: #60a5fa;
+}
+
+#generateDays:hover {
+  background: #1e3448;
+}
+
+.add-period-btn {
+  margin-top: 6px;
+  font-size: 12px;
+  padding: 5px 10px;
+  opacity: 0.6;
+}
+
+.add-period-btn:hover {
+  opacity: 1;
+}
+
+/* ================================
+   FOOTER
+================================ */
+.footer {
+  width: 100%;
+  max-width: 800px;
+  padding: 20px 20px 40px;
+  text-align: center;
+  color: #555;
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+
+.dev-label {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 12px;
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.social-links a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1a1a1a;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text);
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.social-links a:hover {
+  background: #252525;
+  border-color: #555;
+}
+
+.social-links a img {
+  filter: invert(1);
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.footer small {
+  font-size: 12px;
+  color: #444;
+}
+
+/* ================================
+   RESPONSIVO MOBILE
+================================ */
+@media (max-width: 600px) {
+  .topbar {
+    padding: 20px 15px 5px;
+  }
+
+  #pageTitle {
+    font-size: 26px;
+  }
+
+  .tips-container, .victories-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+
+  .tip-card, .victory-card {
+    padding: 12px 6px;
+  }
+
+  .tip-card p, .victory-card p {
+    font-size: 10px;
+  }
+
+  .tip-icon, .victory-icon {
+    font-size: 20px;
+  }
+
+  .victory-card label {
+    font-size: 9px;
+  }
+
+  .water-section {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .water-calc {
+    width: 100%;
+  }
+
+  .water-calc input {
+    flex: 1;
+    width: auto;
+  }
+
+  .date-config {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 15px;
+    gap: 10px;
+  }
+
+  .date-config input[type="date"] {
+    width: 100%;
+  }
+
+  .day-block {
+    padding: 15px;
+  }
+
+  .social-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .social-links a {
+    width: 100%;
+    justify-content: center;
+  }
+
+  li {
+    padding: 10px 5px;
+  }
+
+  input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+  }
+}
