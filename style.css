@@ -251,9 +251,21 @@ body {
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 14px;
+  padding: 12px;
+  font-size: 16px;
   cursor: pointer;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
+}
+
+.date-config input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+  margin-bottom: 0;
+  min-height: 1.5em;
 }
 
 /* DIAS */
