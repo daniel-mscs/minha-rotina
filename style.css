@@ -21,9 +21,7 @@ body {
   align-items: center;
 }
 
-/* ================================
-   HEADER
-================================ */
+/* HEADER */
 .topbar {
   width: 100%;
   max-width: 800px;
@@ -54,9 +52,7 @@ body {
   margin: 0 0 16px;
 }
 
-/* ================================
-   DICAS DE OURO
-================================ */
+/* DICAS DE OURO */
 .tips-section {
   width: 100%;
   max-width: 800px;
@@ -108,7 +104,7 @@ body {
   color: #bbb;
 }
 
-/* Calculadora de água */
+/* CALCULADORA DE ÁGUA */
 .water-section {
   background: rgba(59, 130, 246, 0.08);
   border: 1px solid rgba(59, 130, 246, 0.25);
@@ -166,9 +162,7 @@ body {
   text-align: center;
 }
 
-/* ================================
-   3 VITÓRIAS (SÓ VISUAL)
-================================ */
+/* 3 VITÓRIAS */
 .victories-container {
   width: 100%;
   max-width: 800px;
@@ -226,18 +220,14 @@ body {
   color: #888;
 }
 
-/* ================================
-   CONTAINER PRINCIPAL
-================================ */
+/* CONTAINER PRINCIPAL */
 .container {
   width: 100%;
   max-width: 800px;
   padding: 20px;
 }
 
-/* ================================
-   SELETOR DE DATAS
-================================ */
+/* SELETOR DE DATAS */
 .date-config {
   background: var(--card);
   padding: 20px;
@@ -266,9 +256,7 @@ body {
   cursor: pointer;
 }
 
-/* ================================
-   DIAS
-================================ */
+/* DIAS */
 #daysContainer {
   display: flex;
   flex-direction: column;
@@ -340,9 +328,7 @@ input[type="checkbox"] {
   color: #555;
 }
 
-/* ================================
-   BOTÕES
-================================ */
+/* BOTÕES */
 button {
   background: #2a2a2a;
   color: white;
@@ -389,9 +375,7 @@ button:hover {
   opacity: 1;
 }
 
-/* ================================
-   FOOTER
-================================ */
+/* FOOTER */
 .footer {
   width: 100%;
   max-width: 800px;
@@ -446,9 +430,7 @@ button:hover {
   color: #444;
 }
 
-/* ================================
-   RESPONSIVO MOBILE
-================================ */
+/* RESPONSIVO MOBILE */
 @media (max-width: 600px) {
   .topbar {
     padding: 20px 15px 5px;

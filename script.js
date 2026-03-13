@@ -242,7 +242,7 @@ document.getElementById('pageTitle').addEventListener('input', () => {
 });
 
 // ============================================
-// 7. BLOQUEAR DATAS PASSADAS
+// 7. BLOQUEAR DATAS PASSADAS (CORRIGIDO PARA SAFARI)
 // ============================================
 
 function configurarDatas() {
@@ -257,25 +257,31 @@ function configurarDatas() {
     endInput.min = hojeLocal;
 
     startInput.addEventListener('change', () => {
-        if (startInput.value < hojeLocal && startInput.value !== "") {
-            alert("Você não pode selecionar uma data no passado!");
-            startInput.value = hojeLocal;
+        if (startInput.value) {
+            if (startInput.value < hojeLocal) {
+                alert("Você não pode selecionar uma data no passado!");
+                startInput.value = hojeLocal;
+            }
+            endInput.min = startInput.value;
+            if (endInput.value && endInput.value < startInput.value) {
+                endInput.value = startInput.value;
+            }
         }
-        endInput.min = startInput.value;
-        if (endInput.value < startInput.value && endInput.value !== "") {
-            endInput.value = startInput.value;
-        }
+        saveAll();
     });
 
     endInput.addEventListener('change', () => {
-        if (endInput.value < hojeLocal && endInput.value !== "") {
-            alert("A data final não pode ser no passado!");
-            endInput.value = hojeLocal;
+        if (endInput.value) {
+            if (endInput.value < hojeLocal) {
+                alert("A data final não pode ser no passado!");
+                endInput.value = hojeLocal;
+            }
+            if (startInput.value && endInput.value < startInput.value) {
+                alert("A data final não pode ser anterior à data inicial!");
+                endInput.value = startInput.value;
+            }
         }
-        if (endInput.value < startInput.value && startInput.value !== "") {
-            alert("A data final não pode ser anterior à data inicial!");
-            endInput.value = startInput.value;
-        }
+        saveAll();
     });
 }
 
