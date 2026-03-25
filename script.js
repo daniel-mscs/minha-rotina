@@ -1,4 +1,53 @@
 // ============================================
+// TEMA CLARO / ESCURO
+// ============================================
+
+const themeBtn = document.getElementById('themeBtn');
+
+(function initTheme() {
+    if (localStorage.getItem('tema') === 'light') {
+        document.body.classList.add('light');
+        themeBtn.textContent = '☀️';
+    }
+})();
+
+themeBtn.addEventListener('click', () => {
+    const isLight = document.body.classList.toggle('light');
+    themeBtn.textContent = isLight ? '☀️' : '🌙';
+    localStorage.setItem('tema', isLight ? 'light' : 'dark');
+});
+
+// ============================================
+// NAVEGAÇÃO DE ABAS
+// ============================================
+
+document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        const alvo = tab.dataset.tab;
+
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(c => c.classList.remove('active'));
+
+        tab.classList.add('active');
+        document.getElementById('tab-' + alvo).classList.add('active');
+    });
+});
+
+// ============================================
+// EXPORTAR PDF
+// ============================================
+
+document.getElementById('exportPdfBtn').addEventListener('click', () => {
+    // garante que a aba rotina está visível antes de imprimir
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(c => c.classList.remove('active'));
+    document.querySelector('[data-tab="rotina"]').classList.add('active');
+    document.getElementById('tab-rotina').classList.add('active');
+
+    setTimeout(() => window.print(), 150);
+});
+
+// ============================================
 // 1. GERAR DIAS POR INTERVALO DE DATAS
 // ============================================
 
@@ -35,7 +84,6 @@ document.getElementById('generateDays').addEventListener('click', () => {
             month: '2-digit',
             year: 'numeric'
         });
-
         createDayBlock(dateString);
         current.setDate(current.getDate() + 1);
     }
@@ -88,7 +136,7 @@ function addDynamicItem(button, text = "", checked = false) {
     li.innerHTML = `
         <input type="checkbox" ${checked ? 'checked' : ''}>
         <span class="item-text ${!text ? 'placeholder' : ''}" contenteditable="true">${text || "Digite aqui..."}</span>
-        <button class="delete-item-btn" style="margin-left:auto; opacity:0.3; border:none; background:none; color:white; cursor:pointer;">✕</button>
+        <button class="delete-item-btn" style="margin-left:auto; opacity:0.3; border:none; background:none; color:inherit; cursor:pointer;">✕</button>
     `;
 
     const span = li.querySelector('.item-text');
@@ -242,7 +290,7 @@ document.getElementById('pageTitle').addEventListener('input', () => {
 });
 
 // ============================================
-// 7. BLOQUEAR DATAS PASSADAS (CORRIGIDO PARA SAFARI)
+// 7. BLOQUEAR DATAS PASSADAS
 // ============================================
 
 function configurarDatas() {

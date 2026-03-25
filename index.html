@@ -8,97 +8,283 @@
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/5968/5968914.png" type="image/png">
   </head>
   <body>
-    <header class="topbar">
-      <h1
-        contenteditable="true"
-        id="pageTitle"
-        data-placeholder="Digite o nome da sua rotina..."
-        data-maxlength="40"
-      >
-        Minha Rotina
-      </h1>
-      <p class="subtitle">Marque, desmarque e edite seus blocos.</p>
-      <button id="resetBtn">Resetar Tudo</button>
-    </header>
 
-    <!-- DICAS DE OURO -->
-    <section class="tips-section">
-      <h2 class="tips-title">✨ Dicas de Ouro</h2>
-      <div class="tips-container">
-        <div class="tip-card">
-          <span class="tip-icon">🌙</span>
-          <p>Priorize <strong>7-8h de sono</strong> para recuperação total.</p>
-        </div>
-        <div class="tip-card">
-          <span class="tip-icon">☀️</span>
-          <p>Acorde cedo para alinhar seu <strong>ciclo circadiano</strong>.</p>
-        </div>
-        <div class="tip-card">
-          <span class="tip-icon">💪</span>
-          <p>Exercite-se regularmente para manter o <strong>foco</strong>.</p>
-        </div>
+    <!-- ── BARRA DE NAVEGAÇÃO ── -->
+    <div class="navbar">
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="rotina">📋 Rotina</button>
+        <button class="nav-tab" data-tab="ajuda">❓ Ajuda</button>
+        <button class="nav-tab" data-tab="contato">📬 Contato</button>
       </div>
+      <div class="nav-right">
+        <button id="exportPdfBtn" class="icon-btn pdf-btn" title="Exportar PDF">📄 PDF</button>
+        <button id="themeBtn" class="icon-btn" title="Alternar tema">🌙</button>
+      </div>
+    </div>
 
-      <!-- CALCULADORA DE ÁGUA -->
-      <div class="water-section">
-        <span class="tip-icon">💧</span>
-        <p>Calcule sua <strong>ingestão de água</strong> diária:</p>
-        <div class="water-calc">
-          <input type="number" id="weightInput" placeholder="Peso (kg)" min="1" max="300" />
-          <button id="calcWater">Calcular</button>
-        </div>
-        <p id="waterResult" class="water-result"></p>
-      </div>
-    </section>
+    <!-- ══════════════════════════════
+         ABA: ROTINA
+    ══════════════════════════════ -->
+    <div id="tab-rotina" class="tab active">
 
-    <!-- 3 VITÓRIAS DO DIA -->
-    <section class="victories-container">
-      <h2 class="victories-title">🏆 Suas 3 Vitórias do Dia</h2>
-      <p class="victories-subtitle">Busque o equilíbrio em todos os pilares hoje.</p>
-      <div class="victories-grid">
-        <div class="victory-card">
-          <span class="victory-icon">🧠</span>
-          <label>Mental</label>
-          <p>Conhecimento e Foco</p>
-        </div>
-        <div class="victory-card">
-          <span class="victory-icon">🏋️</span>
-          <label>Física</label>
-          <p>Saúde e Movimento</p>
-        </div>
-        <div class="victory-card">
-          <span class="victory-icon">🙏</span>
-          <label>Espiritual</label>
-          <p>Paz e Gratidão</p>
-        </div>
-      </div>
-    </section>
+      <header class="topbar">
+        <h1
+          contenteditable="true"
+          id="pageTitle"
+          data-placeholder="Digite o nome da sua rotina..."
+          data-maxlength="40"
+        >
+          Minha Rotina
+        </h1>
+        <p class="subtitle">Marque, desmarque e edite seus blocos.</p>
+        <button id="resetBtn">Resetar Tudo</button>
+      </header>
 
-    <main class="container">
-      <div class="date-config">
-        <label>Data inicial:</label>
-        <input type="date" id="startDate" />
-        <label>Data final:</label>
-        <input type="date" id="endDate" />
-        <button id="generateDays">Gerar Rotina</button>
-      </div>
-      <div id="daysContainer"></div>
-    </main>
+      <!-- DICAS DE OURO -->
+      <section class="tips-section">
+        <h2 class="tips-title">✨ Dicas de Ouro</h2>
+        <div class="tips-container">
+          <div class="tip-card">
+            <span class="tip-icon">🌙</span>
+            <p>Priorize <strong>7-8h de sono</strong> para recuperação total.</p>
+          </div>
+          <div class="tip-card">
+            <span class="tip-icon">☀️</span>
+            <p>Acorde cedo para alinhar seu <strong>ciclo circadiano</strong>.</p>
+          </div>
+          <div class="tip-card">
+            <span class="tip-icon">💪</span>
+            <p>Exercite-se regularmente para manter o <strong>foco</strong>.</p>
+          </div>
+        </div>
+        <!-- CALCULADORA DE ÁGUA -->
+        <div class="water-section">
+          <span class="tip-icon">💧</span>
+          <p>Calcule sua <strong>ingestão de água</strong> diária:</p>
+          <div class="water-calc">
+            <input type="number" id="weightInput" placeholder="Peso (kg)" min="1" max="300" />
+            <button id="calcWater">Calcular</button>
+          </div>
+          <p id="waterResult" class="water-result"></p>
+        </div>
+      </section>
 
-    <footer class="footer">
-      <p class="dev-label">Desenvolvido por</p>
-      <div class="social-links">
-        <a href="https://www.instagram.com/daniel.mscs/" target="_blank">
-          <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="18" />
-          daniel.mscs
-        </a>
-        <a href="https://github.com/daniel-mscs" target="_blank">
-          <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" width="18" />
-          daniel-mscs
-        </a>
+      <!-- 3 VITÓRIAS DO DIA -->
+      <section class="victories-container">
+        <h2 class="victories-title">🏆 Suas 3 Vitórias do Dia</h2>
+        <p class="victories-subtitle">Busque o equilíbrio em todos os pilares hoje.</p>
+        <div class="victories-grid">
+          <div class="victory-card">
+            <span class="victory-icon">🧠</span>
+            <label>Mental</label>
+            <p>Conhecimento e Foco</p>
+          </div>
+          <div class="victory-card">
+            <span class="victory-icon">🏋️</span>
+            <label>Física</label>
+            <p>Saúde e Movimento</p>
+          </div>
+          <div class="victory-card">
+            <span class="victory-icon">🙏</span>
+            <label>Espiritual</label>
+            <p>Paz e Gratidão</p>
+          </div>
+        </div>
+      </section>
+
+      <main class="container">
+        <div class="date-config">
+          <label>Data inicial:</label>
+          <input type="date" id="startDate" />
+          <label>Data final:</label>
+          <input type="date" id="endDate" />
+          <button id="generateDays">Gerar Rotina</button>
+        </div>
+        <div id="daysContainer"></div>
+      </main>
+
+      <footer class="footer">
+        <p class="dev-label">Desenvolvido por</p>
+        <div class="social-links">
+          <a href="https://www.instagram.com/daniel.mscs/" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="18" />
+            daniel.mscs
+          </a>
+          <a href="https://github.com/daniel-mscs" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" width="18" />
+            daniel-mscs
+          </a>
+        </div>
+        <small>Dica: use Enter para criar novas tarefas rapidamente.</small>
+      </footer>
+
+    </div><!-- /tab-rotina -->
+
+    <!-- ══════════════════════════════
+         ABA: AJUDA
+    ══════════════════════════════ -->
+    <div id="tab-ajuda" class="tab">
+      <div class="static-wrap">
+        <h2 class="static-title">❓ Como usar o app</h2>
+
+        <div class="help-item">
+          <div class="help-num">1</div>
+          <div class="help-body">
+            <strong>Defina o período</strong>
+            <p>Escolha a <em>Data inicial</em> e <em>Data final</em> e clique em <strong>Gerar Rotina</strong>. Um bloco será criado para cada dia.</p>
+          </div>
+        </div>
+
+        <div class="help-item">
+          <div class="help-num">2</div>
+          <div class="help-body">
+            <strong>Adicione tarefas</strong>
+            <p>Cada dia tem 4 períodos: <em>Acordar, Manhã, Tarde e Noite</em>. Clique em <strong>+ Item</strong> para adicionar uma tarefa e digitar diretamente.</p>
+          </div>
+        </div>
+
+        <div class="help-item">
+          <div class="help-num">3</div>
+          <div class="help-body">
+            <strong>Marque como feito</strong>
+            <p>Clique no checkbox para concluir uma tarefa. O texto é riscado automaticamente.</p>
+          </div>
+        </div>
+
+        <div class="help-item">
+          <div class="help-num">4</div>
+          <div class="help-body">
+            <strong>Edite ou exclua</strong>
+            <p>Clique no texto para editar. Clique no <strong>✕</strong> ao lado para remover a tarefa.</p>
+          </div>
+        </div>
+
+        <div class="help-item">
+          <div class="help-num">5</div>
+          <div class="help-body">
+            <strong>Atalho Enter</strong>
+            <p>Pressione <kbd>Enter</kbd> para criar rapidamente a próxima tarefa sem usar o mouse.</p>
+          </div>
+        </div>
+
+        <div class="help-item">
+          <div class="help-num">6</div>
+          <div class="help-body">
+            <strong>Calculadora de água</strong>
+            <p>Digite seu peso em kg e clique em <strong>Calcular</strong>. A fórmula usada é peso × 35 ml.</p>
+          </div>
+        </div>
+
+        <div class="help-item">
+          <div class="help-num">7</div>
+          <div class="help-body">
+            <strong>Salvo automaticamente</strong>
+            <p>Tudo é salvo no seu navegador via <em>localStorage</em>. Sem conta, sem servidor — seus dados ficam só no seu dispositivo.</p>
+          </div>
+        </div>
+
+        <div class="help-item">
+          <div class="help-num">8</div>
+          <div class="help-body">
+            <strong>Tema claro / escuro</strong>
+            <p>Clique no botão 🌙 / ☀️ no canto superior direito para alternar o tema. A preferência é salva automaticamente.</p>
+          </div>
+        </div>
+
+        <div class="help-item">
+          <div class="help-num">9</div>
+          <div class="help-body">
+            <strong>Exportar PDF</strong>
+            <p>Clique em <strong>📄 PDF</strong> no topo para gerar um PDF imprimível com toda a sua rotina.</p>
+          </div>
+        </div>
+
+        <div class="help-item">
+          <div class="help-num">10</div>
+          <div class="help-body">
+            <strong>Instalar como app (PWA)</strong>
+            <p><strong>iPhone:</strong> abra no Safari → Compartilhar → Adicionar à Tela de Início.<br>
+            <strong>Android:</strong> abra no Chrome → três pontinhos → Instalar aplicativo.</p>
+          </div>
+        </div>
+
+        <div class="help-item">
+          <div class="help-num">11</div>
+          <div class="help-body">
+            <strong>Resetar tudo</strong>
+            <p>O botão <strong>Resetar Tudo</strong> apaga permanentemente toda a rotina salva. Cuidado, não tem como desfazer!</p>
+          </div>
+        </div>
+
       </div>
-      <small>Dica: use Enter para criar novas tarefas rapidamente.</small>
-    </footer>
+    </div><!-- /tab-ajuda -->
+
+    <!-- ══════════════════════════════
+         ABA: CONTATO
+    ══════════════════════════════ -->
+    <div id="tab-contato" class="tab">
+      <div class="static-wrap">
+        <h2 class="static-title">📬 Contato</h2>
+        <p class="static-sub">Fale comigo, reporte um bug, dê uma sugestão ou peça um site personalizado!</p>
+
+        <div class="contact-grid">
+          <a href="https://wa.me/5555991975065" target="_blank" class="contact-card">
+            <span class="contact-icon">💬</span>
+            <div>
+              <strong>WhatsApp</strong>
+              <p>Fale direto comigo</p>
+            </div>
+          </a>
+          <a href="https://www.linkedin.com/in/daniel-mscs/" target="_blank" class="contact-card">
+            <span class="contact-icon">💼</span>
+            <div>
+              <strong>LinkedIn</strong>
+              <p>Conecte-se profissionalmente</p>
+            </div>
+          </a>
+          <a href="https://www.instagram.com/daniel.mscs/" target="_blank" class="contact-card">
+            <span class="contact-icon">📸</span>
+            <div>
+              <strong>Instagram</strong>
+              <p>@daniel.mscs</p>
+            </div>
+          </a>
+          <a href="https://github.com/daniel-mscs" target="_blank" class="contact-card">
+            <span class="contact-icon">🐙</span>
+            <div>
+              <strong>GitHub</strong>
+              <p>daniel-mscs</p>
+            </div>
+          </a>
+        </div>
+
+        <h3 class="reasons-title">O que você pode me enviar?</h3>
+        <div class="reasons">
+          <div class="reason-card">
+            <span>🐛</span>
+            <div>
+              <strong>Bug encontrado</strong>
+              <p>Algo não funcionou? Me conta o que aconteceu e em qual dispositivo/navegador.</p>
+            </div>
+          </div>
+          <div class="reason-card">
+            <span>💡</span>
+            <div>
+              <strong>Sugestão de melhoria</strong>
+              <p>Tem ideia de funcionalidade nova ou algo que poderia ser melhor? Adoraria ouvir!</p>
+            </div>
+          </div>
+          <div class="reason-card">
+            <span>🌐</span>
+            <div>
+              <strong>Quero um site personalizado</strong>
+              <p>Precisa de um app, landing page ou sistema web? Entre em contato e vamos conversar.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div><!-- /tab-contato -->
 
     <script src="./script.js"></script>
   </body>
