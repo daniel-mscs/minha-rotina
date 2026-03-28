@@ -19,6 +19,7 @@
       <div class="nav-tabs">
         <button class="nav-tab active" data-tab="rotina">📋 Rotina</button>
         <button class="nav-tab" data-tab="agua">💧 Água</button>
+        <button class="nav-tab" data-tab="peso">⚖️ Peso</button>
         <button class="nav-tab" data-tab="ajuda">❓ Ajuda</button>
         <button class="nav-tab" data-tab="contato">📬 Contato</button>
       </div>
@@ -203,6 +204,115 @@
 
       </div>
     </div><!-- /tab-agua -->
+
+    <!-- ══════════════════════════════
+         ABA: PESO
+    ══════════════════════════════ -->
+    <div id="tab-peso" class="tab">
+      <div class="static-wrap">
+        <h2 class="static-title">⚖️ Controle de Peso</h2>
+        <p class="static-sub">Registre seu peso diariamente e acompanhe sua evolução.</p>
+
+        <!-- CARDS IMC -->
+        <div class="peso-cards" id="peso-cards">
+          <div class="peso-card">
+            <div class="peso-card-label">Peso atual</div>
+            <div class="peso-card-val" id="pc-peso">—</div>
+          </div>
+          <div class="peso-card">
+            <div class="peso-card-label">IMC</div>
+            <div class="peso-card-val" id="pc-imc">—</div>
+            <div class="peso-card-sub" id="pc-imc-class"></div>
+          </div>
+          <div class="peso-card">
+            <div class="peso-card-label">Gordura est.</div>
+            <div class="peso-card-val" id="pc-gord">—</div>
+            <div class="peso-card-sub">Fórmula Deurenberg</div>
+          </div>
+          <div class="peso-card">
+            <div class="peso-card-label">Peso ideal</div>
+            <div class="peso-card-val" id="pc-ideal">—</div>
+            <div class="peso-card-sub">IMC 22–24</div>
+          </div>
+        </div>
+
+        <!-- BARRA IMC -->
+        <div class="peso-section-block">
+          <h3 class="peso-block-title">Faixa de IMC</h3>
+          <div class="imc-bar-wrap">
+            <div class="imc-track">
+              <div style="width:13%;background:#85B7EB;height:10px;"></div>
+              <div style="width:22%;background:#97C459;height:10px;"></div>
+              <div style="width:20%;background:#FAC775;height:10px;"></div>
+              <div style="width:20%;background:#EF9F27;height:10px;"></div>
+              <div style="width:25%;background:#F09595;height:10px;"></div>
+            </div>
+            <div style="position:relative;height:28px;">
+              <div id="imc-marker" style="position:absolute;transform:translateX(-50%);font-size:11px;font-weight:600;color:var(--text);display:none;">▲ <span id="imc-marker-val"></span></div>
+            </div>
+            <div class="imc-labels">
+              <span>Abaixo</span><span>Normal</span><span>Sobrepeso</span><span>Ob. I</span><span>Ob. II+</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONFIGURAÇÕES -->
+        <div class="peso-section-block">
+          <h3 class="peso-block-title">Suas medidas</h3>
+          <div class="peso-config-row">
+            <div class="peso-config-item">
+              <label>Altura (cm)</label>
+              <input type="number" id="p-altura" placeholder="Ex: 180" min="100" max="250" />
+            </div>
+            <div class="peso-config-item">
+              <label>Idade</label>
+              <input type="number" id="p-idade" placeholder="Ex: 28" min="10" max="100" />
+            </div>
+            <button id="p-config-save-btn">Salvar</button>
+          </div>
+        </div>
+
+        <!-- REGISTRAR PESO -->
+        <div class="peso-section-block">
+          <h3 class="peso-block-title">Registrar peso de hoje</h3>
+          <div class="peso-add-row">
+            <input type="number" id="p-peso-input" placeholder="Ex: 109.5" min="30" max="300" step="0.1" />
+            <span class="p-unit">kg</span>
+            <button id="p-add-btn">+ Registrar</button>
+          </div>
+        </div>
+
+        <!-- MÉDIA SEMANAL -->
+        <div class="peso-section-block">
+          <div class="peso-media-header">
+            <h3 class="peso-block-title" style="margin:0;">Média semanal</h3>
+            <button id="p-media-btn">Ver média ↗</button>
+          </div>
+          <div id="p-media-result" class="p-media-result" style="display:none;"></div>
+        </div>
+
+        <!-- GRÁFICO -->
+        <div class="peso-section-block">
+          <h3 class="peso-block-title">Evolução do peso</h3>
+          <div style="position:relative;width:100%;height:220px;">
+            <canvas id="pesoChart"></canvas>
+          </div>
+          <p class="p-chart-empty" id="p-chart-empty">Registre pelo menos 2 pesos para ver o gráfico.</p>
+        </div>
+
+        <!-- HISTÓRICO -->
+        <div class="peso-section-block">
+          <div class="peso-media-header">
+            <h3 class="peso-block-title" style="margin:0;">Histórico</h3>
+            <button id="p-clear-btn" class="w-danger-btn">Limpar tudo</button>
+          </div>
+          <ul id="p-log-list" class="w-log-list" style="margin-top:12px;"></ul>
+        </div>
+
+        <p class="p-disclaimer">⚠️ A estimativa de gordura corporal é baseada na fórmula de Deurenberg (IMC + idade + sexo) e serve apenas como referência. Para valores precisos, consulte um profissional de saúde.</p>
+
+      </div>
+    </div><!-- /tab-peso -->
 
     <!-- ══════════════════════════════
          ABA: AJUDA

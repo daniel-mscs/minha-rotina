@@ -458,6 +458,302 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 });
 
 // ============================================
+// CONTROLE DE PESO
+// ============================================
+
+const PESO_KEY        = 'peso_data';
+const PESO_CONFIG_KEY = 'peso_config';
+
+function getPesoData() {
+    const raw = localStorage.getItem(PESO_KEY);
+    return raw ? JSON.parse(raw) : [];
+}
+
+function savePesoData(data) {
+    localStorage.setItem(PESO_KEY, JSON.stringify(data));
+}
+
+function getPesoConfig() {
+    const raw = localStorage.getItem(PESO_CONFIG_KEY);
+    return raw ? JSON.parse(raw) : { altura: null, idade: null };
+}
+
+function savePesoConfig(cfg) {
+    localStorage.setItem(PESO_CONFIG_KEY, JSON.stringify(cfg));
+}
+
+function calcIMC(peso, alturaCm) {
+    const h = alturaCm / 100;
+    return peso / (h * h);
+}
+
+function classifyIMC(imc) {
+    if (imc < 18.5) return { label: 'Abaixo do peso', color: '#85B7EB' };
+    if (imc < 25)   return { label: 'Normal', color: '#97C459' };
+    if (imc < 30)   return { label: 'Sobrepeso', color: '#FAC775' };
+    if (imc < 35)   return { label: 'Obesidade I', color: '#EF9F27' };
+    return               { label: 'Obesidade II+', color: '#F09595' };
+}
+
+function calcGordura(imc, idade) {
+    // Fórmula Deurenberg para homens: (1.20 × IMC) + (0.23 × idade) − 10.8 − 5.4
+    return (1.20 * imc) + (0.23 * idade) - 10.8 - 5.4;
+}
+
+function imcToBarPct(imc) {
+    // mapeia IMC 15–40 para 0–100%
+    const min = 15, max = 40;
+    return Math.min(100, Math.max(0, ((imc - min) / (max - min)) * 100));
+}
+
+let pesoChart = null;
+
+function renderPeso() {
+    const data   = getPesoData();
+    const cfg    = getPesoConfig();
+
+    // preenche inputs salvos
+    if (cfg.altura) document.getElementById('p-altura').value = cfg.altura;
+    if (cfg.idade)  document.getElementById('p-idade').value  = cfg.idade;
+
+    const ultimo = data.length > 0 ? data[data.length - 1] : null;
+
+    // cards
+    const elPeso  = document.getElementById('pc-peso');
+    const elImc   = document.getElementById('pc-imc');
+    const elImcCl = document.getElementById('pc-imc-class');
+    const elGord  = document.getElementById('pc-gord');
+    const elIdeal = document.getElementById('pc-ideal');
+    const marker  = document.getElementById('imc-marker');
+    const markerV = document.getElementById('imc-marker-val');
+
+    if (ultimo && cfg.altura && cfg.idade) {
+        const imc     = calcIMC(ultimo.peso, cfg.altura);
+        const cls     = classifyIMC(imc);
+        const gord    = calcGordura(imc, cfg.idade);
+        const h       = cfg.altura / 100;
+        const idealMin = (22 * h * h).toFixed(1);
+        const idealMax = (24 * h * h).toFixed(1);
+        const pct     = imcToBarPct(imc);
+
+        if (elPeso)  elPeso.textContent  = ultimo.peso.toFixed(1) + ' kg';
+        if (elImc)   elImc.textContent   = imc.toFixed(1);
+        if (elImcCl) { elImcCl.textContent = cls.label; elImcCl.style.color = cls.color; }
+        if (elGord)  elGord.textContent  = Math.max(0, gord).toFixed(1) + '%';
+        if (elIdeal) elIdeal.textContent = idealMin + '–' + idealMax + ' kg';
+
+        if (marker && markerV) {
+            marker.style.left    = pct + '%';
+            marker.style.display = 'block';
+            markerV.textContent  = imc.toFixed(1);
+        }
+    } else {
+        if (elPeso)  elPeso.textContent  = '—';
+        if (elImc)   elImc.textContent   = '—';
+        if (elImcCl) elImcCl.textContent = cfg.altura && cfg.idade ? 'Registre um peso' : 'Configure altura e idade';
+        if (elGord)  elGord.textContent  = '—';
+        if (elIdeal) elIdeal.textContent = cfg.altura ? (() => { const h = cfg.altura/100; return (22*h*h).toFixed(1)+'–'+(24*h*h).toFixed(1)+' kg'; })() : '—';
+        if (marker)  marker.style.display = 'none';
+    }
+
+    // histórico
+    renderPesoLog(data);
+
+    // gráfico
+    renderPesoChart(data);
+}
+
+function renderPesoLog(data) {
+    const list = document.getElementById('p-log-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    if (data.length === 0) {
+        list.innerHTML = '<li class="w-log-empty">Nenhum registro ainda.</li>';
+        return;
+    }
+
+    data.slice().reverse().forEach((entry, revIdx) => {
+        const realIdx = data.length - 1 - revIdx;
+        const prev    = realIdx > 0 ? data[realIdx - 1].peso : null;
+        const diff    = prev !== null ? (entry.peso - prev) : null;
+        let diffHtml  = '';
+        if (diff !== null) {
+            if (diff < 0)      diffHtml = `<span style="color:#1D9E75;font-size:12px;">▼ ${Math.abs(diff).toFixed(1)} kg</span>`;
+            else if (diff > 0) diffHtml = `<span style="color:#E24B4A;font-size:12px;">▲ ${diff.toFixed(1)} kg</span>`;
+            else               diffHtml = `<span style="color:var(--muted);font-size:12px;">= igual</span>`;
+        }
+
+        const li = document.createElement('li');
+        li.className = 'w-log-item';
+        li.innerHTML = `
+            <div class="w-log-item-left">
+                <span class="w-log-ml">${entry.peso.toFixed(1)} kg</span>
+                <span class="w-log-time">${entry.date}</span>
+                ${diffHtml}
+            </div>
+            <button class="w-log-del" data-idx="${realIdx}">✕</button>
+        `;
+        li.querySelector('.w-log-del').addEventListener('click', () => {
+            const d = getPesoData();
+            d.splice(realIdx, 1);
+            savePesoData(d);
+            renderPeso();
+        });
+        list.appendChild(li);
+    });
+}
+
+function renderPesoChart(data) {
+    const emptyEl = document.getElementById('p-chart-empty');
+    const canvas  = document.getElementById('pesoChart');
+    if (!canvas) return;
+
+    if (data.length < 2) {
+        canvas.style.display = 'none';
+        if (emptyEl) emptyEl.style.display = 'block';
+        if (pesoChart) { pesoChart.destroy(); pesoChart = null; }
+        return;
+    }
+
+    canvas.style.display = 'block';
+    if (emptyEl) emptyEl.style.display = 'none';
+
+    const labels = data.map(e => e.date);
+    const values = data.map(e => e.peso);
+
+    if (pesoChart) pesoChart.destroy();
+
+    pesoChart = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Peso (kg)',
+                data: values,
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59,130,246,0.08)',
+                pointBackgroundColor: '#3b82f6',
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                borderWidth: 2,
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ctx.parsed.y.toFixed(1) + ' kg'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(136,135,128,0.15)' },
+                    ticks: { font: { size: 11 }, color: '#888780', maxRotation: 45 }
+                },
+                y: {
+                    grid: { color: 'rgba(136,135,128,0.15)' },
+                    ticks: { font: { size: 11 }, color: '#888780', callback: v => v + ' kg' }
+                }
+            }
+        }
+    });
+}
+
+// salvar config
+document.getElementById('p-config-save-btn').addEventListener('click', () => {
+    const altura = parseInt(document.getElementById('p-altura').value);
+    const idade  = parseInt(document.getElementById('p-idade').value);
+    if (!altura || altura < 100 || altura > 250) { alert('Digite uma altura válida (cm)!'); return; }
+    if (!idade  || idade  < 10  || idade  > 100) { alert('Digite uma idade válida!'); return; }
+    savePesoConfig({ altura, idade });
+    renderPeso();
+});
+
+// adicionar peso
+document.getElementById('p-add-btn').addEventListener('click', () => {
+    const input = document.getElementById('p-peso-input');
+    const val   = parseFloat(input.value);
+    if (!val || val < 30 || val > 300) { alert('Digite um peso válido!'); return; }
+
+    const data  = getPesoData();
+    const today = new Date().toLocaleDateString('pt-BR');
+
+    // atualiza se já tem registro hoje
+    const existing = data.findIndex(e => e.date === today);
+    if (existing >= 0) {
+        if (!confirm('Já existe um registro hoje. Deseja substituir?')) return;
+        data[existing].peso = val;
+    } else {
+        data.push({ date: today, peso: val });
+    }
+
+    savePesoData(data);
+    input.value = '';
+    renderPeso();
+});
+
+document.getElementById('p-peso-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('p-add-btn').click();
+});
+
+// média semanal
+document.getElementById('p-media-btn').addEventListener('click', () => {
+    const data    = getPesoData();
+    const result  = document.getElementById('p-media-result');
+    if (!result) return;
+
+    if (data.length < 2) {
+        result.style.display = 'block';
+        result.innerHTML = '<span style="color:var(--muted)">Registre pelo menos 2 pesos para calcular a média.</span>';
+        return;
+    }
+
+    // pega últimos 7 dias com registro
+    const ultimos = data.slice(-7);
+    const primeiro = ultimos[0].peso;
+    const ultimo   = ultimos[ultimos.length - 1].peso;
+    const diff     = ultimo - primeiro;
+    const media    = diff / (ultimos.length - 1);
+    const dias     = ultimos.length - 1;
+
+    let diffClass = diff < 0 ? 'p-loss' : diff > 0 ? 'p-gain' : 'p-same';
+    let diffSinal = diff < 0 ? '▼' : diff > 0 ? '▲' : '=';
+    let diffLabel = diff < 0 ? 'perdidos' : diff > 0 ? 'ganhos' : 'sem alteração';
+    let mediaLabel = media < 0 ? 'perdendo' : media > 0 ? 'ganhando' : 'estável';
+
+    result.style.display = 'block';
+    result.innerHTML = `
+        📅 Período: <strong>${ultimos[0].date}</strong> → <strong>${ultimos[ultimos.length-1].date}</strong> (${dias} dia${dias > 1 ? 's' : ''})<br>
+        ⚖️ Início: <strong>${primeiro.toFixed(1)} kg</strong> → Atual: <strong>${ultimo.toFixed(1)} kg</strong><br>
+        ${diffSinal} Total: <span class="${diffClass}">${Math.abs(diff).toFixed(1)} kg ${diffLabel}</span><br>
+        📊 Média: <span class="${diffClass}">${Math.abs(media).toFixed(2)} kg/dia</span> (${mediaLabel})
+    `;
+});
+
+// limpar tudo
+document.getElementById('p-clear-btn').addEventListener('click', () => {
+    if (!confirm('Apagar todo o histórico de peso?')) return;
+    savePesoData([]);
+    renderPeso();
+});
+
+// carrega Chart.js e renderiza
+(function loadChartAndRender() {
+    if (window.Chart) { renderPeso(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js';
+    s.onload = () => renderPeso();
+    document.head.appendChild(s);
+})();
+
+// ============================================
 // CONTROLE DE ÁGUA
 // ============================================
 
