@@ -6,6 +6,11 @@
     <title>Minha Rotina</title>
     <link rel="stylesheet" href="./style.css" />
     <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/5968/5968914.png" type="image/png">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#121212">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Minha Rotina">
   </head>
   <body>
 
@@ -228,7 +233,7 @@
         <p class="static-sub">Fale comigo, reporte um bug, dê uma sugestão ou peça um site personalizado!</p>
 
         <div class="contact-grid">
-          <a href="https://wa.me/5555991975065" target="_blank" class="contact-card">
+          <a href="https://wa.me/55SEU_NUMERO" target="_blank" class="contact-card">
             <span class="contact-icon">💬</span>
             <div>
               <strong>WhatsApp</strong>
@@ -287,5 +292,10 @@
     </div><!-- /tab-contato -->
 
     <script src="./script.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js');
+      }
+    </script>
   </body>
 </html>

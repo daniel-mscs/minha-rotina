@@ -569,10 +569,33 @@ li {
   gap: 10px;
   padding: 6px 4px;
   border-radius: 6px;
-  transition: background .15s;
+  transition: background .15s, opacity .15s;
+  cursor: default;
 }
 
 li:hover { background: var(--card-hover); }
+
+li.dragging {
+  opacity: 0.4;
+}
+
+li.drag-over {
+  background: var(--accent-dim);
+  border-radius: 6px;
+}
+
+.drag-handle {
+  cursor: grab;
+  opacity: 0.25;
+  font-size: 14px;
+  flex-shrink: 0;
+  padding: 0 2px;
+  user-select: none;
+  touch-action: none;
+}
+
+.drag-handle:hover { opacity: 0.7; }
+.drag-handle:active { cursor: grabbing; }
 
 input[type="checkbox"] {
   width: 16px;

@@ -133,7 +133,9 @@ function addDynamicItem(button, text = "", checked = false) {
     const ul = period.querySelector('ul');
 
     const li = document.createElement('li');
+    li.draggable = true;
     li.innerHTML = `
+        <span class="drag-handle" title="Arrastar para reordenar">⠿</span>
         <input type="checkbox" ${checked ? 'checked' : ''}>
         <span class="item-text ${!text ? 'placeholder' : ''}" contenteditable="true">${text || "Digite aqui..."}</span>
         <button class="delete-item-btn" style="margin-left:auto; opacity:0.3; border:none; background:none; color:inherit; cursor:pointer;">✕</button>
@@ -141,6 +143,7 @@ function addDynamicItem(button, text = "", checked = false) {
 
     const span = li.querySelector('.item-text');
     const checkbox = li.querySelector('input');
+    const handle = li.querySelector('.drag-handle');
 
     if (checked) span.style.textDecoration = "line-through";
 
@@ -176,6 +179,114 @@ function addDynamicItem(button, text = "", checked = false) {
             e.preventDefault();
             addDynamicItem(button);
         }
+    });
+
+    // ── DRAG AND DROP (mouse) ──
+    li.addEventListener('dragstart', (e) => {
+        // só inicia se o handle foi clicado
+        if (!e.target.closest('.drag-handle') && e.target !== handle) {
+            e.preventDefault();
+            return;
+        }
+        li.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+    });
+
+    li.addEventListener('dragend', () => {
+        li.classList.remove('dragging');
+        ul.querySelectorAll('li').forEach(el => el.classList.remove('drag-over'));
+        saveAll();
+    });
+
+    li.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const dragging = ul.querySelector('.dragging');
+        if (!dragging || dragging === li) return;
+        ul.querySelectorAll('li').forEach(el => el.classList.remove('drag-over'));
+        li.classList.add('drag-over');
+
+        const rect = li.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        if (e.clientY < midY) {
+            ul.insertBefore(dragging, li);
+        } else {
+            ul.insertBefore(dragging, li.nextSibling);
+        }
+    });
+
+    li.addEventListener('dragleave', () => {
+        li.classList.remove('drag-over');
+    });
+
+    li.addEventListener('drop', (e) => {
+        e.preventDefault();
+        li.classList.remove('drag-over');
+    });
+
+    // ── TOUCH DRAG (mobile) ──
+    let touchDragging = null;
+    let touchClone = null;
+    let touchOffsetY = 0;
+
+    handle.addEventListener('touchstart', (e) => {
+        const touch = e.touches[0];
+        touchDragging = li;
+        touchOffsetY = touch.clientY - li.getBoundingClientRect().top;
+
+        touchClone = li.cloneNode(true);
+        touchClone.style.cssText = `
+            position: fixed;
+            z-index: 9999;
+            left: ${li.getBoundingClientRect().left}px;
+            width: ${li.offsetWidth}px;
+            opacity: 0.85;
+            pointer-events: none;
+            background: var(--card-hover);
+            border-radius: 6px;
+            padding: 6px 4px;
+        `;
+        document.body.appendChild(touchClone);
+        li.classList.add('dragging');
+        e.preventDefault();
+    }, { passive: false });
+
+    handle.addEventListener('touchmove', (e) => {
+        if (!touchDragging) return;
+        const touch = e.touches[0];
+        const y = touch.clientY - touchOffsetY;
+        touchClone.style.top = `${y}px`;
+
+        const elements = ul.querySelectorAll('li:not(.dragging)');
+        elements.forEach(el => el.classList.remove('drag-over'));
+
+        let target = null;
+        elements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                target = el;
+            }
+        });
+
+        if (target) {
+            target.classList.add('drag-over');
+            const rect = target.getBoundingClientRect();
+            const midY = rect.top + rect.height / 2;
+            if (touch.clientY < midY) {
+                ul.insertBefore(touchDragging, target);
+            } else {
+                ul.insertBefore(touchDragging, target.nextSibling);
+            }
+        }
+        e.preventDefault();
+    }, { passive: false });
+
+    handle.addEventListener('touchend', () => {
+        if (!touchDragging) return;
+        li.classList.remove('dragging');
+        ul.querySelectorAll('li').forEach(el => el.classList.remove('drag-over'));
+        if (touchClone) { touchClone.remove(); touchClone = null; }
+        touchDragging = null;
+        saveAll();
     });
 
     ul.appendChild(li);
