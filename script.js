@@ -119,7 +119,7 @@ function createPeriodHTML(name) {
         <div class="period" data-period-name="${name}">
             <h3>${name}</h3>
             <ul></ul>
-            <button class="add-period-btn">+ Item</button>
+            <button class="add-period-btn">+ Nova tarefa</button>
         </div>
     `;
 }
@@ -456,6 +456,210 @@ document.getElementById('resetBtn').addEventListener('click', () => {
         location.reload();
     }
 });
+
+// ============================================
+// CONTROLE DE ÁGUA
+// ============================================
+
+const W_KEY     = 'water_data';
+const W_META_KEY = 'water_meta';
+
+function getTodayKey() {
+    return new Date().toLocaleDateString('pt-BR');
+}
+
+function getWaterData() {
+    const raw = localStorage.getItem(W_KEY);
+    return raw ? JSON.parse(raw) : {};
+}
+
+function saveWaterData(data) {
+    localStorage.setItem(W_KEY, JSON.stringify(data));
+}
+
+function getWaterMeta() {
+    return parseInt(localStorage.getItem(W_META_KEY) || '2500');
+}
+
+function saveWaterMeta(val) {
+    localStorage.setItem(W_META_KEY, val);
+}
+
+function getTodayTotal() {
+    const data = getWaterData();
+    const today = getTodayKey();
+    const entries = data[today] || [];
+    return entries.reduce((sum, e) => sum + e.ml, 0);
+}
+
+function renderWater() {
+    const meta      = getWaterMeta();
+    const data      = getWaterData();
+    const today     = getTodayKey();
+    const entries   = data[today] || [];
+    const total     = entries.reduce((sum, e) => sum + e.ml, 0);
+    const remaining = Math.max(0, meta - total);
+    const pct       = Math.min(100, Math.round((total / meta) * 100));
+
+    // label data
+    const label = document.getElementById('water-date-label');
+    if (label) label.textContent = 'Hoje · ' + today;
+
+    // cards topo
+    const elMeta = document.getElementById('w-meta-display');
+    const elCons = document.getElementById('w-consumed');
+    const elRem  = document.getElementById('w-remaining');
+    if (elMeta) elMeta.textContent = meta.toLocaleString('pt-BR');
+    if (elCons) elCons.textContent = total.toLocaleString('pt-BR') + ' ml';
+    if (elRem)  elRem.textContent  = remaining > 0 ? remaining.toLocaleString('pt-BR') + ' ml' : '✅ Meta atingida!';
+
+    // progress bar
+    const bar = document.getElementById('w-bar-fill');
+    const pctEl = document.getElementById('w-bar-pct');
+    if (bar) {
+        bar.style.width = pct + '%';
+        bar.classList.toggle('done', pct >= 100);
+    }
+    if (pctEl) pctEl.textContent = pct + '%';
+
+    // hint calculadora
+    const hint = document.getElementById('w-calc-hint');
+    if (hint) {
+        const savedWeight = localStorage.getItem('my_routine_data');
+        if (savedWeight) {
+            const parsed = JSON.parse(savedWeight);
+            if (parsed.weight) {
+                const calcMl = Math.round(parsed.weight * 35);
+                hint.textContent = calcMl.toLocaleString('pt-BR');
+            } else {
+                hint.textContent = '—';
+            }
+        }
+    }
+
+    // log do dia
+    const logList = document.getElementById('w-log-list');
+    if (logList) {
+        logList.innerHTML = '';
+        if (entries.length === 0) {
+            logList.innerHTML = '<li class="w-log-empty">Nenhum registro ainda.</li>';
+        } else {
+            entries.slice().reverse().forEach((entry, revIdx) => {
+                const realIdx = entries.length - 1 - revIdx;
+                const li = document.createElement('li');
+                li.className = 'w-log-item';
+                li.innerHTML = `
+                    <div class="w-log-item-left">
+                        <span class="w-log-ml">+${entry.ml} ml</span>
+                        <span class="w-log-time">${entry.time}</span>
+                    </div>
+                    <button class="w-log-del" data-idx="${realIdx}">✕</button>
+                `;
+                li.querySelector('.w-log-del').addEventListener('click', () => {
+                    const d = getWaterData();
+                    d[today].splice(realIdx, 1);
+                    saveWaterData(d);
+                    renderWater();
+                });
+                logList.appendChild(li);
+            });
+        }
+    }
+
+    // histórico
+    renderWaterHistory(data, meta);
+}
+
+function renderWaterHistory(data, meta) {
+    const hist = document.getElementById('w-history');
+    if (!hist) return;
+
+    const today = getTodayKey();
+    const keys = Object.keys(data)
+        .filter(k => k !== today && data[k].length > 0)
+        .sort((a, b) => {
+            const parse = s => { const [d,m,y] = s.split('/'); return new Date(y,m-1,d); };
+            return parse(b) - parse(a);
+        })
+        .slice(0, 7);
+
+    if (keys.length === 0) {
+        hist.innerHTML = '<p class="w-hist-empty">Nenhum histórico ainda.</p>';
+        return;
+    }
+
+    hist.innerHTML = '';
+    keys.forEach(key => {
+        const entries = data[key] || [];
+        const total = entries.reduce((s, e) => s + e.ml, 0);
+        const pct = Math.min(100, Math.round((total / meta) * 100));
+        const div = document.createElement('div');
+        div.className = 'w-hist-item';
+        div.innerHTML = `
+            <span class="w-hist-date">${key}</span>
+            <div class="w-hist-bar-wrap">
+                <div class="w-hist-bar ${pct >= 100 ? 'done' : ''}" style="width:${pct}%"></div>
+            </div>
+            <span class="w-hist-val">${total.toLocaleString('pt-BR')} ml</span>
+        `;
+        hist.appendChild(div);
+    });
+}
+
+function addWaterEntry(ml) {
+    if (!ml || ml <= 0) return;
+    const data  = getWaterData();
+    const today = getTodayKey();
+    if (!data[today]) data[today] = [];
+    const now = new Date();
+    data[today].push({
+        ml: ml,
+        time: now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    });
+    saveWaterData(data);
+    renderWater();
+}
+
+// botões rápidos
+document.querySelectorAll('.w-quick').forEach(btn => {
+    btn.addEventListener('click', () => addWaterEntry(parseInt(btn.dataset.ml)));
+});
+
+// botão custom
+document.getElementById('w-custom-add-btn').addEventListener('click', () => {
+    const input = document.getElementById('w-custom-input');
+    const val = parseInt(input.value);
+    if (!val || val <= 0) { alert('Digite um valor válido!'); return; }
+    addWaterEntry(val);
+    input.value = '';
+});
+
+document.getElementById('w-custom-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('w-custom-add-btn').click();
+});
+
+// salvar meta
+document.getElementById('w-meta-save-btn').addEventListener('click', () => {
+    const input = document.getElementById('w-meta-input');
+    const val = parseInt(input.value);
+    if (!val || val < 500) { alert('Digite uma meta válida (mínimo 500ml)!'); return; }
+    saveWaterMeta(val);
+    input.value = '';
+    renderWater();
+});
+
+// zerar dia
+document.getElementById('w-clear-day-btn').addEventListener('click', () => {
+    if (!confirm('Zerar todos os registros de hoje?')) return;
+    const data  = getWaterData();
+    const today = getTodayKey();
+    data[today] = [];
+    saveWaterData(data);
+    renderWater();
+});
+
+// render inicial
+renderWater();
 
 // ============================================
 // 9. INICIALIZAR

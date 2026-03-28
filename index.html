@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Minha Rotina</title>
     <link rel="stylesheet" href="./style.css" />
-    <link rel="icon" href="./icon-512.png" type="image/png">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/5968/5968914.png" type="image/png">
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#121212">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,6 +18,7 @@
     <div class="navbar">
       <div class="nav-tabs">
         <button class="nav-tab active" data-tab="rotina">📋 Rotina</button>
+        <button class="nav-tab" data-tab="agua">💧 Água</button>
         <button class="nav-tab" data-tab="ajuda">❓ Ajuda</button>
         <button class="nav-tab" data-tab="contato">📬 Contato</button>
       </div>
@@ -120,9 +121,88 @@
             daniel-mscs
           </a>
         </div>
+        <small>Dica: use Enter para criar novas tarefas rapidamente.</small>
       </footer>
 
     </div><!-- /tab-rotina -->
+
+    <!-- ══════════════════════════════
+         ABA: ÁGUA
+    ══════════════════════════════ -->
+    <div id="tab-agua" class="tab">
+      <div class="static-wrap">
+        <h2 class="static-title">💧 Controle de Água</h2>
+        <p class="static-sub" id="water-date-label"></p>
+
+        <!-- META + PROGRESS -->
+        <div class="water-goal-card">
+          <div class="water-goal-top">
+            <div>
+              <div class="water-goal-label">Meta diária</div>
+              <div class="water-goal-val"><span id="w-meta-display">2.500</span> ml</div>
+            </div>
+            <div>
+              <div class="water-goal-label">Consumido hoje</div>
+              <div class="water-goal-val" id="w-consumed">0 ml</div>
+            </div>
+            <div>
+              <div class="water-goal-label">Restante</div>
+              <div class="water-goal-val" id="w-remaining">—</div>
+            </div>
+          </div>
+
+          <!-- PROGRESS BAR -->
+          <div class="w-bar-track">
+            <div class="w-bar-fill" id="w-bar-fill"></div>
+          </div>
+          <div class="w-bar-pct" id="w-bar-pct">0%</div>
+        </div>
+
+        <!-- META PERSONALIZADA -->
+        <div class="water-section-block">
+          <h3 class="water-block-title">Ajustar meta</h3>
+          <div class="w-meta-row">
+            <input type="number" id="w-meta-input" placeholder="Ex: 3500" min="500" max="10000" step="100" />
+            <span class="w-meta-unit">ml</span>
+            <button id="w-meta-save-btn">Salvar meta</button>
+          </div>
+          <p class="w-hint">💡 Sua calculadora indicou <strong id="w-calc-hint">—</strong> ml baseado no seu peso.</p>
+        </div>
+
+        <!-- REGISTRO RÁPIDO -->
+        <div class="water-section-block">
+          <h3 class="water-block-title">Registrar consumo</h3>
+          <div class="w-quick-btns">
+            <button class="w-quick" data-ml="150">🥃 150ml</button>
+            <button class="w-quick" data-ml="200">🥤 200ml</button>
+            <button class="w-quick" data-ml="300">🧃 300ml</button>
+            <button class="w-quick" data-ml="500">🍶 500ml</button>
+          </div>
+          <div class="w-custom-row">
+            <input type="number" id="w-custom-input" placeholder="Outro valor (ml)" min="1" max="2000" />
+            <button id="w-custom-add-btn">+ Adicionar</button>
+          </div>
+        </div>
+
+        <!-- LOG DO DIA -->
+        <div class="water-section-block">
+          <div class="w-log-header">
+            <h3 class="water-block-title" style="margin:0;">Registros de hoje</h3>
+            <button id="w-clear-day-btn" class="w-danger-btn">Zerar dia</button>
+          </div>
+          <ul id="w-log-list" class="w-log-list">
+            <li class="w-log-empty">Nenhum registro ainda.</li>
+          </ul>
+        </div>
+
+        <!-- HISTÓRICO -->
+        <div class="water-section-block">
+          <h3 class="water-block-title">Histórico dos últimos dias</h3>
+          <div id="w-history" class="w-history"></div>
+        </div>
+
+      </div>
+    </div><!-- /tab-agua -->
 
     <!-- ══════════════════════════════
          ABA: AJUDA
@@ -254,17 +334,18 @@
             </div>
           </a>
           <a href="https://github.com/daniel-mscs" target="_blank" class="contact-card">
-  <span class="contact-icon">
-    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
-    </svg>
-  </span>
-  <div>
-    <strong>GitHub</strong>
-    <p>daniel-mscs</p>
-  </div>
-</a>
+            <span class="contact-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+              </svg>
+            </span>
+            <div>
+              <strong>GitHub</strong>
+              <p>daniel-mscs</p>
+            </div>
+          </a>
         </div>
+
         <h3 class="reasons-title">O que você pode me enviar?</h3>
         <div class="reasons">
           <div class="reason-card">
