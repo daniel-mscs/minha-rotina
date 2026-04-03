@@ -27,7 +27,14 @@ body.light {
   --nav-bg:     #ffffff;
 }
 
-* { box-sizing: border-box; }
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="search"],
+textarea,
+[contenteditable="true"] {
+  font-size: 16px !important;
+}
 
 body {
   margin: 0;
