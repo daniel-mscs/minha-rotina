@@ -428,24 +428,125 @@ function getTodayMacrosTotal() {
     }), { kcal: 0, prot: 0, carb: 0, gord: 0 });
 }
 
-function populateFoodSelect() {
-    const sel = document.getElementById('mc-food-select');
-    if (!sel) return;
-    FOOD_TABLE.forEach((f, i) => {
-        const opt = document.createElement('option');
-        opt.value = i;
-        opt.textContent = f.name;
-        sel.appendChild(opt);
+// ============================================
+// AUTOCOMPLETE FUNCTIONALITY
+// ============================================
+
+let selectedFoodIndex = -1;
+let currentSuggestionIndex = -1;
+
+function normalizeText(text) {
+    return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function filterFoods(query) {
+    if (!query) return [];
+    const normalizedQuery = normalizeText(query);
+    return FOOD_TABLE
+        .map((food, index) => ({ food, index }))
+        .filter(({ food }) => normalizeText(food.name).includes(normalizedQuery));
+}
+
+function showSuggestions(query) {
+    const suggestionsList = document.getElementById('mc-food-suggestions');
+    const filtered = filterFoods(query);
+    
+    suggestionsList.innerHTML = '';
+    currentSuggestionIndex = -1;
+    
+    if (filtered.length === 0) {
+        if (query.length > 0) {
+            const li = document.createElement('li');
+            li.className = 'autocomplete-no-results';
+            li.textContent = 'Nenhum alimento encontrado';
+            suggestionsList.appendChild(li);
+            suggestionsList.classList.add('show');
+        } else {
+            suggestionsList.classList.remove('show');
+        }
+        return;
+    }
+    
+    filtered.forEach(({ food, index }) => {
+        const li = document.createElement('li');
+        li.className = 'autocomplete-item';
+        li.dataset.index = index;
+        
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'autocomplete-item-name';
+        nameDiv.textContent = food.name;
+        
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'autocomplete-item-info';
+        infoDiv.textContent = `${food.kcal} kcal | P: ${food.prot}g C: ${food.carb}g G: ${food.gord}g (por 100g)`;
+        
+        li.appendChild(nameDiv);
+        li.appendChild(infoDiv);
+        
+        li.addEventListener('click', () => selectFood(index, food.name));
+        
+        suggestionsList.appendChild(li);
     });
+    
+    suggestionsList.classList.add('show');
+}
+
+function selectFood(index, name) {
+    selectedFoodIndex = index;
+    const input = document.getElementById('mc-food-input');
+    input.value = name;
+    hideSuggestions();
+    renderMacrosPreview();
+    document.getElementById('mc-grams-input').focus();
+}
+
+function hideSuggestions() {
+    const suggestionsList = document.getElementById('mc-food-suggestions');
+    suggestionsList.classList.remove('show');
+    currentSuggestionIndex = -1;
+}
+
+function navigateSuggestions(direction) {
+    const items = document.querySelectorAll('.autocomplete-item:not(.autocomplete-no-results)');
+    if (items.length === 0) return;
+    
+    // Remove active class from current
+    if (currentSuggestionIndex >= 0 && currentSuggestionIndex < items.length) {
+        items[currentSuggestionIndex].classList.remove('active');
+    }
+    
+    // Update index
+    if (direction === 'down') {
+        currentSuggestionIndex = (currentSuggestionIndex + 1) % items.length;
+    } else if (direction === 'up') {
+        currentSuggestionIndex = currentSuggestionIndex <= 0 ? items.length - 1 : currentSuggestionIndex - 1;
+    }
+    
+    // Add active class to new item
+    items[currentSuggestionIndex].classList.add('active');
+    items[currentSuggestionIndex].scrollIntoView({ block: 'nearest' });
+}
+
+function selectCurrentSuggestion() {
+    const items = document.querySelectorAll('.autocomplete-item:not(.autocomplete-no-results)');
+    if (currentSuggestionIndex >= 0 && currentSuggestionIndex < items.length) {
+        const index = parseInt(items[currentSuggestionIndex].dataset.index);
+        const food = FOOD_TABLE[index];
+        selectFood(index, food.name);
+    }
 }
 
 function renderMacrosPreview() {
-    const sel    = document.getElementById('mc-food-select');
     const grams  = parseFloat(document.getElementById('mc-grams-input').value);
     const preview = document.getElementById('mc-preview');
     if (!preview) return;
-    if (!sel.value || !grams || grams <= 0) { preview.style.display = 'none'; return; }
-    const food = FOOD_TABLE[parseInt(sel.value)];
+    
+    if (selectedFoodIndex === -1 || !grams || grams <= 0) { 
+        preview.style.display = 'none'; 
+        return; 
+    }
+    
+    const food = FOOD_TABLE[selectedFoodIndex];
     const m    = calcMacros(food, grams);
     preview.style.display = 'block';
     preview.innerHTML = `⚡ ${m.kcal} kcal &nbsp;|&nbsp; 🥩 ${m.prot}g prot &nbsp;|&nbsp; 🍞 ${m.carb}g carb &nbsp;|&nbsp; 🧈 ${m.gord}g gord`;
@@ -520,17 +621,82 @@ function renderMacrosLog() {
     });
 }
 
-// eventos macros
-document.getElementById('mc-food-select').addEventListener('change', renderMacrosPreview);
-document.getElementById('mc-grams-input').addEventListener('input', renderMacrosPreview);
+// ============================================
+// EVENT LISTENERS - AUTOCOMPLETE
+// ============================================
 
+const foodInput = document.getElementById('mc-food-input');
+const gramsInput = document.getElementById('mc-grams-input');
+
+// Autocomplete input events
+foodInput.addEventListener('input', (e) => {
+    const query = e.target.value.trim();
+    selectedFoodIndex = -1;
+    showSuggestions(query);
+    renderMacrosPreview();
+});
+
+foodInput.addEventListener('keydown', (e) => {
+    const suggestionsList = document.getElementById('mc-food-suggestions');
+    const isOpen = suggestionsList.classList.contains('show');
+    
+    if (e.key === 'ArrowDown' && isOpen) {
+        e.preventDefault();
+        navigateSuggestions('down');
+    } else if (e.key === 'ArrowUp' && isOpen) {
+        e.preventDefault();
+        navigateSuggestions('up');
+    } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (isOpen && currentSuggestionIndex >= 0) {
+            selectCurrentSuggestion();
+        } else if (selectedFoodIndex >= 0) {
+            gramsInput.focus();
+        }
+    } else if (e.key === 'Escape') {
+        hideSuggestions();
+    }
+});
+
+foodInput.addEventListener('focus', (e) => {
+    if (e.target.value.trim()) {
+        showSuggestions(e.target.value.trim());
+    }
+});
+
+// Close suggestions when clicking outside
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.autocomplete-wrapper')) {
+        hideSuggestions();
+    }
+});
+
+// Grams input events
+gramsInput.addEventListener('input', renderMacrosPreview);
+
+gramsInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('mc-add-btn').click();
+    }
+});
+
+// Add button
 document.getElementById('mc-add-btn').addEventListener('click', () => {
-    const sel   = document.getElementById('mc-food-select');
-    const grams = parseFloat(document.getElementById('mc-grams-input').value);
-    if (!sel.value) { alert('Selecione um alimento!'); return; }
-    if (!grams || grams <= 0) { alert('Digite a quantidade em gramas!'); return; }
+    const grams = parseFloat(gramsInput.value);
+    
+    if (selectedFoodIndex === -1) { 
+        alert('Selecione um alimento!'); 
+        foodInput.focus();
+        return; 
+    }
+    if (!grams || grams <= 0) { 
+        alert('Digite a quantidade em gramas!'); 
+        gramsInput.focus();
+        return; 
+    }
 
-    const food  = FOOD_TABLE[parseInt(sel.value)];
+    const food  = FOOD_TABLE[selectedFoodIndex];
     const m     = calcMacros(food, grams);
     const data  = getMacrosData();
     const today = new Date().toLocaleDateString('pt-BR');
@@ -538,14 +704,13 @@ document.getElementById('mc-add-btn').addEventListener('click', () => {
     data[today].push({ name: food.name, grams, ...m });
     saveMacrosData(data);
 
-    document.getElementById('mc-grams-input').value = '';
+    // Reset form
+    foodInput.value = '';
+    gramsInput.value = '';
+    selectedFoodIndex = -1;
     document.getElementById('mc-preview').style.display = 'none';
-    sel.value = '';
     renderMacros();
-});
-
-document.getElementById('mc-grams-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('mc-add-btn').click();
+    foodInput.focus();
 });
 
 document.getElementById('mc-meta-save-btn').addEventListener('click', () => {
@@ -564,7 +729,7 @@ document.getElementById('mc-clear-btn').addEventListener('click', () => {
     renderMacros();
 });
 
-populateFoodSelect();
+// Initialize macros
 renderMacros();
 
 // ============================================
