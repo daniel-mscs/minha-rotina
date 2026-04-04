@@ -17,7 +17,8 @@
     <!-- ── BARRA DE NAVEGAÇÃO ── -->
     <div class="navbar">
       <div class="nav-tabs">
-        <button class="nav-tab active" data-tab="rotina">📋 <span class="nav-label">Rotina</span></button>
+        <button class="nav-tab active" data-tab="dashboard">🏠 <span class="nav-label">Início</span></button>
+        <button class="nav-tab" data-tab="rotina">📋 <span class="nav-label">Rotina</span></button>
         <button class="nav-tab" data-tab="agua">💧 <span class="nav-label">Água</span></button>
         <button class="nav-tab" data-tab="peso">⚖️ <span class="nav-label">Peso</span></button>
         <button class="nav-tab" data-tab="ajuda">❓ <span class="nav-label">Ajuda</span></button>
@@ -25,14 +26,101 @@
       </div>
       <div class="nav-right">
         <button id="exportPdfBtn" class="icon-btn pdf-btn" title="Exportar PDF">📄 <span class="nav-label">PDF</span></button>
+        <button id="perfilBtn" class="icon-btn" title="Meu perfil" onclick="showPerfilModal()">👤</button>
         <button id="themeBtn" class="icon-btn" title="Alternar tema">🌙</button>
       </div>
     </div>
 
     <!-- ══════════════════════════════
+         ABA: DASHBOARD
+    ══════════════════════════════ -->
+    <div id="tab-dashboard" class="tab active">
+      <div class="static-wrap">
+
+        <!-- saudação + data -->
+        <div class="dash-header">
+          <div>
+            <h2 class="dash-greeting" id="dash-greeting">Bom dia! 👋</h2>
+            <p class="dash-date" id="dash-date"></p>
+          </div>
+          <div class="dash-streak" id="dash-streak" title="Dias consecutivos usando o app"></div>
+        </div>
+
+        <!-- frase motivacional -->
+        <div class="dash-quote" id="dash-quote"></div>
+
+        <!-- cards rápidos -->
+        <div class="dash-cards">
+          <div class="dash-card" id="dc-agua" onclick="switchTab('agua')">
+            <div class="dc-icon">💧</div>
+            <div class="dc-info">
+              <div class="dc-label">Água hoje</div>
+              <div class="dc-val" id="dc-agua-val">0 ml</div>
+              <div class="dc-bar-wrap"><div class="dc-bar" id="dc-agua-bar"></div></div>
+              <div class="dc-sub" id="dc-agua-sub">0% da meta</div>
+            </div>
+          </div>
+
+          <div class="dash-card" id="dc-peso" onclick="switchTab('peso')">
+            <div class="dc-icon">⚖️</div>
+            <div class="dc-info">
+              <div class="dc-label">Peso hoje</div>
+              <div class="dc-val" id="dc-peso-val">—</div>
+              <div class="dc-sub" id="dc-peso-sub">Toque para registrar</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- hábitos do dia -->
+        <div class="dash-section">
+          <div class="dash-section-title">Hábitos do dia</div>
+          <div class="dash-habits">
+            <div class="habit-item" id="hab-treino" onclick="toggleHabit('treino')">
+              <span class="habit-icon">🏋️</span>
+              <span class="habit-label">Treino</span>
+              <span class="habit-check" id="hc-treino">○</span>
+            </div>
+            <div class="habit-item" id="hab-estudo" onclick="toggleHabit('estudo')">
+              <span class="habit-icon">📚</span>
+              <span class="habit-label">Estudo</span>
+              <span class="habit-check" id="hc-estudo">○</span>
+            </div>
+            <div class="habit-item" id="hab-sono" onclick="toggleHabit('sono')">
+              <span class="habit-icon">😴</span>
+              <span class="habit-label">Sono ok</span>
+              <span class="habit-check" id="hc-sono">○</span>
+            </div>
+            <div class="habit-item" id="hab-hidratacao" onclick="toggleHabit('hidratacao')">
+              <span class="habit-icon">💧</span>
+              <span class="habit-label">Hidratação</span>
+              <span class="habit-check" id="hc-hidratacao">○</span>
+            </div>
+            <div class="habit-item" id="hab-alimentacao" onclick="toggleHabit('alimentacao')">
+              <span class="habit-icon">🥗</span>
+              <span class="habit-label">Alimentação</span>
+              <span class="habit-check" id="hc-alimentacao">○</span>
+            </div>
+            <div class="habit-item" id="hab-produtividade" onclick="toggleHabit('produtividade')">
+              <span class="habit-icon">🎯</span>
+              <span class="habit-label">Produtividade</span>
+              <span class="habit-check" id="hc-produtividade">○</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- tarefas de hoje da rotina -->
+        <div class="dash-section">
+          <div class="dash-section-title">Tarefas de hoje</div>
+          <div id="dash-tasks" class="dash-tasks"></div>
+        </div>
+
+      </div>
+    </div><!-- /tab-dashboard -->
+
+    <!-- ══════════════════════════════
          ABA: ROTINA
     ══════════════════════════════ -->
-    <div id="tab-rotina" class="tab active">
+    <div id="tab-rotina" class="tab">
 
       <header class="topbar">
         <h1
@@ -321,94 +409,35 @@
       <div class="static-wrap">
         <h2 class="static-title">❓ Como usar o app</h2>
 
-        <div class="help-item">
-          <div class="help-num">1</div>
-          <div class="help-body">
-            <strong>Defina o período</strong>
-            <p>Escolha a <em>Data inicial</em> e <em>Data final</em> e clique em <strong>Gerar Rotina</strong>. Um bloco será criado para cada dia.</p>
-          </div>
-        </div>
+        <div class="help-group-title">🏠 Início (Dashboard)</div>
+        <div class="help-item"><div class="help-num">1</div><div class="help-body"><strong>Visão geral do seu dia</strong><p>A aba Início mostra um resumo completo: saudação personalizada, data, frase motivacional, consumo de água, peso e hábitos do dia.</p></div></div>
+        <div class="help-item"><div class="help-num">2</div><div class="help-body"><strong>Hábitos diários</strong><p>Toque em qualquer hábito (Treino, Estudo, Sono, Hidratação, Alimentação, Produtividade) para marcá-lo. Fica verde quando concluído e reseta todo dia automaticamente.</p></div></div>
+        <div class="help-item"><div class="help-num">3</div><div class="help-body"><strong>Streak de dias consecutivos 🔥</strong><p>Mostra quantos dias seguidos você usou o app e marcou pelo menos um hábito.</p></div></div>
+        <div class="help-item"><div class="help-num">4</div><div class="help-body"><strong>Tarefas de hoje</strong><p>Puxa automaticamente as tarefas da aba Rotina que correspondem ao dia atual, com o status de cada uma.</p></div></div>
 
-        <div class="help-item">
-          <div class="help-num">2</div>
-          <div class="help-body">
-            <strong>Adicione tarefas</strong>
-            <p>Cada dia tem 4 períodos: <em>Acordar, Manhã, Tarde e Noite</em>. Clique em <strong>+ Item</strong> para adicionar uma tarefa e digitar diretamente.</p>
-          </div>
-        </div>
+        <div class="help-group-title">📋 Rotina</div>
+        <div class="help-item"><div class="help-num">5</div><div class="help-body"><strong>Gerar rotina por período</strong><p>Escolha a <em>Data inicial</em> e <em>Data final</em> e clique em <strong>Gerar Rotina</strong>. Um bloco é criado para cada dia com 4 períodos: Acordar, Manhã, Tarde e Noite.</p></div></div>
+        <div class="help-item"><div class="help-num">6</div><div class="help-body"><strong>Adicionar e editar tarefas</strong><p>Clique em <strong>+ Nova tarefa</strong> para adicionar. Clique no texto para editar. Pressione <kbd>Enter</kbd> para criar rapidamente a próxima. Clique em <strong>✕</strong> para excluir.</p></div></div>
+        <div class="help-item"><div class="help-num">7</div><div class="help-body"><strong>Reordenar tarefas (drag & drop)</strong><p>Segure o ícone <strong>⠿</strong> à esquerda da tarefa e arraste. Funciona no desktop e no celular com toque.</p></div></div>
+        <div class="help-item"><div class="help-num">8</div><div class="help-body"><strong>Marcar como concluído</strong><p>Clique no checkbox para marcar como feita. O texto é riscado e o status aparece no dashboard.</p></div></div>
 
-        <div class="help-item">
-          <div class="help-num">3</div>
-          <div class="help-body">
-            <strong>Marque como feito</strong>
-            <p>Clique no checkbox para concluir uma tarefa. O texto é riscado automaticamente.</p>
-          </div>
-        </div>
+        <div class="help-group-title">💧 Controle de Água</div>
+        <div class="help-item"><div class="help-num">9</div><div class="help-body"><strong>Meta diária</strong><p>A meta padrão é 2.500 ml. Você pode personalizar em <em>Ajustar meta</em>. A fórmula recomendada é <strong>peso (kg) × 35 ml</strong> — ex: 110 kg = 3.850 ml/dia.</p></div></div>
+        <div class="help-item"><div class="help-num">10</div><div class="help-body"><strong>Registrar consumo</strong><p>Use os botões rápidos (180ml, 300ml, 500ml, 1000ml) ou digite qualquer valor no campo manual e pressione <kbd>Enter</kbd>. Cada registro é salvo com o horário exato.</p></div></div>
+        <div class="help-item"><div class="help-num">11</div><div class="help-body"><strong>Barra de progresso</strong><p>Fica <span style="color:#3b82f6;font-weight:500;">azul</span> abaixo da meta e vira <span style="color:#1D9E75;font-weight:500;">verde</span> ao bater 100%. O histórico mostra os últimos 7 dias.</p></div></div>
 
-        <div class="help-item">
-          <div class="help-num">4</div>
-          <div class="help-body">
-            <strong>Edite ou exclua</strong>
-            <p>Clique no texto para editar. Clique no <strong>✕</strong> ao lado para remover a tarefa.</p>
-          </div>
-        </div>
+        <div class="help-group-title">⚖️ Controle de Peso</div>
+        <div class="help-item"><div class="help-num">12</div><div class="help-body"><strong>Configurar altura e idade</strong><p>Configure em <em>Suas medidas</em> antes de registrar o peso. Esses dados são usados para calcular IMC e gordura corporal.</p></div></div>
+        <div class="help-item"><div class="help-num">13</div><div class="help-body"><strong>IMC — Índice de Massa Corporal</strong><p>Fórmula: <strong>peso ÷ altura²</strong>. Classificação: <span style="color:#85B7EB;font-weight:500;">Abaixo</span> &lt;18,5 · <span style="color:#97C459;font-weight:500;">Normal</span> 18,5–24,9 · <span style="color:#FAC775;font-weight:500;">Sobrepeso</span> 25–29,9 · <span style="color:#EF9F27;font-weight:500;">Ob. I</span> 30–34,9 · <span style="color:#F09595;font-weight:500;">Ob. II+</span> ≥35</p></div></div>
+        <div class="help-item"><div class="help-num">14</div><div class="help-body"><strong>Estimativa de gordura corporal</strong><p>Baseada na <strong>Fórmula de Deurenberg</strong>: <em>(1,20 × IMC) + (0,23 × idade) − 10,8 − 5,4</em>. É uma estimativa — não substitui avaliação profissional.</p></div></div>
+        <div class="help-item"><div class="help-num">15</div><div class="help-body"><strong>Gráfico e média semanal</strong><p>O gráfico aparece após 2 registros. Clique em <strong>Ver média ↗</strong> para calcular variação nos últimos 7 registros: total perdido/ganho e média por dia.</p></div></div>
 
-        <div class="help-item">
-          <div class="help-num">5</div>
-          <div class="help-body">
-            <strong>Atalho Enter</strong>
-            <p>Pressione <kbd>Enter</kbd> para criar rapidamente a próxima tarefa sem usar o mouse.</p>
-          </div>
-        </div>
-
-        <div class="help-item">
-          <div class="help-num">6</div>
-          <div class="help-body">
-            <strong>Calculadora de água</strong>
-            <p>Digite seu peso em kg e clique em <strong>Calcular</strong>. A fórmula usada é peso × 35 ml.</p>
-          </div>
-        </div>
-
-        <div class="help-item">
-          <div class="help-num">7</div>
-          <div class="help-body">
-            <strong>Salvo automaticamente</strong>
-            <p>Tudo é salvo no seu navegador via <em>localStorage</em>. Sem conta, sem servidor — seus dados ficam só no seu dispositivo.</p>
-          </div>
-        </div>
-
-        <div class="help-item">
-          <div class="help-num">8</div>
-          <div class="help-body">
-            <strong>Tema claro / escuro</strong>
-            <p>Clique no botão 🌙 / ☀️ no canto superior direito para alternar o tema. A preferência é salva automaticamente.</p>
-          </div>
-        </div>
-
-        <div class="help-item">
-          <div class="help-num">9</div>
-          <div class="help-body">
-            <strong>Exportar PDF</strong>
-            <p>Clique em <strong>📄 PDF</strong> no topo para gerar um PDF imprimível com toda a sua rotina.</p>
-          </div>
-        </div>
-
-        <div class="help-item">
-          <div class="help-num">10</div>
-          <div class="help-body">
-            <strong>Instalar como app (PWA)</strong>
-            <p><strong>iPhone:</strong> abra no Safari → Compartilhar → Adicionar à Tela de Início.<br>
-            <strong>Android:</strong> abra no Chrome → três pontinhos → Instalar aplicativo.</p>
-          </div>
-        </div>
-
-        <div class="help-item">
-          <div class="help-num">11</div>
-          <div class="help-body">
-            <strong>Resetar tudo</strong>
-            <p>O botão <strong>Resetar Tudo</strong> apaga permanentemente toda a rotina salva. Cuidado, não tem como desfazer!</p>
-          </div>
-        </div>
+        <div class="help-group-title">⚙️ Geral</div>
+        <div class="help-item"><div class="help-num">16</div><div class="help-body"><strong>Perfil do usuário 👤</strong><p>Clique no botão 👤 para configurar nome, sexo e idade. O nome aparece na saudação do dashboard.</p></div></div>
+        <div class="help-item"><div class="help-num">17</div><div class="help-body"><strong>Tema claro / escuro 🌙</strong><p>Clique em 🌙 / ☀️ para alternar. A preferência é salva automaticamente.</p></div></div>
+        <div class="help-item"><div class="help-num">18</div><div class="help-body"><strong>Exportar PDF 📄</strong><p>Clique em <strong>📄 PDF</strong> para gerar um PDF com sua rotina completa.</p></div></div>
+        <div class="help-item"><div class="help-num">19</div><div class="help-body"><strong>Salvo automaticamente 💾</strong><p>Tudo salvo via <em>localStorage</em>. Sem conta, sem servidor. Dados ficam no seu dispositivo.</p></div></div>
+        <div class="help-item"><div class="help-num">20</div><div class="help-body"><strong>Instalar como app (PWA) 📱</strong><p><strong>Android:</strong> três pontinhos → Instalar aplicativo.<br><strong>iPhone:</strong> Compartilhar → Adicionar à Tela de Início.</p></div></div>
 
       </div>
     </div><!-- /tab-ajuda -->
@@ -483,6 +512,36 @@
 
       </div>
     </div><!-- /tab-contato -->
+
+    <!-- MODAL PERFIL -->
+    <div id="perfil-modal" class="modal-overlay" style="display:none;">
+      <div class="modal-box">
+        <h3 class="modal-title">👤 Meu Perfil</h3>
+        <p class="modal-sub">Personalize sua experiência no app.</p>
+
+        <div class="modal-field">
+          <label>Seu nome</label>
+          <input type="text" id="pf-nome" placeholder="Seu nome" maxlength="30" />
+        </div>
+        <div class="modal-field">
+          <label>Sexo biológico</label>
+          <select id="pf-sexo">
+            <option value="">Selecione...</option>
+            <option value="M">Masculino</option>
+            <option value="F">Feminino</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <label>Idade</label>
+          <input type="number" id="pf-idade" placeholder="Ex: 28" min="10" max="100" />
+        </div>
+
+        <div class="modal-btns">
+          <button id="pf-cancel-btn" class="modal-btn-cancel">Cancelar</button>
+          <button id="pf-save-btn" class="modal-btn-save">Salvar perfil</button>
+        </div>
+      </div>
+    </div>
 
     <script src="./script.js"></script>
     <script>
