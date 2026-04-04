@@ -21,6 +21,7 @@
         <button class="nav-tab" data-tab="rotina">📋 <span class="nav-label">Rotina</span></button>
         <button class="nav-tab" data-tab="agua">💧 <span class="nav-label">Água</span></button>
         <button class="nav-tab" data-tab="peso">⚖️ <span class="nav-label">Peso</span></button>
+        <button class="nav-tab" data-tab="macros">🍽️ <span class="nav-label">Macros</span></button>
         <button class="nav-tab" data-tab="ajuda">❓ <span class="nav-label">Ajuda</span></button>
         <button class="nav-tab" data-tab="contato">📬 <span class="nav-label">Contato</span></button>
       </div>
@@ -107,6 +108,9 @@
             </div>
           </div>
         </div>
+
+        <!-- RELATÓRIO SEMANAL (aparece aos sábados) -->
+        <div id="dash-weekly-report" class="dash-section" style="display:none;"></div>
 
         <!-- tarefas de hoje da rotina -->
         <div class="dash-section">
@@ -370,6 +374,17 @@
           </div>
         </div>
 
+        <!-- META DE PESO -->
+        <div class="peso-section-block">
+          <h3 class="peso-block-title">Meta de peso</h3>
+          <div class="w-meta-row">
+            <input type="number" id="p-meta-input" placeholder="Ex: 90" min="30" max="300" step="0.1" />
+            <span class="w-meta-unit">kg</span>
+            <button id="p-meta-save-btn">Salvar meta</button>
+          </div>
+          <div id="p-meta-result" class="p-meta-result" style="display:none;"></div>
+        </div>
+
         <!-- MÉDIA SEMANAL -->
         <div class="peso-section-block">
           <div class="peso-media-header">
@@ -403,6 +418,84 @@
     </div><!-- /tab-peso -->
 
     <!-- ══════════════════════════════
+         ABA: MACROS
+    ══════════════════════════════ -->
+    <div id="tab-macros" class="tab">
+      <div class="static-wrap">
+        <h2 class="static-title">🍽️ Controle de Macros</h2>
+        <p class="static-sub" id="macros-date-label"></p>
+
+        <!-- RESUMO DO DIA -->
+        <div class="macros-summary">
+          <div class="macro-card kcal">
+            <div class="macro-card-label">Calorias</div>
+            <div class="macro-card-val" id="mc-kcal">0</div>
+            <div class="macro-card-unit">kcal</div>
+            <div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-kcal-bar" style="background:#f5c518;"></div></div>
+            <div class="macro-card-meta" id="mc-kcal-meta"></div>
+          </div>
+          <div class="macro-card prot">
+            <div class="macro-card-label">Proteína</div>
+            <div class="macro-card-val" id="mc-prot">0</div>
+            <div class="macro-card-unit">g</div>
+            <div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-prot-bar" style="background:#3b82f6;"></div></div>
+          </div>
+          <div class="macro-card carb">
+            <div class="macro-card-label">Carboidrato</div>
+            <div class="macro-card-val" id="mc-carb">0</div>
+            <div class="macro-card-unit">g</div>
+            <div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-carb-bar" style="background:#f59e0b;"></div></div>
+          </div>
+          <div class="macro-card gord">
+            <div class="macro-card-label">Gordura</div>
+            <div class="macro-card-val" id="mc-gord">0</div>
+            <div class="macro-card-unit">g</div>
+            <div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-gord-bar" style="background:#ef4444;"></div></div>
+          </div>
+        </div>
+
+        <!-- META DE KCAL -->
+        <div class="water-section-block">
+          <h3 class="water-block-title">Meta calórica diária</h3>
+          <div class="w-meta-row">
+            <input type="number" id="mc-meta-input" placeholder="Ex: 2000" min="500" max="5000" step="50"/>
+            <span class="w-meta-unit">kcal</span>
+            <button id="mc-meta-save-btn">Salvar</button>
+          </div>
+          <p class="w-hint" id="mc-meta-hint">💡 Para emagrecer, consuma ~500 kcal abaixo do seu gasto diário.</p>
+        </div>
+
+        <!-- ADICIONAR ALIMENTO -->
+        <div class="water-section-block">
+          <h3 class="water-block-title">Adicionar alimento</h3>
+          <div class="macros-add-row">
+            <select id="mc-food-select">
+              <option value="">Selecione o alimento...</option>
+            </select>
+          </div>
+          <div class="macros-add-row" style="margin-top:8px;">
+            <input type="number" id="mc-grams-input" placeholder="Quantidade (g)" min="1" max="2000" step="1"/>
+            <span class="w-meta-unit">g</span>
+            <button id="mc-add-btn">+ Adicionar</button>
+          </div>
+          <div id="mc-preview" class="mc-preview" style="display:none;"></div>
+        </div>
+
+        <!-- LOG DO DIA -->
+        <div class="water-section-block">
+          <div class="w-log-header">
+            <h3 class="water-block-title" style="margin:0;">Refeições de hoje</h3>
+            <button id="mc-clear-btn" class="w-danger-btn">Zerar dia</button>
+          </div>
+          <ul id="mc-log-list" class="w-log-list" style="margin-top:12px;">
+            <li class="w-log-empty">Nenhum alimento registrado.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div><!-- /tab-macros -->
+
+    <!-- ══════════════════════════════
          ABA: AJUDA
     ══════════════════════════════ -->
     <div id="tab-ajuda" class="tab">
@@ -410,34 +503,41 @@
         <h2 class="static-title">❓ Como usar o app</h2>
 
         <div class="help-group-title">🏠 Início (Dashboard)</div>
-        <div class="help-item"><div class="help-num">1</div><div class="help-body"><strong>Visão geral do seu dia</strong><p>A aba Início mostra um resumo completo: saudação personalizada, data, frase motivacional, consumo de água, peso e hábitos do dia.</p></div></div>
-        <div class="help-item"><div class="help-num">2</div><div class="help-body"><strong>Hábitos diários</strong><p>Toque em qualquer hábito (Treino, Estudo, Sono, Hidratação, Alimentação, Produtividade) para marcá-lo. Fica verde quando concluído e reseta todo dia automaticamente.</p></div></div>
-        <div class="help-item"><div class="help-num">3</div><div class="help-body"><strong>Streak de dias consecutivos 🔥</strong><p>Mostra quantos dias seguidos você usou o app e marcou pelo menos um hábito.</p></div></div>
-        <div class="help-item"><div class="help-num">4</div><div class="help-body"><strong>Tarefas de hoje</strong><p>Puxa automaticamente as tarefas da aba Rotina que correspondem ao dia atual, com o status de cada uma.</p></div></div>
+        <div class="help-item"><div class="help-num">1</div><div class="help-body"><strong>Visão geral do seu dia</strong><p>A aba Início mostra um resumo completo: saudação com seu nome, data, frase motivacional, cards de água e peso, hábitos do dia e tarefas de hoje.</p></div></div>
+        <div class="help-item"><div class="help-num">2</div><div class="help-body"><strong>Hábitos diários</strong><p>Toque em qualquer hábito (Treino, Estudo, Sono, Hidratação, Alimentação, Produtividade) para marcá-lo como feito. Fica verde quando concluído e reseta automaticamente todo dia.</p></div></div>
+        <div class="help-item"><div class="help-num">3</div><div class="help-body"><strong>Streak de dias consecutivos 🔥</strong><p>Contador no topo que mostra quantos dias seguidos você usou o app e marcou pelo menos um hábito.</p></div></div>
+        <div class="help-item"><div class="help-num">4</div><div class="help-body"><strong>Relatório semanal 📊</strong><p>Todo sábado aparece automaticamente um relatório com média de água, variação de peso, % de hábitos cumpridos e média calórica da semana.</p></div></div>
+        <div class="help-item"><div class="help-num">5</div><div class="help-body"><strong>Tarefas de hoje</strong><p>Puxa automaticamente as tarefas da aba Rotina que correspondem ao dia atual, com o status de cada uma.</p></div></div>
 
         <div class="help-group-title">📋 Rotina</div>
-        <div class="help-item"><div class="help-num">5</div><div class="help-body"><strong>Gerar rotina por período</strong><p>Escolha a <em>Data inicial</em> e <em>Data final</em> e clique em <strong>Gerar Rotina</strong>. Um bloco é criado para cada dia com 4 períodos: Acordar, Manhã, Tarde e Noite.</p></div></div>
-        <div class="help-item"><div class="help-num">6</div><div class="help-body"><strong>Adicionar e editar tarefas</strong><p>Clique em <strong>+ Nova tarefa</strong> para adicionar. Clique no texto para editar. Pressione <kbd>Enter</kbd> para criar rapidamente a próxima. Clique em <strong>✕</strong> para excluir.</p></div></div>
-        <div class="help-item"><div class="help-num">7</div><div class="help-body"><strong>Reordenar tarefas (drag & drop)</strong><p>Segure o ícone <strong>⠿</strong> à esquerda da tarefa e arraste. Funciona no desktop e no celular com toque.</p></div></div>
-        <div class="help-item"><div class="help-num">8</div><div class="help-body"><strong>Marcar como concluído</strong><p>Clique no checkbox para marcar como feita. O texto é riscado e o status aparece no dashboard.</p></div></div>
+        <div class="help-item"><div class="help-num">6</div><div class="help-body"><strong>Gerar rotina por período</strong><p>Escolha a <em>Data inicial</em> e <em>Data final</em> e clique em <strong>Gerar Rotina</strong>. Um bloco é criado para cada dia com 4 períodos: Acordar, Manhã, Tarde e Noite.</p></div></div>
+        <div class="help-item"><div class="help-num">7</div><div class="help-body"><strong>Adicionar e editar tarefas</strong><p>Clique em <strong>+ Nova tarefa</strong> para adicionar. Clique no texto para editar. Pressione <kbd>Enter</kbd> para criar a próxima rapidamente. Clique em <strong>✕</strong> para excluir.</p></div></div>
+        <div class="help-item"><div class="help-num">8</div><div class="help-body"><strong>Reordenar tarefas (drag & drop)</strong><p>Segure o ícone <strong>⠿</strong> à esquerda da tarefa e arraste para cima ou para baixo. Funciona no desktop e no celular com toque.</p></div></div>
+        <div class="help-item"><div class="help-num">9</div><div class="help-body"><strong>Resetar rotina</strong><p>O botão <strong>Resetar Tudo</strong> apaga apenas a rotina (dias e tarefas). Seus dados de água, peso, macros, hábitos e perfil <strong>não são apagados</strong>.</p></div></div>
 
         <div class="help-group-title">💧 Controle de Água</div>
-        <div class="help-item"><div class="help-num">9</div><div class="help-body"><strong>Meta diária</strong><p>A meta padrão é 2.500 ml. Você pode personalizar em <em>Ajustar meta</em>. A fórmula recomendada é <strong>peso (kg) × 35 ml</strong> — ex: 110 kg = 3.850 ml/dia.</p></div></div>
-        <div class="help-item"><div class="help-num">10</div><div class="help-body"><strong>Registrar consumo</strong><p>Use os botões rápidos (180ml, 300ml, 500ml, 1000ml) ou digite qualquer valor no campo manual e pressione <kbd>Enter</kbd>. Cada registro é salvo com o horário exato.</p></div></div>
-        <div class="help-item"><div class="help-num">11</div><div class="help-body"><strong>Barra de progresso</strong><p>Fica <span style="color:#3b82f6;font-weight:500;">azul</span> abaixo da meta e vira <span style="color:#1D9E75;font-weight:500;">verde</span> ao bater 100%. O histórico mostra os últimos 7 dias.</p></div></div>
+        <div class="help-item"><div class="help-num">10</div><div class="help-body"><strong>Meta diária</strong><p>A meta padrão é 2.500 ml. Personalize em <em>Ajustar meta</em>. A fórmula recomendada é <strong>peso (kg) × 35 ml</strong> — ex: 110 kg = 3.850 ml/dia.</p></div></div>
+        <div class="help-item"><div class="help-num">11</div><div class="help-body"><strong>Registrar consumo</strong><p>Use os botões rápidos (180ml, 300ml, 500ml, 1000ml) ou digite qualquer valor no campo manual e pressione <kbd>Enter</kbd>. Cada registro é salvo com o horário exato.</p></div></div>
+        <div class="help-item"><div class="help-num">12</div><div class="help-body"><strong>Barra de progresso</strong><p>Fica <span style="color:#3b82f6;font-weight:500;">azul</span> abaixo da meta e vira <span style="color:#1D9E75;font-weight:500;">verde</span> ao bater 100%. O histórico mostra os últimos 7 dias.</p></div></div>
 
         <div class="help-group-title">⚖️ Controle de Peso</div>
-        <div class="help-item"><div class="help-num">12</div><div class="help-body"><strong>Configurar altura e idade</strong><p>Configure em <em>Suas medidas</em> antes de registrar o peso. Esses dados são usados para calcular IMC e gordura corporal.</p></div></div>
-        <div class="help-item"><div class="help-num">13</div><div class="help-body"><strong>IMC — Índice de Massa Corporal</strong><p>Fórmula: <strong>peso ÷ altura²</strong>. Classificação: <span style="color:#85B7EB;font-weight:500;">Abaixo</span> &lt;18,5 · <span style="color:#97C459;font-weight:500;">Normal</span> 18,5–24,9 · <span style="color:#FAC775;font-weight:500;">Sobrepeso</span> 25–29,9 · <span style="color:#EF9F27;font-weight:500;">Ob. I</span> 30–34,9 · <span style="color:#F09595;font-weight:500;">Ob. II+</span> ≥35</p></div></div>
-        <div class="help-item"><div class="help-num">14</div><div class="help-body"><strong>Estimativa de gordura corporal</strong><p>Baseada na <strong>Fórmula de Deurenberg</strong>: <em>(1,20 × IMC) + (0,23 × idade) − 10,8 − 5,4</em>. É uma estimativa — não substitui avaliação profissional.</p></div></div>
-        <div class="help-item"><div class="help-num">15</div><div class="help-body"><strong>Gráfico e média semanal</strong><p>O gráfico aparece após 2 registros. Clique em <strong>Ver média ↗</strong> para calcular variação nos últimos 7 registros: total perdido/ganho e média por dia.</p></div></div>
+        <div class="help-item"><div class="help-num">13</div><div class="help-body"><strong>Configurar altura e idade</strong><p>Configure em <em>Suas medidas</em> antes de registrar o peso. Esses dados são usados para calcular IMC e gordura corporal.</p></div></div>
+        <div class="help-item"><div class="help-num">14</div><div class="help-body"><strong>IMC — Índice de Massa Corporal</strong><p>Fórmula: <strong>peso ÷ altura²</strong>. Classificação: <span style="color:#85B7EB;font-weight:500;">Abaixo</span> &lt;18,5 · <span style="color:#97C459;font-weight:500;">Normal</span> 18,5–24,9 · <span style="color:#FAC775;font-weight:500;">Sobrepeso</span> 25–29,9 · <span style="color:#EF9F27;font-weight:500;">Ob. I</span> 30–34,9 · <span style="color:#F09595;font-weight:500;">Ob. II+</span> ≥35</p></div></div>
+        <div class="help-item"><div class="help-num">15</div><div class="help-body"><strong>Estimativa de gordura corporal</strong><p>Baseada na <strong>Fórmula de Deurenberg</strong>: <em>(1,20 × IMC) + (0,23 × idade) − 10,8 − 5,4</em>. É uma estimativa — não substitui avaliação profissional.</p></div></div>
+        <div class="help-item"><div class="help-num">16</div><div class="help-body"><strong>Meta de peso</strong><p>Defina um peso alvo em <em>Meta de peso</em>. O app mostra quanto falta e faz uma projeção de quando você vai chegar lá baseada na sua média semanal atual.</p></div></div>
+        <div class="help-item"><div class="help-num">17</div><div class="help-body"><strong>Gráfico e média semanal</strong><p>O gráfico de evolução aparece após 2 registros. Clique em <strong>Ver média ↗</strong> para calcular variação nos últimos 7 registros e a média diária de perda ou ganho.</p></div></div>
+
+        <div class="help-group-title">🍽️ Controle de Macros</div>
+        <div class="help-item"><div class="help-num">18</div><div class="help-body"><strong>Meta calórica</strong><p>Defina sua meta de calorias diária. Para emagrecer, consuma ~500 kcal abaixo do seu gasto diário. A barra mostra o % atingido.</p></div></div>
+        <div class="help-item"><div class="help-num">19</div><div class="help-body"><strong>Registrar alimentos</strong><p>Selecione o alimento na tabela (20 opções comuns), digite a quantidade em gramas e veja o preview de kcal, proteína, carbo e gordura antes de adicionar.</p></div></div>
+        <div class="help-item"><div class="help-num">20</div><div class="help-body"><strong>Resumo do dia</strong><p>Os 4 cards no topo mostram o total de calorias, proteína, carboidrato e gordura consumidos no dia, atualizados em tempo real a cada registro.</p></div></div>
 
         <div class="help-group-title">⚙️ Geral</div>
-        <div class="help-item"><div class="help-num">16</div><div class="help-body"><strong>Perfil do usuário 👤</strong><p>Clique no botão 👤 para configurar nome, sexo e idade. O nome aparece na saudação do dashboard.</p></div></div>
-        <div class="help-item"><div class="help-num">17</div><div class="help-body"><strong>Tema claro / escuro 🌙</strong><p>Clique em 🌙 / ☀️ para alternar. A preferência é salva automaticamente.</p></div></div>
-        <div class="help-item"><div class="help-num">18</div><div class="help-body"><strong>Exportar PDF 📄</strong><p>Clique em <strong>📄 PDF</strong> para gerar um PDF com sua rotina completa.</p></div></div>
-        <div class="help-item"><div class="help-num">19</div><div class="help-body"><strong>Salvo automaticamente 💾</strong><p>Tudo salvo via <em>localStorage</em>. Sem conta, sem servidor. Dados ficam no seu dispositivo.</p></div></div>
-        <div class="help-item"><div class="help-num">20</div><div class="help-body"><strong>Instalar como app (PWA) 📱</strong><p><strong>Android:</strong> três pontinhos → Instalar aplicativo.<br><strong>iPhone:</strong> Compartilhar → Adicionar à Tela de Início.</p></div></div>
+        <div class="help-item"><div class="help-num">21</div><div class="help-body"><strong>Perfil do usuário 👤</strong><p>Clique no botão 👤 na barra superior para configurar nome, sexo e idade. O nome aparece na saudação do dashboard e os dados são usados nos cálculos de saúde.</p></div></div>
+        <div class="help-item"><div class="help-num">22</div><div class="help-body"><strong>Tema claro / escuro 🌙</strong><p>Clique em 🌙 / ☀️ para alternar. A preferência é salva automaticamente entre sessões.</p></div></div>
+        <div class="help-item"><div class="help-num">23</div><div class="help-body"><strong>Exportar PDF 📄</strong><p>Clique em <strong>📄 PDF</strong> para gerar um PDF imprimível com sua rotina completa.</p></div></div>
+        <div class="help-item"><div class="help-num">24</div><div class="help-body"><strong>Salvo automaticamente 💾</strong><p>Tudo salvo via <em>localStorage</em>. Sem conta, sem servidor. Os dados ficam no seu dispositivo e persistem entre sessões.</p></div></div>
+        <div class="help-item"><div class="help-num">25</div><div class="help-body"><strong>Instalar como app (PWA) 📱</strong><p><strong>Android (Chrome):</strong> três pontinhos → Instalar aplicativo.<br><strong>iPhone (Safari):</strong> Compartilhar → Adicionar à Tela de Início.<br>Após instalar, abre em tela cheia e funciona offline.</p></div></div>
 
       </div>
     </div><!-- /tab-ajuda -->

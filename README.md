@@ -1,48 +1,119 @@
-# 🚀 Minha Rotina - Tracker Estilo Notion
+# Minha Rotina
 
-Um organizador de rotina pessoal focado em alta performance, inspirado no design minimalista do Notion. Desenvolvido para ajudar no acompanhamento de hábitos diários divididos por períodos.
+Organizador de rotina pessoal com foco em saúde, produtividade e hábitos diários. Desenvolvido como PWA (Progressive Web App) com HTML, CSS e JavaScript puro — sem frameworks ou dependências externas além do Chart.js para gráficos.
 
-## ✨ Funcionalidades
-- **📅 Planejamento Dinâmico:** Escolha um intervalo de datas e gere blocos de rotina automaticamente.
-- **🌅 Divisão por Períodos:** Organização em Acordar, Manhã, Tarde e Noite.
-- **🏆 3 Vitórias do Dia:** Lembretes visuais para os pilares Mental, Físico e Espiritual.
-- **💧 Calculadora de Água:** Cálculo personalizado de ingestão hídrica baseado no peso.
-- **🌙 Dark Mode:** Interface otimizada para foco e conforto visual.
-- **💾 Persistência de Dados:** Tudo é salvo automaticamente no navegador (`localStorage`).
-- **📱 Responsivo:** Funciona perfeitamente no computador e no celular (PWA).
-
-## 🛠️ Tecnologias Utilizadas
-- **HTML5** (Estrutura e Semântica)
-- **CSS3** (Layout Moderno, Flexbox/Grid e Variáveis)
-- **JavaScript Vanilla** (Manipulação de DOM e Lógica de Persistência)
-- **GitHub Pages** (Hospedagem)
-
-## 📖 Como utilizar o App
-1. **Defina sua Jornada:** No topo da página, selecione a **Data Inicial** e a **Data Final** do período que deseja planejar.
-2. **Gere sua Rotina:** Clique no botão `Gerar Rotina`. 
-   - *Nota: Se você já tiver uma rotina, o sistema pedirá confirmação para não apagar seus dados por acidente.*
-3. **Personalize o Título:** Clique no texto "Minha Rotina" no topo e digite o nome que desejar (ex: "Foco Total Março").
-4. **Gerencie as Tarefas:**
-   - Clique em `+ Item` em qualquer período para adicionar uma tarefa.
-   - Pressione `Enter` para criar rapidamente o próximo item.
-   - Marque o checkbox para concluir e ver o efeito de "riscado".
-5. **Acompanhe as Vitórias:** Use os cards de **Vitória Mental, Física e Espiritual** como um guia visual para manter o equilíbrio do seu dia.
-6. **Hidrate-se:** Insira seu peso na calculadora de água para saber exatamente quanto beber.
-7. **Reset Total:** Se quiser começar do zero absoluto, use o botão `Resetar Tudo` no topo.
-
-## 💡 Dica de Ouro: Como instalar como App (PWA)
-**No iPhone (iOS):**
-1. Abra o link no **Safari**.
-2. Toque no ícone de **Compartilhar** (três pontinhos ao lado do link).
-3. Role para baixo e toque em **Adicionar à Tela de Início**.
-
-**No Android:**
-1. Abra o link no **Chrome**.
-2. Toque nos **três pontinhos** no canto superior.
-3. Toque em **Instalar aplicativo** ou **Adicionar à tela inicial**.
-
-## 🔗 Acesse o Projeto
-Você pode testar a aplicação online aqui: [https://daniel-mscs.github.io/minha-rotina/](https://daniel-mscs.github.io/minha-rotina/)
+Acesse: https://daniel-mscs.github.io/minha-rotina/
 
 ---
-⚡️ Desenvolvido por [Daniel](https://github.com/daniel-mscs) - Sistema de Rotina v1.0 ⚡️
+
+## Funcionalidades
+
+**Dashboard (Início)**
+- Saudação personalizada com nome do usuário e horário do dia
+- Frase motivacional diária (muda uma vez por dia)
+- Cards de resumo: consumo de água e peso do dia com variação
+- Hábitos diários com marcação por toque (Treino, Estudo, Sono, Hidratação, Alimentação, Produtividade)
+- Streak de dias consecutivos de uso
+- Relatório semanal automático todo sábado (água, peso, hábitos, calorias)
+- Tarefas de hoje integradas com a aba Rotina
+
+**Rotina**
+- Geração de blocos de dias por intervalo de datas
+- 4 períodos por dia: Acordar, Manhã, Tarde e Noite
+- Tarefas editáveis inline com checkbox de conclusão
+- Drag and drop para reordenar tarefas (desktop e mobile touch)
+- Atalho Enter para criação rápida de itens
+- Reset seguro que apaga apenas a rotina, preservando todos os outros dados
+
+**Controle de Água**
+- Meta diária personalizável (padrão: peso × 35 ml)
+- Botões rápidos: 180ml, 300ml, 500ml e 1000ml
+- Campo manual para qualquer volume
+- Barra de progresso (azul → verde ao atingir a meta)
+- Log do dia com horário de cada registro
+- Histórico dos últimos 7 dias
+
+**Controle de Peso**
+- Registro diário com comparação ao dia anterior
+- Cálculo de IMC com barra visual de classificação
+- Estimativa de gordura corporal (Fórmula de Deurenberg)
+- Meta de peso com projeção de data baseada na média atual
+- Gráfico de linha com evolução do peso
+- Média semanal de perda ou ganho
+
+**Controle de Macros**
+- Tabela com 20 alimentos comuns pré-cadastrados
+- Cálculo automático de kcal, proteína, carboidrato e gordura por grama
+- Preview dos macros antes de confirmar o registro
+- Meta calórica diária personalizável
+- Cards de resumo atualizados em tempo real
+- Log do dia com opção de excluir registros individuais
+
+**Geral**
+- Perfil do usuário (nome, sexo biológico, idade)
+- Tema claro e escuro com persistência entre sessões
+- Exportação para PDF
+- Salvamento automático via localStorage
+- Instalável como app (PWA) no Android e iOS
+- Funciona offline após primeira visita
+
+---
+
+## Tecnologias
+
+- HTML5
+- CSS3 com variáveis para temas claro/escuro
+- JavaScript ES6+ sem frameworks
+- localStorage para persistência de dados
+- Service Worker para funcionamento offline
+- Web App Manifest para instalação como PWA
+- Chart.js para gráfico de evolução do peso
+- GitHub Pages para hospedagem
+
+---
+
+## Estrutura do projeto
+
+```
+├── index.html       — estrutura e abas
+├── style.css        — estilos e temas
+├── script.js        — lógica e persistência
+├── manifest.json    — configurações do PWA
+└── sw.js            — service worker (offline)
+```
+
+---
+
+## Dados salvos (localStorage)
+
+| Chave | Conteúdo |
+|---|---|
+| `my_routine_data` | Rotina (dias e tarefas) |
+| `water_data` | Registros de água por data |
+| `water_meta` | Meta diária de água |
+| `peso_data` | Registros de peso por data |
+| `peso_config` | Altura e idade |
+| `peso_meta` | Meta de peso alvo |
+| `macros_data` | Registros de alimentos por data |
+| `macros_meta` | Meta calórica diária |
+| `habits_data` | Hábitos por data |
+| `user_perfil` | Nome, sexo e idade |
+| `tema` | Preferência de tema |
+
+---
+
+## Como instalar como app
+
+**Android (Chrome):** três pontinhos no menu → Instalar aplicativo
+
+**iPhone (Safari):** botão compartilhar → Adicionar à Tela de Início
+
+---
+
+## Como rodar localmente
+
+Basta abrir o `index.html` no navegador ou usar o Live Server do VS Code.
+
+---
+
+Desenvolvido por [Daniel](https://github.com/daniel-mscs) — v3.0

@@ -304,6 +304,374 @@ document.getElementById('w-clear-day-btn').addEventListener('click', () => {
 renderWater();
 
 // ============================================
+// META DE PESO
+// ============================================
+
+const PESO_META_KEY = 'peso_meta';
+
+function getPesoMeta() {
+    return parseFloat(localStorage.getItem(PESO_META_KEY) || '0');
+}
+
+function renderPesoMeta() {
+    const meta    = getPesoMeta();
+    const data    = getPesoData();
+    const result  = document.getElementById('p-meta-result');
+    const input   = document.getElementById('p-meta-input');
+    if (input && meta) input.value = meta;
+    if (!result) return;
+
+    if (!meta) { result.style.display = 'none'; return; }
+
+    const ultimo = data.length > 0 ? data[data.length - 1].peso : null;
+    if (!ultimo) {
+        result.style.display = 'block';
+        result.innerHTML = `🎯 Meta: <strong>${meta} kg</strong><br>Registre seu peso para ver o progresso.`;
+        return;
+    }
+
+    const diff = ultimo - meta;
+    const mediaData = data.slice(-7);
+    let projecao = '';
+    if (mediaData.length >= 2) {
+        const mediaPerDay = (mediaData[mediaData.length-1].peso - mediaData[0].peso) / (mediaData.length - 1);
+        if (mediaPerDay < 0 && diff > 0) {
+            const dias = Math.ceil(diff / Math.abs(mediaPerDay));
+            const dataProj = new Date();
+            dataProj.setDate(dataProj.getDate() + dias);
+            projecao = `<br>📅 Projeção: <strong>${dataProj.toLocaleDateString('pt-BR')}</strong> (~${dias} dias no ritmo atual)`;
+        }
+    }
+
+    const pct = Math.min(100, Math.max(0, Math.round(((data[0]?.peso || ultimo) - ultimo) / ((data[0]?.peso || ultimo) - meta) * 100)));
+
+    result.style.display = 'block';
+    result.innerHTML = `
+        🎯 Meta: <strong>${meta} kg</strong><br>
+        ⚖️ Atual: <strong>${ultimo.toFixed(1)} kg</strong><br>
+        ${diff > 0
+            ? `📉 Faltam: <span style="color:#3b82f6;font-weight:600;">${diff.toFixed(1)} kg</span>`
+            : `✅ <span style="color:#1D9E75;font-weight:600;">Meta atingida! Parabéns!</span>`}
+        ${projecao}
+    `;
+}
+
+document.getElementById('p-meta-save-btn').addEventListener('click', () => {
+    const val = parseFloat(document.getElementById('p-meta-input').value);
+    if (!val || val < 30) { alert('Digite uma meta válida!'); return; }
+    localStorage.setItem(PESO_META_KEY, val);
+    renderPesoMeta();
+});
+
+// ============================================
+// MACROS
+// ============================================
+
+const MACROS_KEY     = 'macros_data';
+const MACROS_META_KEY = 'macros_meta';
+
+const FOOD_TABLE = [
+    { name: 'Arroz branco cozido',    kcal: 128, prot: 2.5,  carb: 28.1, gord: 0.2  },
+    { name: 'Frango grelhado (peito)',kcal: 159, prot: 32.0, carb: 0.0,  gord: 2.7  },
+    { name: 'Ovo inteiro cozido',     kcal: 155, prot: 12.6, carb: 1.1,  gord: 10.6 },
+    { name: 'Ovo inteiro (clara)',    kcal: 52,  prot: 11.0, carb: 0.7,  gord: 0.2  },
+    { name: 'Leite em pó integral',   kcal: 496, prot: 24.6, carb: 39.4, gord: 26.3 },
+    { name: 'Banana nanica',          kcal: 89,  prot: 1.1,  carb: 22.8, gord: 0.3  },
+    { name: 'Batata doce cozida',     kcal: 77,  prot: 1.4,  carb: 18.4, gord: 0.1  },
+    { name: 'Aveia em flocos',        kcal: 394, prot: 13.9, carb: 67.0, gord: 8.5  },
+    { name: 'Whey protein',           kcal: 370, prot: 75.0, carb: 9.0,  gord: 4.0  },
+    { name: 'Feijão cozido',          kcal: 76,  prot: 4.8,  carb: 13.5, gord: 0.5  },
+    { name: 'Macarrão cozido',        kcal: 130, prot: 4.3,  carb: 26.4, gord: 0.9  },
+    { name: 'Pão francês',            kcal: 300, prot: 8.0,  carb: 58.6, gord: 3.1  },
+    { name: 'Azeite de oliva',        kcal: 884, prot: 0.0,  carb: 0.0,  gord: 100.0},
+    { name: 'Salada (folhas mistas)', kcal: 17,  prot: 1.3,  carb: 2.9,  gord: 0.2  },
+    { name: 'Tomate',                 kcal: 18,  prot: 0.9,  carb: 3.9,  gord: 0.2  },
+    { name: 'Carne bovina patinho',   kcal: 219, prot: 21.0, carb: 0.0,  gord: 14.5 },
+    { name: 'Atum em lata (água)',    kcal: 109, prot: 24.4, carb: 0.0,  gord: 0.9  },
+    { name: 'Iogurte grego natural',  kcal: 97,  prot: 9.0,  carb: 3.6,  gord: 5.0  },
+    { name: 'Queijo cottage',         kcal: 98,  prot: 11.1, carb: 3.4,  gord: 4.3  },
+    { name: 'Amendoim torrado',       kcal: 567, prot: 25.8, carb: 16.1, gord: 49.2 },
+];
+
+function getMacrosData() {
+    const raw = localStorage.getItem(MACROS_KEY);
+    return raw ? JSON.parse(raw) : {};
+}
+
+function saveMacrosData(data) {
+    localStorage.setItem(MACROS_KEY, JSON.stringify(data));
+}
+
+function getMacrosMeta() {
+    return parseInt(localStorage.getItem(MACROS_META_KEY) || '2000');
+}
+
+function calcMacros(food, grams) {
+    const factor = grams / 100;
+    return {
+        kcal: Math.round(food.kcal * factor),
+        prot: parseFloat((food.prot * factor).toFixed(1)),
+        carb: parseFloat((food.carb * factor).toFixed(1)),
+        gord: parseFloat((food.gord * factor).toFixed(1)),
+    };
+}
+
+function getTodayMacrosTotal() {
+    const data    = getMacrosData();
+    const today   = new Date().toLocaleDateString('pt-BR');
+    const entries = data[today] || [];
+    return entries.reduce((acc, e) => ({
+        kcal: acc.kcal + e.kcal,
+        prot: acc.prot + e.prot,
+        carb: acc.carb + e.carb,
+        gord: acc.gord + e.gord,
+    }), { kcal: 0, prot: 0, carb: 0, gord: 0 });
+}
+
+function populateFoodSelect() {
+    const sel = document.getElementById('mc-food-select');
+    if (!sel) return;
+    FOOD_TABLE.forEach((f, i) => {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = f.name;
+        sel.appendChild(opt);
+    });
+}
+
+function renderMacrosPreview() {
+    const sel    = document.getElementById('mc-food-select');
+    const grams  = parseFloat(document.getElementById('mc-grams-input').value);
+    const preview = document.getElementById('mc-preview');
+    if (!preview) return;
+    if (!sel.value || !grams || grams <= 0) { preview.style.display = 'none'; return; }
+    const food = FOOD_TABLE[parseInt(sel.value)];
+    const m    = calcMacros(food, grams);
+    preview.style.display = 'block';
+    preview.innerHTML = `⚡ ${m.kcal} kcal &nbsp;|&nbsp; 🥩 ${m.prot}g prot &nbsp;|&nbsp; 🍞 ${m.carb}g carb &nbsp;|&nbsp; 🧈 ${m.gord}g gord`;
+}
+
+function renderMacros() {
+    const today  = new Date().toLocaleDateString('pt-BR');
+    const label  = document.getElementById('macros-date-label');
+    if (label) label.textContent = 'Hoje · ' + today;
+
+    const total  = getTodayMacrosTotal();
+    const meta   = getMacrosMeta();
+    const pct    = Math.min(100, Math.round((total.kcal / meta) * 100));
+
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    const setBar = (id, pct) => { const el = document.getElementById(id); if (el) el.style.width = pct + '%'; };
+
+    set('mc-kcal', total.kcal);
+    set('mc-prot', total.prot);
+    set('mc-carb', total.carb);
+    set('mc-gord', total.gord);
+    setBar('mc-kcal-bar', pct);
+    setBar('mc-prot-bar', Math.min(100, Math.round(total.prot / 2)));
+    setBar('mc-carb-bar', Math.min(100, Math.round(total.carb / 3)));
+    setBar('mc-gord-bar', Math.min(100, Math.round(total.gord / 0.8)));
+
+    const metaEl = document.getElementById('mc-kcal-meta');
+    if (metaEl) metaEl.textContent = `${pct}% de ${meta} kcal`;
+
+    const metaInput = document.getElementById('mc-meta-input');
+    if (metaInput && !metaInput.value) metaInput.placeholder = `Meta atual: ${meta} kcal`;
+
+    renderMacrosLog();
+}
+
+function renderMacrosLog() {
+    const list  = document.getElementById('mc-log-list');
+    if (!list) return;
+    const data  = getMacrosData();
+    const today = new Date().toLocaleDateString('pt-BR');
+    const entries = data[today] || [];
+
+    if (entries.length === 0) {
+        list.innerHTML = '<li class="w-log-empty">Nenhum alimento registrado.</li>';
+        return;
+    }
+
+    list.innerHTML = '';
+    entries.slice().reverse().forEach((e, revIdx) => {
+        const realIdx = entries.length - 1 - revIdx;
+        const li = document.createElement('li');
+        li.className = 'mc-log-item';
+        li.innerHTML = `
+            <div class="mc-log-item-top">
+                <span class="mc-log-name">${e.name} <span class="mc-log-grams">(${e.grams}g)</span></span>
+                <button class="w-log-del" data-idx="${realIdx}">✕</button>
+            </div>
+            <div class="mc-log-macros">
+                <span>⚡ ${e.kcal} kcal</span>
+                <span>🥩 ${e.prot}g</span>
+                <span>🍞 ${e.carb}g</span>
+                <span>🧈 ${e.gord}g</span>
+            </div>
+        `;
+        li.querySelector('.w-log-del').addEventListener('click', () => {
+            const d = getMacrosData();
+            d[today].splice(realIdx, 1);
+            saveMacrosData(d);
+            renderMacros();
+        });
+        list.appendChild(li);
+    });
+}
+
+// eventos macros
+document.getElementById('mc-food-select').addEventListener('change', renderMacrosPreview);
+document.getElementById('mc-grams-input').addEventListener('input', renderMacrosPreview);
+
+document.getElementById('mc-add-btn').addEventListener('click', () => {
+    const sel   = document.getElementById('mc-food-select');
+    const grams = parseFloat(document.getElementById('mc-grams-input').value);
+    if (!sel.value) { alert('Selecione um alimento!'); return; }
+    if (!grams || grams <= 0) { alert('Digite a quantidade em gramas!'); return; }
+
+    const food  = FOOD_TABLE[parseInt(sel.value)];
+    const m     = calcMacros(food, grams);
+    const data  = getMacrosData();
+    const today = new Date().toLocaleDateString('pt-BR');
+    if (!data[today]) data[today] = [];
+    data[today].push({ name: food.name, grams, ...m });
+    saveMacrosData(data);
+
+    document.getElementById('mc-grams-input').value = '';
+    document.getElementById('mc-preview').style.display = 'none';
+    sel.value = '';
+    renderMacros();
+});
+
+document.getElementById('mc-grams-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('mc-add-btn').click();
+});
+
+document.getElementById('mc-meta-save-btn').addEventListener('click', () => {
+    const val = parseInt(document.getElementById('mc-meta-input').value);
+    if (!val || val < 500) { alert('Digite uma meta válida (mínimo 500 kcal)!'); return; }
+    localStorage.setItem(MACROS_META_KEY, val);
+    renderMacros();
+});
+
+document.getElementById('mc-clear-btn').addEventListener('click', () => {
+    if (!confirm('Zerar todos os registros de hoje?')) return;
+    const data  = getMacrosData();
+    const today = new Date().toLocaleDateString('pt-BR');
+    data[today] = [];
+    saveMacrosData(data);
+    renderMacros();
+});
+
+populateFoodSelect();
+renderMacros();
+
+// ============================================
+// RELATÓRIO SEMANAL (aparece aos sábados)
+// ============================================
+
+function renderWeeklyReport() {
+    const dash = document.getElementById('dash-weekly-report');
+    if (!dash) return;
+
+    const hoje = new Date();
+    if (hoje.getDay() !== 6) { dash.style.display = 'none'; return; }
+
+    // água: média dos últimos 7 dias
+    const wData  = getWaterData();
+    const meta   = getWaterMeta();
+    const last7  = [];
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date(hoje);
+        d.setDate(hoje.getDate() - i);
+        const key = d.toLocaleDateString('pt-BR');
+        const entries = wData[key] || [];
+        last7.push(entries.reduce((s, e) => s + e.ml, 0));
+    }
+    const mediaAgua = Math.round(last7.reduce((s, v) => s + v, 0) / 7);
+    const diasMeta  = last7.filter(v => v >= meta).length;
+
+    // peso: variação semanal
+    const pData  = getPesoData();
+    const semana = pData.slice(-7);
+    const pesoVar = semana.length >= 2
+        ? (semana[semana.length-1].peso - semana[0].peso).toFixed(1)
+        : null;
+
+    // hábitos: % de conclusão
+    const hData  = getHabitsData();
+    let totalH = 0, doneH = 0;
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date(hoje);
+        d.setDate(hoje.getDate() - i);
+        const key    = d.toLocaleDateString('pt-BR');
+        const habits = hData[key] || {};
+        const keys   = ['treino','estudo','sono','hidratacao','alimentacao','produtividade'];
+        keys.forEach(k => { totalH++; if (habits[k]) doneH++; });
+    }
+    const pctHabitos = Math.round((doneH / totalH) * 100);
+
+    // macros: média kcal
+    const mData  = getMacrosData();
+    let totalKcal = 0, diasComRegistro = 0;
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date(hoje);
+        d.setDate(hoje.getDate() - i);
+        const key     = d.toLocaleDateString('pt-BR');
+        const entries = mData[key] || [];
+        if (entries.length > 0) {
+            totalKcal += entries.reduce((s, e) => s + e.kcal, 0);
+            diasComRegistro++;
+        }
+    }
+    const mediaKcal = diasComRegistro > 0 ? Math.round(totalKcal / diasComRegistro) : null;
+
+    dash.style.display = 'block';
+    dash.innerHTML = `
+        <div class="dash-section-title">📊 Relatório da semana</div>
+        <div class="weekly-grid">
+            <div class="weekly-item">
+                <span class="weekly-icon">💧</span>
+                <div>
+                    <div class="weekly-label">Média de água</div>
+                    <div class="weekly-val">${mediaAgua.toLocaleString('pt-BR')} ml/dia</div>
+                    <div class="weekly-sub">${diasMeta} de 7 dias bateu a meta</div>
+                </div>
+            </div>
+            ${pesoVar !== null ? `
+            <div class="weekly-item">
+                <span class="weekly-icon">⚖️</span>
+                <div>
+                    <div class="weekly-label">Variação de peso</div>
+                    <div class="weekly-val" style="color:${parseFloat(pesoVar) < 0 ? '#1D9E75' : parseFloat(pesoVar) > 0 ? '#ef4444' : 'var(--text)'}">
+                        ${parseFloat(pesoVar) > 0 ? '+' : ''}${pesoVar} kg
+                    </div>
+                    <div class="weekly-sub">${parseFloat(pesoVar) < 0 ? 'Ótimo progresso!' : parseFloat(pesoVar) > 0 ? 'Atenção à dieta' : 'Peso estável'}</div>
+                </div>
+            </div>` : ''}
+            <div class="weekly-item">
+                <span class="weekly-icon">✅</span>
+                <div>
+                    <div class="weekly-label">Hábitos cumpridos</div>
+                    <div class="weekly-val">${pctHabitos}%</div>
+                    <div class="weekly-sub">${doneH} de ${totalH} hábitos</div>
+                </div>
+            </div>
+            ${mediaKcal ? `
+            <div class="weekly-item">
+                <span class="weekly-icon">🍽️</span>
+                <div>
+                    <div class="weekly-label">Média calórica</div>
+                    <div class="weekly-val">${mediaKcal.toLocaleString('pt-BR')} kcal</div>
+                    <div class="weekly-sub">em ${diasComRegistro} dias registrados</div>
+                </div>
+            </div>` : ''}
+        </div>
+    `;
+}
+
+// ============================================
 // CONTROLE DE PESO
 // ============================================
 
@@ -401,6 +769,9 @@ function renderPeso() {
         if (elIdeal) elIdeal.textContent = cfg.altura ? (() => { const h = cfg.altura/100; return (22*h*h).toFixed(1)+'–'+(24*h*h).toFixed(1)+' kg'; })() : '—';
         if (marker)  marker.style.display = 'none';
     }
+
+    // meta de peso
+    renderPesoMeta();
 
     // histórico
     renderPesoLog(data);
@@ -735,6 +1106,9 @@ function renderDashboard() {
         if (pesoVal) pesoVal.textContent = '—';
         if (pesoSub) pesoSub.textContent = 'Toque para registrar';
     }
+
+    // relatório semanal
+    renderWeeklyReport();
 
     // hábitos
     const habits = getTodayHabits();
@@ -1216,7 +1590,7 @@ configurarDatas();
 // ============================================
 
 document.getElementById('resetBtn').addEventListener('click', () => {
-    if (confirm("Apagar tudo permanentemente?")) {
+    if (confirm('⚠️ Isso vai apagar SOMENTE sua rotina (os dias e tarefas gerados).\n\nSeus dados de água, peso, macros, hábitos e perfil NÃO serão apagados.\n\nDeseja continuar?')) {
         localStorage.removeItem('my_routine_data');
         location.reload();
     }

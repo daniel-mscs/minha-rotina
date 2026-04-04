@@ -34,6 +34,8 @@ input[type="search"],
 textarea,
 [contenteditable="true"] {
   font-size: 16px !important;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 body {
@@ -833,6 +835,176 @@ body:not(.light) .social-links a img { filter: invert(1); }
 }
 
 .modal-btn-save:hover { opacity: 0.9; }
+
+/* ══════════════════════════════════════
+   RELATÓRIO SEMANAL
+══════════════════════════════════════ */
+.weekly-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.weekly-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.weekly-icon { font-size: 22px; flex-shrink: 0; }
+
+.weekly-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 2px;
+}
+
+.weekly-val {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.weekly-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+/* ══════════════════════════════════════
+   META DE PESO
+══════════════════════════════════════ */
+.p-meta-result {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.9;
+  margin-top: 10px;
+}
+
+/* ══════════════════════════════════════
+   MACROS
+══════════════════════════════════════ */
+.macros-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.macro-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 10px;
+  text-align: center;
+}
+
+.macro-card-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+
+.macro-card-val {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.macro-card-unit {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.macro-card-meta {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.macros-add-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.macros-add-row select {
+  flex: 1;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.macros-add-row input {
+  width: 140px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.mc-preview {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 8px;
+  line-height: 1.8;
+}
+
+.mc-log-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+}
+
+.mc-log-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.mc-log-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.mc-log-grams { font-size: 12px; color: var(--muted); }
+
+.mc-log-macros {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+
+.mc-log-macros span { display: flex; align-items: center; gap: 3px; }
+
+@media (max-width: 600px) {
+  .macros-summary { grid-template-columns: repeat(2,1fr); }
+  .macro-card-val { font-size: 17px; }
+  .macros-add-row input { width: 100px; }
+}
 
 /* ══════════════════════════════════════
    DASHBOARD
