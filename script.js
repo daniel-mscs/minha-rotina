@@ -24,10 +24,8 @@ themeBtn.addEventListener('click', () => {
 document.querySelectorAll('.nav-tab').forEach(tab => {
     tab.addEventListener('click', () => {
         const alvo = tab.dataset.tab;
-
         document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(c => c.classList.remove('active'));
-
         tab.classList.add('active');
         document.getElementById('tab-' + alvo).classList.add('active');
     });
@@ -38,14 +36,13 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
 // ============================================
 
 document.getElementById('exportPdfBtn').addEventListener('click', () => {
-    // garante que a aba rotina está visível antes de imprimir
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(c => c.classList.remove('active'));
     document.querySelector('[data-tab="rotina"]').classList.add('active');
     document.getElementById('tab-rotina').classList.add('active');
-
     setTimeout(() => window.print(), 150);
 });
+
 // ============================================
 // PERFIL DO USUÁRIO
 // ============================================
@@ -77,11 +74,9 @@ document.getElementById('pf-save-btn').addEventListener('click', () => {
     const nome  = document.getElementById('pf-nome').value.trim();
     const sexo  = document.getElementById('pf-sexo').value;
     const idade = parseInt(document.getElementById('pf-idade').value);
-
     if (!nome)  { alert('Digite seu nome!'); return; }
     if (!sexo)  { alert('Selecione seu sexo!'); return; }
     if (!idade) { alert('Digite sua idade!'); return; }
-
     savePerfil({ nome, sexo, idade });
     hidePerfilModal();
     renderDashboard();
@@ -93,7 +88,6 @@ document.getElementById('perfil-modal').addEventListener('click', (e) => {
     if (e.target === document.getElementById('perfil-modal')) hidePerfilModal();
 });
 
-// abre modal automaticamente se não tem perfil ainda
 (function checkPerfil() {
     const p = getPerfil();
     if (!p.nome) setTimeout(showPerfilModal, 800);
@@ -103,7 +97,7 @@ document.getElementById('perfil-modal').addEventListener('click', (e) => {
 // CONTROLE DE ÁGUA
 // ============================================
 
-const W_KEY     = 'water_data';
+const W_KEY      = 'water_data';
 const W_META_KEY = 'water_meta';
 
 function getTodayKey() {
@@ -143,11 +137,9 @@ function renderWater() {
     const remaining = Math.max(0, meta - total);
     const pct       = Math.min(100, Math.round((total / meta) * 100));
 
-    // label data
     const label = document.getElementById('water-date-label');
     if (label) label.textContent = 'Hoje · ' + today;
 
-    // cards topo
     const elMeta = document.getElementById('w-meta-display');
     const elCons = document.getElementById('w-consumed');
     const elRem  = document.getElementById('w-remaining');
@@ -155,7 +147,6 @@ function renderWater() {
     if (elCons) elCons.textContent = total.toLocaleString('pt-BR') + ' ml';
     if (elRem)  elRem.textContent  = remaining > 0 ? remaining.toLocaleString('pt-BR') + ' ml' : '✅ Meta atingida!';
 
-    // progress bar
     const bar = document.getElementById('w-bar-fill');
     const pctEl = document.getElementById('w-bar-pct');
     if (bar) {
@@ -164,7 +155,6 @@ function renderWater() {
     }
     if (pctEl) pctEl.textContent = pct + '%';
 
-    // hint calculadora
     const hint = document.getElementById('w-calc-hint');
     if (hint) {
         const savedWeight = localStorage.getItem('my_routine_data');
@@ -179,7 +169,6 @@ function renderWater() {
         }
     }
 
-    // log do dia
     const logList = document.getElementById('w-log-list');
     if (logList) {
         logList.innerHTML = '';
@@ -208,7 +197,6 @@ function renderWater() {
         }
     }
 
-    // histórico
     renderWaterHistory(data, meta);
 }
 
@@ -262,12 +250,10 @@ function addWaterEntry(ml) {
     renderWater();
 }
 
-// botões rápidos
 document.querySelectorAll('.w-quick').forEach(btn => {
     btn.addEventListener('click', () => addWaterEntry(parseInt(btn.dataset.ml)));
 });
 
-// botão custom
 document.getElementById('w-custom-add-btn').addEventListener('click', () => {
     const input = document.getElementById('w-custom-input');
     const val = parseInt(input.value);
@@ -280,7 +266,6 @@ document.getElementById('w-custom-input').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') document.getElementById('w-custom-add-btn').click();
 });
 
-// salvar meta
 document.getElementById('w-meta-save-btn').addEventListener('click', () => {
     const input = document.getElementById('w-meta-input');
     const val = parseInt(input.value);
@@ -290,7 +275,6 @@ document.getElementById('w-meta-save-btn').addEventListener('click', () => {
     renderWater();
 });
 
-// zerar dia
 document.getElementById('w-clear-day-btn').addEventListener('click', () => {
     if (!confirm('Zerar todos os registros de hoje?')) return;
     const data  = getWaterData();
@@ -300,7 +284,6 @@ document.getElementById('w-clear-day-btn').addEventListener('click', () => {
     renderWater();
 });
 
-// render inicial
 renderWater();
 
 // ============================================
@@ -343,8 +326,6 @@ function renderPesoMeta() {
         }
     }
 
-    const pct = Math.min(100, Math.max(0, Math.round(((data[0]?.peso || ultimo) - ultimo) / ((data[0]?.peso || ultimo) - meta) * 100)));
-
     result.style.display = 'block';
     result.innerHTML = `
         🎯 Meta: <strong>${meta} kg</strong><br>
@@ -367,30 +348,52 @@ document.getElementById('p-meta-save-btn').addEventListener('click', () => {
 // MACROS
 // ============================================
 
-const MACROS_KEY     = 'macros_data';
+const MACROS_KEY      = 'macros_data';
 const MACROS_META_KEY = 'macros_meta';
 
 const FOOD_TABLE = [
-    { name: 'Arroz branco cozido',    kcal: 128, prot: 2.5,  carb: 28.1, gord: 0.2  },
-    { name: 'Frango grelhado (peito)',kcal: 159, prot: 32.0, carb: 0.0,  gord: 2.7  },
-    { name: 'Ovo inteiro cozido',     kcal: 155, prot: 12.6, carb: 1.1,  gord: 10.6 },
-    { name: 'Ovo inteiro (clara)',    kcal: 52,  prot: 11.0, carb: 0.7,  gord: 0.2  },
-    { name: 'Leite em pó integral',   kcal: 496, prot: 24.6, carb: 39.4, gord: 26.3 },
-    { name: 'Banana nanica',          kcal: 89,  prot: 1.1,  carb: 22.8, gord: 0.3  },
-    { name: 'Batata doce cozida',     kcal: 77,  prot: 1.4,  carb: 18.4, gord: 0.1  },
-    { name: 'Aveia em flocos',        kcal: 394, prot: 13.9, carb: 67.0, gord: 8.5  },
-    { name: 'Whey protein',           kcal: 370, prot: 75.0, carb: 9.0,  gord: 4.0  },
-    { name: 'Feijão cozido',          kcal: 76,  prot: 4.8,  carb: 13.5, gord: 0.5  },
-    { name: 'Macarrão cozido',        kcal: 130, prot: 4.3,  carb: 26.4, gord: 0.9  },
-    { name: 'Pão francês',            kcal: 300, prot: 8.0,  carb: 58.6, gord: 3.1  },
-    { name: 'Azeite de oliva',        kcal: 884, prot: 0.0,  carb: 0.0,  gord: 100.0},
-    { name: 'Salada (folhas mistas)', kcal: 17,  prot: 1.3,  carb: 2.9,  gord: 0.2  },
-    { name: 'Tomate',                 kcal: 18,  prot: 0.9,  carb: 3.9,  gord: 0.2  },
-    { name: 'Carne bovina patinho',   kcal: 219, prot: 21.0, carb: 0.0,  gord: 14.5 },
-    { name: 'Atum em lata (água)',    kcal: 109, prot: 24.4, carb: 0.0,  gord: 0.9  },
-    { name: 'Iogurte grego natural',  kcal: 97,  prot: 9.0,  carb: 3.6,  gord: 5.0  },
-    { name: 'Queijo cottage',         kcal: 98,  prot: 11.1, carb: 3.4,  gord: 4.3  },
-    { name: 'Amendoim torrado',       kcal: 567, prot: 25.8, carb: 16.1, gord: 49.2 },
+    // Carboidratos / base
+    { name: 'Arroz branco cozido',       kcal: 128, prot: 2.5,  carb: 28.1, gord: 0.2  },
+    { name: 'Arroz integral cozido',      kcal: 124, prot: 2.6,  carb: 25.8, gord: 1.0  },
+    { name: 'Batata doce cozida',         kcal: 77,  prot: 1.4,  carb: 18.4, gord: 0.1  },
+    { name: 'Batata inglesa cozida',      kcal: 56,  prot: 1.6,  carb: 13.0, gord: 0.1  },
+    { name: 'Batata frita',               kcal: 312, prot: 3.4,  carb: 41.4, gord: 15.0 },
+    { name: 'Macarrão cozido',            kcal: 130, prot: 4.3,  carb: 26.4, gord: 0.9  },
+    { name: 'Pão francês',                kcal: 300, prot: 8.0,  carb: 58.6, gord: 3.1  },
+    { name: 'Aveia em flocos',            kcal: 394, prot: 13.9, carb: 67.0, gord: 8.5  },
+    { name: 'Feijão cozido',              kcal: 76,  prot: 4.8,  carb: 13.5, gord: 0.5  },
+    { name: 'Lentilha cozida',            kcal: 93,  prot: 6.3,  carb: 16.3, gord: 0.4  },
+    // Proteínas
+    { name: 'Frango grelhado (peito)',    kcal: 159, prot: 32.0, carb: 0.0,  gord: 2.7  },
+    { name: 'Frango cozido (coxa)',       kcal: 191, prot: 26.0, carb: 0.0,  gord: 9.3  },
+    { name: 'Carne bovina patinho',       kcal: 219, prot: 21.0, carb: 0.0,  gord: 14.5 },
+    { name: 'Carne moída (patinho)',      kcal: 189, prot: 26.0, carb: 0.0,  gord: 9.5  },
+    { name: 'Tilápia grelhada',           kcal: 128, prot: 26.2, carb: 0.0,  gord: 2.7  },
+    { name: 'Salmão grelhado',            kcal: 208, prot: 20.0, carb: 0.0,  gord: 13.4 },
+    { name: 'Atum em lata (água)',        kcal: 109, prot: 24.4, carb: 0.0,  gord: 0.9  },
+    { name: 'Sardinha em lata',           kcal: 208, prot: 24.6, carb: 0.0,  gord: 11.5 },
+    { name: 'Ovo inteiro cozido',         kcal: 155, prot: 12.6, carb: 1.1,  gord: 10.6 },
+    { name: 'Clara de ovo',               kcal: 52,  prot: 11.0, carb: 0.7,  gord: 0.2  },
+    { name: 'Whey protein',               kcal: 370, prot: 75.0, carb: 9.0,  gord: 4.0  },
+    { name: 'Iogurte grego natural',      kcal: 97,  prot: 9.0,  carb: 3.6,  gord: 5.0  },
+    { name: 'Queijo cottage',             kcal: 98,  prot: 11.1, carb: 3.4,  gord: 4.3  },
+    // Laticínios / extras
+    { name: 'Leite em pó integral',       kcal: 496, prot: 24.6, carb: 39.4, gord: 26.3 },
+    { name: 'Leite desnatado',            kcal: 36,  prot: 3.5,  carb: 5.1,  gord: 0.1  },
+    // Frutas
+    { name: 'Banana nanica',              kcal: 89,  prot: 1.1,  carb: 22.8, gord: 0.3  },
+    { name: 'Maçã',                       kcal: 56,  prot: 0.3,  carb: 15.2, gord: 0.1  },
+    { name: 'Laranja',                    kcal: 47,  prot: 0.9,  carb: 11.7, gord: 0.1  },
+    { name: 'Mamão papaia',               kcal: 45,  prot: 0.5,  carb: 11.8, gord: 0.1  },
+    // Gorduras / oleaginosas
+    { name: 'Azeite de oliva',            kcal: 884, prot: 0.0,  carb: 0.0,  gord: 100.0},
+    { name: 'Amendoim torrado',           kcal: 567, prot: 25.8, carb: 16.1, gord: 49.2 },
+    { name: 'Castanha do pará',           kcal: 656, prot: 14.3, carb: 15.1, gord: 63.5 },
+    // Vegetais
+    { name: 'Salada (folhas mistas)',     kcal: 17,  prot: 1.3,  carb: 2.9,  gord: 0.2  },
+    { name: 'Tomate',                     kcal: 18,  prot: 0.9,  carb: 3.9,  gord: 0.2  },
+    { name: 'Brócolis cozido',            kcal: 35,  prot: 2.4,  carb: 6.6,  gord: 0.4  },
+    { name: 'Cenoura crua',               kcal: 34,  prot: 0.9,  carb: 7.9,  gord: 0.2  },
 ];
 
 function getMacrosData() {
@@ -406,13 +409,16 @@ function getMacrosMeta() {
     return parseInt(localStorage.getItem(MACROS_META_KEY) || '2000');
 }
 
+// FIX: arredonda corretamente sem floating point bug
+function round1(n) { return Math.round(n * 10) / 10; }
+
 function calcMacros(food, grams) {
     const factor = grams / 100;
     return {
         kcal: Math.round(food.kcal * factor),
-        prot: parseFloat((food.prot * factor).toFixed(1)),
-        carb: parseFloat((food.carb * factor).toFixed(1)),
-        gord: parseFloat((food.gord * factor).toFixed(1)),
+        prot: round1(food.prot * factor),
+        carb: round1(food.carb * factor),
+        gord: round1(food.gord * factor),
     };
 }
 
@@ -422,14 +428,14 @@ function getTodayMacrosTotal() {
     const entries = data[today] || [];
     return entries.reduce((acc, e) => ({
         kcal: acc.kcal + e.kcal,
-        prot: acc.prot + e.prot,
-        carb: acc.carb + e.carb,
-        gord: acc.gord + e.gord,
+        prot: round1(acc.prot + e.prot),
+        carb: round1(acc.carb + e.carb),
+        gord: round1(acc.gord + e.gord),
     }), { kcal: 0, prot: 0, carb: 0, gord: 0 });
 }
 
 // ============================================
-// AUTOCOMPLETE FUNCTIONALITY
+// AUTOCOMPLETE
 // ============================================
 
 let selectedFoodIndex = -1;
@@ -450,10 +456,10 @@ function filterFoods(query) {
 function showSuggestions(query) {
     const suggestionsList = document.getElementById('mc-food-suggestions');
     const filtered = filterFoods(query);
-    
+
     suggestionsList.innerHTML = '';
     currentSuggestionIndex = -1;
-    
+
     if (filtered.length === 0) {
         if (query.length > 0) {
             const li = document.createElement('li');
@@ -466,28 +472,26 @@ function showSuggestions(query) {
         }
         return;
     }
-    
+
     filtered.forEach(({ food, index }) => {
         const li = document.createElement('li');
         li.className = 'autocomplete-item';
         li.dataset.index = index;
-        
+
         const nameDiv = document.createElement('div');
         nameDiv.className = 'autocomplete-item-name';
         nameDiv.textContent = food.name;
-        
+
         const infoDiv = document.createElement('div');
         infoDiv.className = 'autocomplete-item-info';
         infoDiv.textContent = `${food.kcal} kcal | P: ${food.prot}g C: ${food.carb}g G: ${food.gord}g (por 100g)`;
-        
+
         li.appendChild(nameDiv);
         li.appendChild(infoDiv);
-        
         li.addEventListener('click', () => selectFood(index, food.name));
-        
         suggestionsList.appendChild(li);
     });
-    
+
     suggestionsList.classList.add('show');
 }
 
@@ -509,20 +513,17 @@ function hideSuggestions() {
 function navigateSuggestions(direction) {
     const items = document.querySelectorAll('.autocomplete-item:not(.autocomplete-no-results)');
     if (items.length === 0) return;
-    
-    // Remove active class from current
+
     if (currentSuggestionIndex >= 0 && currentSuggestionIndex < items.length) {
         items[currentSuggestionIndex].classList.remove('active');
     }
-    
-    // Update index
+
     if (direction === 'down') {
         currentSuggestionIndex = (currentSuggestionIndex + 1) % items.length;
     } else if (direction === 'up') {
         currentSuggestionIndex = currentSuggestionIndex <= 0 ? items.length - 1 : currentSuggestionIndex - 1;
     }
-    
-    // Add active class to new item
+
     items[currentSuggestionIndex].classList.add('active');
     items[currentSuggestionIndex].scrollIntoView({ block: 'nearest' });
 }
@@ -537,15 +538,15 @@ function selectCurrentSuggestion() {
 }
 
 function renderMacrosPreview() {
-    const grams  = parseFloat(document.getElementById('mc-grams-input').value);
+    const grams   = parseFloat(document.getElementById('mc-grams-input').value);
     const preview = document.getElementById('mc-preview');
     if (!preview) return;
-    
-    if (selectedFoodIndex === -1 || !grams || grams <= 0) { 
-        preview.style.display = 'none'; 
-        return; 
+
+    if (selectedFoodIndex === -1 || !grams || grams <= 0) {
+        preview.style.display = 'none';
+        return;
     }
-    
+
     const food = FOOD_TABLE[selectedFoodIndex];
     const m    = calcMacros(food, grams);
     preview.style.display = 'block';
@@ -561,8 +562,8 @@ function renderMacros() {
     const meta   = getMacrosMeta();
     const pct    = Math.min(100, Math.round((total.kcal / meta) * 100));
 
-    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-    const setBar = (id, pct) => { const el = document.getElementById(id); if (el) el.style.width = pct + '%'; };
+    const set    = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    const setBar = (id, p)   => { const el = document.getElementById(id); if (el) el.style.width = p + '%'; };
 
     set('mc-kcal', total.kcal);
     set('mc-prot', total.prot);
@@ -621,14 +622,10 @@ function renderMacrosLog() {
     });
 }
 
-// ============================================
-// EVENT LISTENERS - AUTOCOMPLETE
-// ============================================
-
-const foodInput = document.getElementById('mc-food-input');
+// Event listeners autocomplete
+const foodInput  = document.getElementById('mc-food-input');
 const gramsInput = document.getElementById('mc-grams-input');
 
-// Autocomplete input events
 foodInput.addEventListener('input', (e) => {
     const query = e.target.value.trim();
     selectedFoodIndex = -1;
@@ -639,62 +636,32 @@ foodInput.addEventListener('input', (e) => {
 foodInput.addEventListener('keydown', (e) => {
     const suggestionsList = document.getElementById('mc-food-suggestions');
     const isOpen = suggestionsList.classList.contains('show');
-    
-    if (e.key === 'ArrowDown' && isOpen) {
+    if (e.key === 'ArrowDown' && isOpen)  { e.preventDefault(); navigateSuggestions('down'); }
+    else if (e.key === 'ArrowUp' && isOpen) { e.preventDefault(); navigateSuggestions('up'); }
+    else if (e.key === 'Enter') {
         e.preventDefault();
-        navigateSuggestions('down');
-    } else if (e.key === 'ArrowUp' && isOpen) {
-        e.preventDefault();
-        navigateSuggestions('up');
-    } else if (e.key === 'Enter') {
-        e.preventDefault();
-        if (isOpen && currentSuggestionIndex >= 0) {
-            selectCurrentSuggestion();
-        } else if (selectedFoodIndex >= 0) {
-            gramsInput.focus();
-        }
-    } else if (e.key === 'Escape') {
-        hideSuggestions();
-    }
+        if (isOpen && currentSuggestionIndex >= 0) selectCurrentSuggestion();
+        else if (selectedFoodIndex >= 0) gramsInput.focus();
+    } else if (e.key === 'Escape') hideSuggestions();
 });
 
 foodInput.addEventListener('focus', (e) => {
-    if (e.target.value.trim()) {
-        showSuggestions(e.target.value.trim());
-    }
+    if (e.target.value.trim()) showSuggestions(e.target.value.trim());
 });
 
-// Close suggestions when clicking outside
 document.addEventListener('click', (e) => {
-    if (!e.target.closest('.autocomplete-wrapper')) {
-        hideSuggestions();
-    }
+    if (!e.target.closest('.mc-autocomplete-wrap')) hideSuggestions();
 });
 
-// Grams input events
 gramsInput.addEventListener('input', renderMacrosPreview);
-
 gramsInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        document.getElementById('mc-add-btn').click();
-    }
+    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('mc-add-btn').click(); }
 });
 
-// Add button
 document.getElementById('mc-add-btn').addEventListener('click', () => {
     const grams = parseFloat(gramsInput.value);
-    
-    if (selectedFoodIndex === -1) { 
-        alert('Selecione um alimento!'); 
-        foodInput.focus();
-        return; 
-    }
-    if (!grams || grams <= 0) { 
-        alert('Digite a quantidade em gramas!'); 
-        gramsInput.focus();
-        return; 
-    }
+    if (selectedFoodIndex === -1) { alert('Selecione um alimento!'); foodInput.focus(); return; }
+    if (!grams || grams <= 0)    { alert('Digite a quantidade em gramas!'); gramsInput.focus(); return; }
 
     const food  = FOOD_TABLE[selectedFoodIndex];
     const m     = calcMacros(food, grams);
@@ -704,8 +671,7 @@ document.getElementById('mc-add-btn').addEventListener('click', () => {
     data[today].push({ name: food.name, grams, ...m });
     saveMacrosData(data);
 
-    // Reset form
-    foodInput.value = '';
+    foodInput.value  = '';
     gramsInput.value = '';
     selectedFoodIndex = -1;
     document.getElementById('mc-preview').style.display = 'none';
@@ -729,7 +695,6 @@ document.getElementById('mc-clear-btn').addEventListener('click', () => {
     renderMacros();
 });
 
-// Initialize macros
 renderMacros();
 
 // ============================================
@@ -743,7 +708,6 @@ function renderWeeklyReport() {
     const hoje = new Date();
     if (hoje.getDay() !== 6) { dash.style.display = 'none'; return; }
 
-    // água: média dos últimos 7 dias
     const wData  = getWaterData();
     const meta   = getWaterMeta();
     const last7  = [];
@@ -757,15 +721,13 @@ function renderWeeklyReport() {
     const mediaAgua = Math.round(last7.reduce((s, v) => s + v, 0) / 7);
     const diasMeta  = last7.filter(v => v >= meta).length;
 
-    // peso: variação semanal
-    const pData  = getPesoData();
-    const semana = pData.slice(-7);
+    const pData   = getPesoData();
+    const semana  = pData.slice(-7);
     const pesoVar = semana.length >= 2
         ? (semana[semana.length-1].peso - semana[0].peso).toFixed(1)
         : null;
 
-    // hábitos: % de conclusão
-    const hData  = getHabitsData();
+    const hData = getHabitsData();
     let totalH = 0, doneH = 0;
     for (let i = 6; i >= 0; i--) {
         const d = new Date(hoje);
@@ -777,8 +739,7 @@ function renderWeeklyReport() {
     }
     const pctHabitos = Math.round((doneH / totalH) * 100);
 
-    // macros: média kcal
-    const mData  = getMacrosData();
+    const mData = getMacrosData();
     let totalKcal = 0, diasComRegistro = 0;
     for (let i = 6; i >= 0; i--) {
         const d = new Date(hoje);
@@ -868,19 +829,17 @@ function calcIMC(peso, alturaCm) {
 
 function classifyIMC(imc) {
     if (imc < 18.5) return { label: 'Abaixo do peso', color: '#85B7EB' };
-    if (imc < 25)   return { label: 'Normal', color: '#97C459' };
-    if (imc < 30)   return { label: 'Sobrepeso', color: '#FAC775' };
-    if (imc < 35)   return { label: 'Obesidade I', color: '#EF9F27' };
-    return               { label: 'Obesidade II+', color: '#F09595' };
+    if (imc < 25)   return { label: 'Normal',          color: '#97C459' };
+    if (imc < 30)   return { label: 'Sobrepeso',       color: '#FAC775' };
+    if (imc < 35)   return { label: 'Obesidade I',     color: '#EF9F27' };
+    return               { label: 'Obesidade II+',    color: '#F09595' };
 }
 
 function calcGordura(imc, idade) {
-    // Fórmula Deurenberg para homens: (1.20 × IMC) + (0.23 × idade) − 10.8 − 5.4
     return (1.20 * imc) + (0.23 * idade) - 10.8 - 5.4;
 }
 
 function imcToBarPct(imc) {
-    // mapeia IMC 15–40 para 0–100%
     const min = 15, max = 40;
     return Math.min(100, Math.max(0, ((imc - min) / (max - min)) * 100));
 }
@@ -888,16 +847,14 @@ function imcToBarPct(imc) {
 let pesoChart = null;
 
 function renderPeso() {
-    const data   = getPesoData();
-    const cfg    = getPesoConfig();
+    const data = getPesoData();
+    const cfg  = getPesoConfig();
 
-    // preenche inputs salvos
     if (cfg.altura) document.getElementById('p-altura').value = cfg.altura;
     if (cfg.idade)  document.getElementById('p-idade').value  = cfg.idade;
 
     const ultimo = data.length > 0 ? data[data.length - 1] : null;
 
-    // cards
     const elPeso  = document.getElementById('pc-peso');
     const elImc   = document.getElementById('pc-imc');
     const elImcCl = document.getElementById('pc-imc-class');
@@ -907,13 +864,13 @@ function renderPeso() {
     const markerV = document.getElementById('imc-marker-val');
 
     if (ultimo && cfg.altura && cfg.idade) {
-        const imc     = calcIMC(ultimo.peso, cfg.altura);
-        const cls     = classifyIMC(imc);
-        const gord    = calcGordura(imc, cfg.idade);
-        const h       = cfg.altura / 100;
+        const imc      = calcIMC(ultimo.peso, cfg.altura);
+        const cls      = classifyIMC(imc);
+        const gord     = calcGordura(imc, cfg.idade);
+        const h        = cfg.altura / 100;
         const idealMin = (22 * h * h).toFixed(1);
         const idealMax = (24 * h * h).toFixed(1);
-        const pct     = imcToBarPct(imc);
+        const pct      = imcToBarPct(imc);
 
         if (elPeso)  elPeso.textContent  = ultimo.peso.toFixed(1) + ' kg';
         if (elImc)   elImc.textContent   = imc.toFixed(1);
@@ -935,13 +892,8 @@ function renderPeso() {
         if (marker)  marker.style.display = 'none';
     }
 
-    // meta de peso
     renderPesoMeta();
-
-    // histórico
     renderPesoLog(data);
-
-    // gráfico
     renderPesoChart(data);
 }
 
@@ -1028,27 +980,16 @@ function renderPesoChart(data) {
             maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
-                tooltip: {
-                    callbacks: {
-                        label: ctx => ctx.parsed.y.toFixed(1) + ' kg'
-                    }
-                }
+                tooltip: { callbacks: { label: ctx => ctx.parsed.y.toFixed(1) + ' kg' } }
             },
             scales: {
-                x: {
-                    grid: { color: 'rgba(136,135,128,0.15)' },
-                    ticks: { font: { size: 11 }, color: '#888780', maxRotation: 45 }
-                },
-                y: {
-                    grid: { color: 'rgba(136,135,128,0.15)' },
-                    ticks: { font: { size: 11 }, color: '#888780', callback: v => v + ' kg' }
-                }
+                x: { grid: { color: 'rgba(136,135,128,0.15)' }, ticks: { font: { size: 11 }, color: '#888780', maxRotation: 45 } },
+                y: { grid: { color: 'rgba(136,135,128,0.15)' }, ticks: { font: { size: 11 }, color: '#888780', callback: v => v + ' kg' } }
             }
         }
     });
 }
 
-// salvar config
 document.getElementById('p-config-save-btn').addEventListener('click', () => {
     const altura = parseInt(document.getElementById('p-altura').value);
     const idade  = parseInt(document.getElementById('p-idade').value);
@@ -1058,7 +999,6 @@ document.getElementById('p-config-save-btn').addEventListener('click', () => {
     renderPeso();
 });
 
-// adicionar peso
 document.getElementById('p-add-btn').addEventListener('click', () => {
     const input = document.getElementById('p-peso-input');
     const val   = parseFloat(input.value);
@@ -1067,7 +1007,6 @@ document.getElementById('p-add-btn').addEventListener('click', () => {
     const data  = getPesoData();
     const today = new Date().toLocaleDateString('pt-BR');
 
-    // atualiza se já tem registro hoje
     const existing = data.findIndex(e => e.date === today);
     if (existing >= 0) {
         if (!confirm('Já existe um registro hoje. Deseja substituir?')) return;
@@ -1085,10 +1024,9 @@ document.getElementById('p-peso-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') document.getElementById('p-add-btn').click();
 });
 
-// média semanal
 document.getElementById('p-media-btn').addEventListener('click', () => {
-    const data    = getPesoData();
-    const result  = document.getElementById('p-media-result');
+    const data   = getPesoData();
+    const result = document.getElementById('p-media-result');
     if (!result) return;
 
     if (data.length < 2) {
@@ -1097,18 +1035,17 @@ document.getElementById('p-media-btn').addEventListener('click', () => {
         return;
     }
 
-    // pega últimos 7 dias com registro
-    const ultimos = data.slice(-7);
+    const ultimos  = data.slice(-7);
     const primeiro = ultimos[0].peso;
     const ultimo   = ultimos[ultimos.length - 1].peso;
     const diff     = ultimo - primeiro;
     const media    = diff / (ultimos.length - 1);
     const dias     = ultimos.length - 1;
 
-    let diffClass = diff < 0 ? 'p-loss' : diff > 0 ? 'p-gain' : 'p-same';
-    let diffSinal = diff < 0 ? '▼' : diff > 0 ? '▲' : '=';
-    let diffLabel = diff < 0 ? 'perdidos' : diff > 0 ? 'ganhos' : 'sem alteração';
-    let mediaLabel = media < 0 ? 'perdendo' : media > 0 ? 'ganhando' : 'estável';
+    const diffClass  = diff < 0 ? 'p-loss' : diff > 0 ? 'p-gain' : 'p-same';
+    const diffSinal  = diff < 0 ? '▼' : diff > 0 ? '▲' : '=';
+    const diffLabel  = diff < 0 ? 'perdidos' : diff > 0 ? 'ganhos' : 'sem alteração';
+    const mediaLabel = media < 0 ? 'perdendo' : media > 0 ? 'ganhando' : 'estável';
 
     result.style.display = 'block';
     result.innerHTML = `
@@ -1119,14 +1056,12 @@ document.getElementById('p-media-btn').addEventListener('click', () => {
     `;
 });
 
-// limpar tudo
 document.getElementById('p-clear-btn').addEventListener('click', () => {
     if (!confirm('Apagar todo o histórico de peso?')) return;
     savePesoData([]);
     renderPeso();
 });
 
-// carrega Chart.js e renderiza
 (function loadChartAndRender() {
     if (window.Chart) { renderPeso(); return; }
     const s = document.createElement('script');
@@ -1136,20 +1071,36 @@ document.getElementById('p-clear-btn').addEventListener('click', () => {
 })();
 
 // ============================================
+// DASHBOARD + HÁBITOS + FRASES
+// ============================================
 
 const HABITS_KEY = 'habits_data';
 
 const FRASES = [
+    // Motivacionais pessoais
     "Disciplina é fazer o que precisa ser feito, mesmo quando não quer. 💪",
-    "Cada plantão é uma prova de força. Cada treino também. 🏋️",
-    "O José vai crescer vendo um pai que não desiste. 👶",
     "Pequenas ações consistentes constroem grandes resultados. 🎯",
     "Você está construindo o futuro enquanto cuida do presente. 🚀",
-    "Engenharia, enfermagem e paternidade — você carrega muito. Descanse quando precisar. 🌙",
     "Beber água, treinar, estudar. Um dia de cada vez. 💧",
     "A jornada de mil km começa com um passo. Você já está andando. 👣",
     "Consistência bate talento quando o talento não é consistente. 🔥",
-    "Seu filho vai perguntar um dia o que você fez quando foi difícil. 👨‍👦",
+    "Engenharia, enfermagem e paternidade — você carrega muito. Descanse quando precisar. 🌙",
+    // Estoicismo — Marco Aurélio
+    "Você tem poder sobre sua mente, não sobre os eventos externos. Perceba isso e encontrará força. — Marco Aurélio 🏛️",
+    "Faça cada ato de sua vida como se fosse o último. — Marco Aurélio 🏛️",
+    "A melhor vingança é não ser como o seu inimigo. — Marco Aurélio 🏛️",
+    "Perca o tempo que você tem e você perderá o que você não tem. — Marco Aurélio 🏛️",
+    "Nunca estime que algo seja do seu interesse se isso o forçar a quebrar uma promessa. — Marco Aurélio 🏛️",
+    // Estoicismo — Epicteto
+    "Não procure que os eventos que acontecem sejam como você quer, mas deseje os eventos como eles são e encontrará tranquilidade. — Epicteto 🏛️",
+    "Temos dois ouvidos e uma boca para que possamos ouvir o dobro do que falamos. — Epicteto 🏛️",
+    "É impossível para um homem aprender o que ele acha que já sabe. — Epicteto 🏛️",
+    "Não é o que acontece com você, mas como você reage a isso que importa. — Epicteto 🏛️",
+    // Estoicismo — Sêneca
+    "Não é porque as coisas são difíceis que não ousamos. É porque não ousamos que as coisas são difíceis. — Sêneca 🏛️",
+    "Enquanto adiamos, a vida passa. — Sêneca 🏛️",
+    "Trate a cada novo dia como um novo começo. — Sêneca 🏛️",
+    "Devemos sofrer o que não podemos evitar. — Sêneca 🏛️",
 ];
 
 function getGreeting() {
@@ -1198,7 +1149,6 @@ function switchTab(tabName) {
 }
 
 function renderDashboard() {
-    // saudação
     const greetEl = document.getElementById('dash-greeting');
     if (greetEl) {
         const perfil = getPerfil();
@@ -1206,40 +1156,35 @@ function renderDashboard() {
         greetEl.textContent = getGreeting().replace('!', nome + '!');
     }
 
-    // data
     const dateEl = document.getElementById('dash-date');
     if (dateEl) {
-        const now = new Date();
-        dateEl.textContent = now.toLocaleDateString('pt-BR', {
+        dateEl.textContent = new Date().toLocaleDateString('pt-BR', {
             weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
         });
     }
 
-    // frase do dia (muda uma vez por dia baseado na data)
     const quoteEl = document.getElementById('dash-quote');
     if (quoteEl) {
         const idx = new Date().getDate() % FRASES.length;
         quoteEl.textContent = FRASES[idx];
     }
 
-    // streak (dias consecutivos com hábitos)
     const streakEl = document.getElementById('dash-streak');
     if (streakEl) {
-        const data = getHabitsData();
-        let streak = 0;
+        const data  = getHabitsData();
+        let streak  = 0;
         const today = new Date();
         for (let i = 0; i < 30; i++) {
             const d = new Date(today);
             d.setDate(today.getDate() - i);
             const key = d.toLocaleDateString('pt-BR');
-            const h = data[key] || {};
+            const h   = data[key] || {};
             if (Object.values(h).some(v => v)) streak++;
             else if (i > 0) break;
         }
         streakEl.textContent = streak > 0 ? `🔥 ${streak} dia${streak > 1 ? 's' : ''} seguido${streak > 1 ? 's' : ''}` : '🎯 Comece hoje!';
     }
 
-    // card água
     const meta  = getWaterMeta();
     const total = getTodayTotal();
     const pct   = Math.min(100, Math.round((total / meta) * 100));
@@ -1250,7 +1195,6 @@ function renderDashboard() {
     if (aguaBar) { aguaBar.style.width = pct + '%'; aguaBar.classList.toggle('done', pct >= 100); }
     if (aguaSub) aguaSub.textContent = pct + '% da meta (' + meta.toLocaleString('pt-BR') + ' ml)';
 
-    // card peso
     const pesoData = getPesoData();
     const today    = new Date().toLocaleDateString('pt-BR');
     const pesoHoje = pesoData.find(e => e.date === today);
@@ -1272,19 +1216,16 @@ function renderDashboard() {
         if (pesoSub) pesoSub.textContent = 'Toque para registrar';
     }
 
-    // relatório semanal
     renderWeeklyReport();
 
-    // hábitos
     const habits = getTodayHabits();
     ['treino','estudo','sono','hidratacao','alimentacao','produtividade'].forEach(key => {
-        const item = document.getElementById('hab-' + key);
+        const item  = document.getElementById('hab-' + key);
         const check = document.getElementById('hc-' + key);
         if (item)  item.classList.toggle('done', !!habits[key]);
         if (check) check.textContent = habits[key] ? '✓' : '○';
     });
 
-    // tarefas de hoje da rotina
     renderDashTasks();
 }
 
@@ -1296,9 +1237,8 @@ function renderDashTasks() {
         weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric'
     });
 
-    // procura o bloco do dia de hoje
     const dayBlocks = document.querySelectorAll('#daysContainer .day-block');
-    let todayBlock = null;
+    let todayBlock  = null;
     dayBlocks.forEach(block => {
         const title = block.querySelector('.day-title');
         if (title && title.innerText.toLowerCase() === today.toLowerCase()) {
@@ -1311,8 +1251,7 @@ function renderDashTasks() {
         return;
     }
 
-    let html = '';
-    let hasItems = false;
+    let html = '', hasItems = false;
 
     todayBlock.querySelectorAll('.period').forEach(period => {
         const items = period.querySelectorAll('li');
@@ -1339,38 +1278,28 @@ function renderDashTasks() {
     container.innerHTML = hasItems ? html : '<div class="dash-empty">Nenhuma tarefa adicionada para hoje.</div>';
 }
 
-// render inicial do dashboard
 renderDashboard();
 
-// atualiza dashboard quando muda de aba
 document.querySelectorAll('.nav-tab').forEach(tab => {
     tab.addEventListener('click', () => {
-        if (tab.dataset.tab === 'dashboard') {
-            setTimeout(renderDashboard, 50);
-        }
+        if (tab.dataset.tab === 'dashboard') setTimeout(renderDashboard, 50);
     });
 });
 
 // ============================================
-// 1. GERAR DIAS POR INTERVALO DE DATAS
+// 1. GERAR DIAS
 // ============================================
 
 document.getElementById('generateDays').addEventListener('click', () => {
     const startValue = document.getElementById('startDate').value;
-    const endValue = document.getElementById('endDate').value;
+    const endValue   = document.getElementById('endDate').value;
 
-    if (!startValue || !endValue) {
-        alert("Selecione as duas datas.");
-        return;
-    }
+    if (!startValue || !endValue) { alert("Selecione as duas datas."); return; }
 
     const start = new Date(startValue + "T00:00:00");
-    const end = new Date(endValue + "T00:00:00");
+    const end   = new Date(endValue   + "T00:00:00");
 
-    if (start > end) {
-        alert("A data inicial não pode ser maior que a final.");
-        return;
-    }
+    if (start > end) { alert("A data inicial não pode ser maior que a final."); return; }
 
     const container = document.getElementById('daysContainer');
 
@@ -1383,10 +1312,7 @@ document.getElementById('generateDays').addEventListener('click', () => {
     let current = new Date(start);
     while (current <= end) {
         const dateString = current.toLocaleDateString('pt-BR', {
-            weekday: 'long',
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
+            weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric'
         });
         createDayBlock(dateString);
         current.setDate(current.getDate() + 1);
@@ -1401,7 +1327,7 @@ document.getElementById('generateDays').addEventListener('click', () => {
 
 function createDayBlock(dateString) {
     const container = document.getElementById('daysContainer');
-    const dayDiv = document.createElement('div');
+    const dayDiv    = document.createElement('div');
     dayDiv.classList.add('day-block');
     dayDiv.innerHTML = `
         <h2 class="day-title">${dateString}</h2>
@@ -1429,12 +1355,12 @@ function createPeriodHTML(name) {
 }
 
 // ============================================
-// 3. ADICIONAR ITEM NA LISTA
+// 3. ADICIONAR ITEM
 // ============================================
 
 function addDynamicItem(button, text = "", checked = false) {
     const period = button.closest('.period');
-    const ul = period.querySelector('ul');
+    const ul     = period.querySelector('ul');
 
     const li = document.createElement('li');
     li.draggable = true;
@@ -1445,24 +1371,18 @@ function addDynamicItem(button, text = "", checked = false) {
         <button class="delete-item-btn" style="margin-left:auto; opacity:0.3; border:none; background:none; color:inherit; cursor:pointer;">✕</button>
     `;
 
-    const span = li.querySelector('.item-text');
+    const span    = li.querySelector('.item-text');
     const checkbox = li.querySelector('input');
-    const handle = li.querySelector('.drag-handle');
+    const handle  = li.querySelector('.drag-handle');
 
     if (checked) span.style.textDecoration = "line-through";
 
     span.addEventListener('focus', () => {
-        if (span.classList.contains('placeholder')) {
-            span.innerText = "";
-            span.classList.remove('placeholder');
-        }
+        if (span.classList.contains('placeholder')) { span.innerText = ""; span.classList.remove('placeholder'); }
     });
 
     span.addEventListener('blur', () => {
-        if (span.innerText.trim() === "") {
-            span.innerText = "Digite aqui...";
-            span.classList.add('placeholder');
-        }
+        if (span.innerText.trim() === "") { span.innerText = "Digite aqui..."; span.classList.add('placeholder'); }
         saveAll();
     });
 
@@ -1473,25 +1393,15 @@ function addDynamicItem(button, text = "", checked = false) {
         saveAll();
     });
 
-    li.querySelector('.delete-item-btn').addEventListener('click', () => {
-        li.remove();
-        saveAll();
-    });
+    li.querySelector('.delete-item-btn').addEventListener('click', () => { li.remove(); saveAll(); });
 
     span.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            addDynamicItem(button);
-        }
+        if (e.key === 'Enter') { e.preventDefault(); addDynamicItem(button); }
     });
 
-    // ── DRAG AND DROP (mouse) ──
+    // Drag mouse
     li.addEventListener('dragstart', (e) => {
-        // só inicia se o handle foi clicado
-        if (!e.target.closest('.drag-handle') && e.target !== handle) {
-            e.preventDefault();
-            return;
-        }
+        if (!e.target.closest('.drag-handle') && e.target !== handle) { e.preventDefault(); return; }
         li.classList.add('dragging');
         e.dataTransfer.effectAllowed = 'move';
     });
@@ -1508,47 +1418,24 @@ function addDynamicItem(button, text = "", checked = false) {
         if (!dragging || dragging === li) return;
         ul.querySelectorAll('li').forEach(el => el.classList.remove('drag-over'));
         li.classList.add('drag-over');
-
         const rect = li.getBoundingClientRect();
         const midY = rect.top + rect.height / 2;
-        if (e.clientY < midY) {
-            ul.insertBefore(dragging, li);
-        } else {
-            ul.insertBefore(dragging, li.nextSibling);
-        }
+        if (e.clientY < midY) ul.insertBefore(dragging, li);
+        else                   ul.insertBefore(dragging, li.nextSibling);
     });
 
-    li.addEventListener('dragleave', () => {
-        li.classList.remove('drag-over');
-    });
+    li.addEventListener('dragleave', () => li.classList.remove('drag-over'));
+    li.addEventListener('drop', (e) => { e.preventDefault(); li.classList.remove('drag-over'); });
 
-    li.addEventListener('drop', (e) => {
-        e.preventDefault();
-        li.classList.remove('drag-over');
-    });
-
-    // ── TOUCH DRAG (mobile) ──
-    let touchDragging = null;
-    let touchClone = null;
-    let touchOffsetY = 0;
+    // Touch drag
+    let touchDragging = null, touchClone = null, touchOffsetY = 0;
 
     handle.addEventListener('touchstart', (e) => {
         const touch = e.touches[0];
         touchDragging = li;
-        touchOffsetY = touch.clientY - li.getBoundingClientRect().top;
-
+        touchOffsetY  = touch.clientY - li.getBoundingClientRect().top;
         touchClone = li.cloneNode(true);
-        touchClone.style.cssText = `
-            position: fixed;
-            z-index: 9999;
-            left: ${li.getBoundingClientRect().left}px;
-            width: ${li.offsetWidth}px;
-            opacity: 0.85;
-            pointer-events: none;
-            background: var(--card-hover);
-            border-radius: 6px;
-            padding: 6px 4px;
-        `;
+        touchClone.style.cssText = `position:fixed;z-index:9999;left:${li.getBoundingClientRect().left}px;width:${li.offsetWidth}px;opacity:.85;pointer-events:none;background:var(--card-hover);border-radius:6px;padding:6px 4px;`;
         document.body.appendChild(touchClone);
         li.classList.add('dragging');
         e.preventDefault();
@@ -1557,29 +1444,20 @@ function addDynamicItem(button, text = "", checked = false) {
     handle.addEventListener('touchmove', (e) => {
         if (!touchDragging) return;
         const touch = e.touches[0];
-        const y = touch.clientY - touchOffsetY;
-        touchClone.style.top = `${y}px`;
-
+        touchClone.style.top = `${touch.clientY - touchOffsetY}px`;
         const elements = ul.querySelectorAll('li:not(.dragging)');
         elements.forEach(el => el.classList.remove('drag-over'));
-
         let target = null;
         elements.forEach(el => {
             const rect = el.getBoundingClientRect();
-            if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-                target = el;
-            }
+            if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) target = el;
         });
-
         if (target) {
             target.classList.add('drag-over');
             const rect = target.getBoundingClientRect();
             const midY = rect.top + rect.height / 2;
-            if (touch.clientY < midY) {
-                ul.insertBefore(touchDragging, target);
-            } else {
-                ul.insertBefore(touchDragging, target.nextSibling);
-            }
+            if (touch.clientY < midY) ul.insertBefore(touchDragging, target);
+            else                       ul.insertBefore(touchDragging, target.nextSibling);
         }
         e.preventDefault();
     }, { passive: false });
@@ -1615,28 +1493,20 @@ function saveAll() {
             period.querySelectorAll('li').forEach(li => {
                 const text = li.querySelector('.item-text').innerText;
                 if (text !== "Digite aqui...") {
-                    items.push({
-                        text: text,
-                        checked: li.querySelector('input').checked
-                    });
+                    items.push({ text: text, checked: li.querySelector('input').checked });
                 }
             });
-            dayData.periods.push({
-                name: period.dataset.periodName,
-                items: items
-            });
+            dayData.periods.push({ name: period.dataset.periodName, items: items });
         });
 
         days.push(dayData);
     });
 
-    const dataToSave = {
+    localStorage.setItem('my_routine_data', JSON.stringify({
         pageTitle: document.getElementById('pageTitle').innerText,
         weight: document.getElementById('weightInput').value,
         days: days
-    };
-
-    localStorage.setItem('my_routine_data', JSON.stringify(dataToSave));
+    }));
 }
 
 function loadAll() {
@@ -1661,11 +1531,8 @@ function loadAll() {
         dayData.periods.forEach(periodData => {
             const periodDiv = Array.from(lastDayBlock.querySelectorAll('.period'))
                 .find(p => p.dataset.periodName === periodData.name);
-
             const btn = periodDiv.querySelector('.add-period-btn');
-            periodData.items.forEach(item => {
-                addDynamicItem(btn, item.text, item.checked);
-            });
+            periodData.items.forEach(item => addDynamicItem(btn, item.text, item.checked));
         });
     });
 }
@@ -1676,26 +1543,23 @@ function loadAll() {
 
 document.getElementById('calcWater').addEventListener('click', () => {
     const weight = parseFloat(document.getElementById('weightInput').value);
-    if (!weight || weight <= 0) {
-        alert("Digite um peso válido!");
-        return;
-    }
+    if (!weight || weight <= 0) { alert("Digite um peso válido!"); return; }
     const liters = ((weight * 35) / 1000).toFixed(2);
     document.getElementById('waterResult').innerText = `💧 Beba pelo menos ${liters}L de água por dia!`;
     saveAll();
 });
 
 // ============================================
-// 6. TÍTULO COM LIMITE DE CARACTERES
+// 6. TÍTULO
 // ============================================
 
 document.getElementById('pageTitle').addEventListener('input', () => {
-    const el = document.getElementById('pageTitle');
+    const el  = document.getElementById('pageTitle');
     const max = parseInt(el.dataset.maxlength);
     if (el.innerText.length > max) {
         el.innerText = el.innerText.substring(0, max);
         const range = document.createRange();
-        const sel = window.getSelection();
+        const sel   = window.getSelection();
         range.selectNodeContents(el);
         range.collapse(false);
         sel.removeAllRanges();
@@ -1705,44 +1569,33 @@ document.getElementById('pageTitle').addEventListener('input', () => {
 });
 
 // ============================================
-// 7. BLOQUEAR DATAS PASSADAS
+// 7. DATAS
 // ============================================
 
 function configurarDatas() {
     const startInput = document.getElementById('startDate');
-    const endInput = document.getElementById('endDate');
+    const endInput   = document.getElementById('endDate');
 
-    const hoje = new Date();
-    const offset = hoje.getTimezoneOffset();
+    const hoje      = new Date();
+    const offset    = hoje.getTimezoneOffset();
     const hojeLocal = new Date(hoje.getTime() - (offset * 60 * 1000)).toISOString().split('T')[0];
 
     startInput.min = hojeLocal;
-    endInput.min = hojeLocal;
+    endInput.min   = hojeLocal;
 
     startInput.addEventListener('change', () => {
         if (startInput.value) {
-            if (startInput.value < hojeLocal) {
-                alert("Você não pode selecionar uma data no passado!");
-                startInput.value = hojeLocal;
-            }
+            if (startInput.value < hojeLocal) { alert("Você não pode selecionar uma data no passado!"); startInput.value = hojeLocal; }
             endInput.min = startInput.value;
-            if (endInput.value && endInput.value < startInput.value) {
-                endInput.value = startInput.value;
-            }
+            if (endInput.value && endInput.value < startInput.value) endInput.value = startInput.value;
         }
         saveAll();
     });
 
     endInput.addEventListener('change', () => {
         if (endInput.value) {
-            if (endInput.value < hojeLocal) {
-                alert("A data final não pode ser no passado!");
-                endInput.value = hojeLocal;
-            }
-            if (startInput.value && endInput.value < startInput.value) {
-                alert("A data final não pode ser anterior à data inicial!");
-                endInput.value = startInput.value;
-            }
+            if (endInput.value < hojeLocal) { alert("A data final não pode ser no passado!"); endInput.value = hojeLocal; }
+            if (startInput.value && endInput.value < startInput.value) { alert("A data final não pode ser anterior à data inicial!"); endInput.value = startInput.value; }
         }
         saveAll();
     });
@@ -1761,8 +1614,6 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     }
 });
 
-// ============================================
-// DASHBOARD
 // ============================================
 // 9. INICIALIZAR
 // ============================================

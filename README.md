@@ -10,7 +10,7 @@ Acesse: https://daniel-mscs.github.io/minha-rotina/
 
 **Dashboard (Início)**
 - Saudação personalizada com nome do usuário e horário do dia
-- Frase motivacional diária (muda uma vez por dia)
+- Frase motivacional e estoica diária (20 frases, muda uma vez por dia)
 - Cards de resumo: consumo de água e peso do dia com variação
 - Hábitos diários com marcação por toque (Treino, Estudo, Sono, Hidratação, Alimentação, Produtividade)
 - Streak de dias consecutivos de uso
@@ -42,7 +42,7 @@ Acesse: https://daniel-mscs.github.io/minha-rotina/
 - Média semanal de perda ou ganho
 
 **Controle de Macros**
-- Tabela com 20 alimentos comuns pré-cadastrados
+- Tabela com 35 alimentos pré-cadastrados com busca por autocomplete
 - Cálculo automático de kcal, proteína, carboidrato e gordura por grama
 - Preview dos macros antes de confirmar o registro
 - Meta calórica diária personalizável
@@ -56,6 +56,22 @@ Acesse: https://daniel-mscs.github.io/minha-rotina/
 - Salvamento automático via localStorage
 - Instalável como app (PWA) no Android e iOS
 - Funciona offline após primeira visita
+
+---
+
+## Alimentos cadastrados nos Macros
+
+Carboidratos: arroz branco, arroz integral, batata doce, batata inglesa, batata frita, macarrão, pão francês, aveia, feijão, lentilha
+
+Proteínas: frango (peito e coxa), carne bovina, carne moída, tilápia, salmão, atum, sardinha, ovo inteiro, clara de ovo, whey protein, iogurte grego, queijo cottage
+
+Laticínios: leite em pó integral, leite desnatado
+
+Frutas: banana, maçã, laranja, mamão
+
+Gorduras: azeite de oliva, amendoim, castanha do pará
+
+Vegetais: salada, tomate, brócolis, cenoura
 
 ---
 
@@ -116,4 +132,4 @@ Basta abrir o `index.html` no navegador ou usar o Live Server do VS Code.
 
 ---
 
-Desenvolvido por [Daniel](https://github.com/daniel-mscs) — v3.0
+Desenvolvido por [Daniel](https://github.com/daniel-mscs) — v4.0

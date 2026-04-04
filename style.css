@@ -1752,7 +1752,7 @@ body:not(.light) .social-links a img { filter: invert(1); }
    AUTOCOMPLETE STYLES
    =============================== */
 
-.autocomplete-wrapper {
+.mc-autocomplete-wrap {
   position: relative;
   width: 100%;
 }
@@ -1761,19 +1761,20 @@ body:not(.light) .social-links a img { filter: invert(1); }
   width: 100%;
   padding: 12px;
   font-size: 14px;
-  border: 2px solid #ddd;
-  border-radius: 6px;
-  background: #fff;
-  color: #333;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
   outline: none;
   transition: border-color 0.2s;
+  box-sizing: border-box;
 }
 
 #mc-food-input:focus {
-  border-color: #4a90e2;
+  border-color: var(--accent);
 }
 
-.autocomplete-list {
+.mc-suggestions-list {
   position: absolute;
   top: 100%;
   left: 0;
@@ -1781,17 +1782,17 @@ body:not(.light) .social-links a img { filter: invert(1); }
   margin: 4px 0 0 0;
   padding: 0;
   list-style: none;
-  background: #fff;
-  border: 2px solid #4a90e2;
-  border-radius: 6px;
+  background: var(--card);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
   max-height: 250px;
   overflow-y: auto;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   display: none;
 }
 
-.autocomplete-list.show {
+.mc-suggestions-list.show {
   display: block;
 }
 
@@ -1799,8 +1800,8 @@ body:not(.light) .social-links a img { filter: invert(1); }
   padding: 12px;
   cursor: pointer;
   font-size: 14px;
-  color: #333;
-  border-bottom: 1px solid #f0f0f0;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
   transition: background-color 0.15s;
 }
 
@@ -1810,23 +1811,23 @@ body:not(.light) .social-links a img { filter: invert(1); }
 
 .autocomplete-item:hover,
 .autocomplete-item.active {
-  background-color: #f0f8ff;
+  background: var(--accent-dim);
 }
 
 .autocomplete-item-name {
   font-weight: 600;
-  color: #2c3e50;
+  color: var(--text);
 }
 
 .autocomplete-item-info {
   font-size: 12px;
-  color: #7f8c8d;
+  color: var(--muted);
   margin-top: 4px;
 }
 
 .autocomplete-no-results {
   padding: 12px;
   text-align: center;
-  color: #999;
+  color: var(--muted);
   font-size: 13px;
 }
