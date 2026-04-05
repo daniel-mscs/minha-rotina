@@ -14,22 +14,39 @@
   </head>
   <body>
 
-    <!-- ── BARRA DE NAVEGAÇÃO ── -->
-    <div class="navbar">
-      <div class="nav-tabs">
-        <button class="nav-tab active" data-tab="dashboard">🏠 <span class="nav-label">Início</span></button>
-        <button class="nav-tab" data-tab="rotina">📋 <span class="nav-label">Rotina</span></button>
-        <button class="nav-tab" data-tab="agua">💧 <span class="nav-label">Água</span></button>
-        <button class="nav-tab" data-tab="peso">⚖️ <span class="nav-label">Peso</span></button>
-        <button class="nav-tab" data-tab="macros">🍽️ <span class="nav-label">Macros</span></button>
-        <button class="nav-tab" data-tab="ajuda">❓ <span class="nav-label">Ajuda</span></button>
-        <button class="nav-tab" data-tab="contato">📬 <span class="nav-label">Contato</span></button>
+    <!-- ── OVERLAY DO MENU ── -->
+    <div id="menu-overlay" class="menu-overlay"></div>
+
+    <!-- ── MENU LATERAL ── -->
+    <nav id="side-menu" class="side-menu">
+      <div class="side-menu-header">
+        <span class="side-menu-title">Minha Rotina</span>
+        <button id="menu-close-btn" class="menu-close-btn">✕</button>
       </div>
-      <div class="nav-right">
-        <button id="exportPdfBtn" class="icon-btn pdf-btn" title="Exportar PDF">📄 <span class="nav-label">PDF</span></button>
-        <button id="perfilBtn" class="icon-btn" title="Meu perfil" onclick="showPerfilModal()">👤</button>
-        <button id="themeBtn" class="icon-btn" title="Alternar tema">🌙</button>
+      <div class="side-menu-nav">
+        <button class="side-tab active" data-tab="dashboard">🏠 Início</button>
+        <button class="side-tab" data-tab="rotina">📋 Rotina</button>
+        <button class="side-tab" data-tab="agua">💧 Água</button>
+        <button class="side-tab" data-tab="peso">⚖️ Peso</button>
+        <button class="side-tab" data-tab="macros">🍽️ Macros</button>
+        <button class="side-tab" data-tab="stats">📊 Estatísticas</button>
+        <button class="side-tab" data-tab="ajuda">❓ Ajuda</button>
+        <button class="side-tab" data-tab="contato">📬 Contato</button>
       </div>
+      <div class="side-menu-footer">
+        <button id="exportPdfBtn" class="side-action-btn pdf-btn">📄 Exportar PDF</button>
+        <button id="perfilBtn" class="side-action-btn" onclick="showPerfilModal()">👤 Meu Perfil</button>
+        <button id="themeBtn" class="side-action-btn">🌙 Alternar tema</button>
+      </div>
+    </nav>
+
+    <!-- ── TOPBAR COMPACTA ── -->
+    <div class="topbar-nav">
+      <button id="menu-open-btn" class="hamburger-btn" title="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <span class="topbar-nav-title" id="topbar-title">Início</span>
+      <div style="width:40px;"></div>
     </div>
 
     <!-- ══════════════════════════════
@@ -47,6 +64,9 @@
           <div class="dash-streak" id="dash-streak" title="Dias consecutivos usando o app"></div>
         </div>
 
+        <!-- contador de dias até fim do ano -->
+        <div class="year-countdown" id="year-countdown"></div>
+
         <!-- frase motivacional -->
         <div class="dash-quote" id="dash-quote"></div>
 
@@ -61,7 +81,6 @@
               <div class="dc-sub" id="dc-agua-sub">0% da meta</div>
             </div>
           </div>
-
           <div class="dash-card" id="dc-peso" onclick="switchTab('peso')">
             <div class="dc-icon">⚖️</div>
             <div class="dc-info">
@@ -125,38 +144,18 @@
          ABA: ROTINA
     ══════════════════════════════ -->
     <div id="tab-rotina" class="tab">
-
       <header class="topbar">
-        <h1
-          contenteditable="true"
-          id="pageTitle"
-          data-placeholder="Digite o nome da sua rotina..."
-          data-maxlength="40"
-        >
-          Minha Rotina
-        </h1>
+        <h1 contenteditable="true" id="pageTitle" data-placeholder="Digite o nome da sua rotina..." data-maxlength="40">Minha Rotina</h1>
         <p class="subtitle">Marque, desmarque e edite seus blocos.</p>
         <button id="resetBtn">Resetar Tudo</button>
       </header>
-
-      <!-- DICAS DE OURO -->
       <section class="tips-section">
         <h2 class="tips-title">✨ Dicas de Ouro</h2>
         <div class="tips-container">
-          <div class="tip-card">
-            <span class="tip-icon">🌙</span>
-            <p>Priorize <strong>7-8h de sono</strong> para recuperação total.</p>
-          </div>
-          <div class="tip-card">
-            <span class="tip-icon">☀️</span>
-            <p>Acorde cedo para alinhar seu <strong>ciclo circadiano</strong>.</p>
-          </div>
-          <div class="tip-card">
-            <span class="tip-icon">💪</span>
-            <p>Exercite-se regularmente para manter o <strong>foco</strong>.</p>
-          </div>
+          <div class="tip-card"><span class="tip-icon">🌙</span><p>Priorize <strong>7-8h de sono</strong> para recuperação total.</p></div>
+          <div class="tip-card"><span class="tip-icon">☀️</span><p>Acorde cedo para alinhar seu <strong>ciclo circadiano</strong>.</p></div>
+          <div class="tip-card"><span class="tip-icon">💪</span><p>Exercite-se regularmente para manter o <strong>foco</strong>.</p></div>
         </div>
-        <!-- CALCULADORA DE ÁGUA -->
         <div class="water-section">
           <span class="tip-icon">💧</span>
           <p>Calcule sua <strong>ingestão de água</strong> diária:</p>
@@ -167,30 +166,15 @@
           <p id="waterResult" class="water-result"></p>
         </div>
       </section>
-
-      <!-- 3 VITÓRIAS DO DIA -->
       <section class="victories-container">
         <h2 class="victories-title">🏆 Suas 3 Vitórias do Dia</h2>
         <p class="victories-subtitle">Busque o equilíbrio em todos os pilares hoje.</p>
         <div class="victories-grid">
-          <div class="victory-card">
-            <span class="victory-icon">🧠</span>
-            <label>Mental</label>
-            <p>Conhecimento e Foco</p>
-          </div>
-          <div class="victory-card">
-            <span class="victory-icon">🏋️</span>
-            <label>Física</label>
-            <p>Saúde e Movimento</p>
-          </div>
-          <div class="victory-card">
-            <span class="victory-icon">🙏</span>
-            <label>Espiritual</label>
-            <p>Paz e Gratidão</p>
-          </div>
+          <div class="victory-card"><span class="victory-icon">🧠</span><label>Mental</label><p>Conhecimento e Foco</p></div>
+          <div class="victory-card"><span class="victory-icon">🏋️</span><label>Física</label><p>Saúde e Movimento</p></div>
+          <div class="victory-card"><span class="victory-icon">🙏</span><label>Espiritual</label><p>Paz e Gratidão</p></div>
         </div>
       </section>
-
       <main class="container">
         <div class="date-config">
           <label>Data inicial:</label>
@@ -201,22 +185,18 @@
         </div>
         <div id="daysContainer"></div>
       </main>
-
       <footer class="footer">
         <p class="dev-label">Desenvolvido por</p>
         <div class="social-links">
           <a href="https://www.instagram.com/daniel.mscs/" target="_blank">
-            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="18" />
-            daniel.mscs
+            <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram" width="18" />daniel.mscs
           </a>
           <a href="https://github.com/daniel-mscs" target="_blank">
-            <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" width="18" />
-            daniel-mscs
+            <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" width="18" />daniel-mscs
           </a>
         </div>
         <small>Dica: use Enter para criar novas tarefas rapidamente.</small>
       </footer>
-
     </div><!-- /tab-rotina -->
 
     <!-- ══════════════════════════════
@@ -226,32 +206,15 @@
       <div class="static-wrap">
         <h2 class="static-title">💧 Controle de Água</h2>
         <p class="static-sub" id="water-date-label"></p>
-
-        <!-- META + PROGRESS -->
         <div class="water-goal-card">
           <div class="water-goal-top">
-            <div>
-              <div class="water-goal-label">Meta diária</div>
-              <div class="water-goal-val"><span id="w-meta-display">2.500</span> ml</div>
-            </div>
-            <div>
-              <div class="water-goal-label">Consumido hoje</div>
-              <div class="water-goal-val" id="w-consumed">0 ml</div>
-            </div>
-            <div>
-              <div class="water-goal-label">Restante</div>
-              <div class="water-goal-val" id="w-remaining">—</div>
-            </div>
+            <div><div class="water-goal-label">Meta diária</div><div class="water-goal-val"><span id="w-meta-display">2.500</span> ml</div></div>
+            <div><div class="water-goal-label">Consumido hoje</div><div class="water-goal-val" id="w-consumed">0 ml</div></div>
+            <div><div class="water-goal-label">Restante</div><div class="water-goal-val" id="w-remaining">—</div></div>
           </div>
-
-          <!-- PROGRESS BAR -->
-          <div class="w-bar-track">
-            <div class="w-bar-fill" id="w-bar-fill"></div>
-          </div>
+          <div class="w-bar-track"><div class="w-bar-fill" id="w-bar-fill"></div></div>
           <div class="w-bar-pct" id="w-bar-pct">0%</div>
         </div>
-
-        <!-- META PERSONALIZADA -->
         <div class="water-section-block">
           <h3 class="water-block-title">Ajustar meta</h3>
           <div class="w-meta-row">
@@ -261,8 +224,6 @@
           </div>
           <p class="w-hint">💡 Sua calculadora indicou <strong id="w-calc-hint">—</strong> ml baseado no seu peso.</p>
         </div>
-
-        <!-- REGISTRO RÁPIDO -->
         <div class="water-section-block">
           <h3 class="water-block-title">Registrar consumo</h3>
           <div class="w-quick-btns">
@@ -276,24 +237,17 @@
             <button id="w-custom-add-btn">+ Adicionar</button>
           </div>
         </div>
-
-        <!-- LOG DO DIA -->
         <div class="water-section-block">
           <div class="w-log-header">
             <h3 class="water-block-title" style="margin:0;">Registros de hoje</h3>
             <button id="w-clear-day-btn" class="w-danger-btn">Zerar dia</button>
           </div>
-          <ul id="w-log-list" class="w-log-list">
-            <li class="w-log-empty">Nenhum registro ainda.</li>
-          </ul>
+          <ul id="w-log-list" class="w-log-list"><li class="w-log-empty">Nenhum registro ainda.</li></ul>
         </div>
-
-        <!-- HISTÓRICO -->
         <div class="water-section-block">
           <h3 class="water-block-title">Histórico dos últimos dias</h3>
           <div id="w-history" class="w-history"></div>
         </div>
-
       </div>
     </div><!-- /tab-agua -->
 
@@ -304,31 +258,12 @@
       <div class="static-wrap">
         <h2 class="static-title">⚖️ Controle de Peso</h2>
         <p class="static-sub">Registre seu peso diariamente e acompanhe sua evolução.</p>
-
-        <!-- CARDS IMC -->
         <div class="peso-cards" id="peso-cards">
-          <div class="peso-card">
-            <div class="peso-card-label">Peso atual</div>
-            <div class="peso-card-val" id="pc-peso">—</div>
-          </div>
-          <div class="peso-card">
-            <div class="peso-card-label">IMC</div>
-            <div class="peso-card-val" id="pc-imc">—</div>
-            <div class="peso-card-sub" id="pc-imc-class"></div>
-          </div>
-          <div class="peso-card">
-            <div class="peso-card-label">Gordura est.</div>
-            <div class="peso-card-val" id="pc-gord">—</div>
-            <div class="peso-card-sub">Fórmula Deurenberg</div>
-          </div>
-          <div class="peso-card">
-            <div class="peso-card-label">Peso ideal</div>
-            <div class="peso-card-val" id="pc-ideal">—</div>
-            <div class="peso-card-sub">IMC 22–24</div>
-          </div>
+          <div class="peso-card"><div class="peso-card-label">Peso atual</div><div class="peso-card-val" id="pc-peso">—</div></div>
+          <div class="peso-card"><div class="peso-card-label">IMC</div><div class="peso-card-val" id="pc-imc">—</div><div class="peso-card-sub" id="pc-imc-class"></div></div>
+          <div class="peso-card"><div class="peso-card-label">Gordura est.</div><div class="peso-card-val" id="pc-gord">—</div><div class="peso-card-sub">Fórmula Deurenberg</div></div>
+          <div class="peso-card"><div class="peso-card-label">Peso ideal</div><div class="peso-card-val" id="pc-ideal">—</div><div class="peso-card-sub">IMC 22–24</div></div>
         </div>
-
-        <!-- BARRA IMC -->
         <div class="peso-section-block">
           <h3 class="peso-block-title">Faixa de IMC</h3>
           <div class="imc-bar-wrap">
@@ -342,29 +277,17 @@
             <div style="position:relative;height:28px;">
               <div id="imc-marker" style="position:absolute;transform:translateX(-50%);font-size:11px;font-weight:600;color:var(--text);display:none;">▲ <span id="imc-marker-val"></span></div>
             </div>
-            <div class="imc-labels">
-              <span>Abaixo</span><span>Normal</span><span>Sobrepeso</span><span>Ob. I</span><span>Ob. II+</span>
-            </div>
+            <div class="imc-labels"><span>Abaixo</span><span>Normal</span><span>Sobrepeso</span><span>Ob. I</span><span>Ob. II+</span></div>
           </div>
         </div>
-
-        <!-- CONFIGURAÇÕES -->
         <div class="peso-section-block">
           <h3 class="peso-block-title">Suas medidas</h3>
           <div class="peso-config-row">
-            <div class="peso-config-item">
-              <label>Altura (cm)</label>
-              <input type="number" id="p-altura" placeholder="Ex: 180" min="100" max="250" />
-            </div>
-            <div class="peso-config-item">
-              <label>Idade</label>
-              <input type="number" id="p-idade" placeholder="Ex: 28" min="10" max="100" />
-            </div>
+            <div class="peso-config-item"><label>Altura (cm)</label><input type="number" id="p-altura" placeholder="Ex: 180" min="100" max="250" /></div>
+            <div class="peso-config-item"><label>Idade</label><input type="number" id="p-idade" placeholder="Ex: 28" min="10" max="100" /></div>
             <button id="p-config-save-btn">Salvar</button>
           </div>
         </div>
-
-        <!-- REGISTRAR PESO -->
         <div class="peso-section-block">
           <h3 class="peso-block-title">Registrar peso de hoje</h3>
           <div class="peso-add-row">
@@ -373,8 +296,6 @@
             <button id="p-add-btn">+ Registrar</button>
           </div>
         </div>
-
-        <!-- META DE PESO -->
         <div class="peso-section-block">
           <h3 class="peso-block-title">Meta de peso</h3>
           <div class="w-meta-row">
@@ -384,8 +305,6 @@
           </div>
           <div id="p-meta-result" class="p-meta-result" style="display:none;"></div>
         </div>
-
-        <!-- MÉDIA SEMANAL -->
         <div class="peso-section-block">
           <div class="peso-media-header">
             <h3 class="peso-block-title" style="margin:0;">Média semanal</h3>
@@ -393,17 +312,11 @@
           </div>
           <div id="p-media-result" class="p-media-result" style="display:none;"></div>
         </div>
-
-        <!-- GRÁFICO -->
         <div class="peso-section-block">
           <h3 class="peso-block-title">Evolução do peso</h3>
-          <div style="position:relative;width:100%;height:220px;">
-            <canvas id="pesoChart"></canvas>
-          </div>
+          <div style="position:relative;width:100%;height:220px;"><canvas id="pesoChart"></canvas></div>
           <p class="p-chart-empty" id="p-chart-empty">Registre pelo menos 2 pesos para ver o gráfico.</p>
         </div>
-
-        <!-- HISTÓRICO -->
         <div class="peso-section-block">
           <div class="peso-media-header">
             <h3 class="peso-block-title" style="margin:0;">Histórico</h3>
@@ -411,9 +324,7 @@
           </div>
           <ul id="p-log-list" class="w-log-list" style="margin-top:12px;"></ul>
         </div>
-
-        <p class="p-disclaimer">⚠️ A estimativa de gordura corporal é baseada na fórmula de Deurenberg (IMC + idade + sexo) e serve apenas como referência. Para valores precisos, consulte um profissional de saúde.</p>
-
+        <p class="p-disclaimer">⚠️ A estimativa de gordura corporal é baseada na fórmula de Deurenberg e serve apenas como referência. Para valores precisos, consulte um profissional de saúde.</p>
       </div>
     </div><!-- /tab-peso -->
 
@@ -424,37 +335,12 @@
       <div class="static-wrap">
         <h2 class="static-title">🍽️ Controle de Macros</h2>
         <p class="static-sub" id="macros-date-label"></p>
-
-        <!-- RESUMO DO DIA -->
         <div class="macros-summary">
-          <div class="macro-card kcal">
-            <div class="macro-card-label">Calorias</div>
-            <div class="macro-card-val" id="mc-kcal">0</div>
-            <div class="macro-card-unit">kcal</div>
-            <div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-kcal-bar" style="background:#f5c518;"></div></div>
-            <div class="macro-card-meta" id="mc-kcal-meta"></div>
-          </div>
-          <div class="macro-card prot">
-            <div class="macro-card-label">Proteína</div>
-            <div class="macro-card-val" id="mc-prot">0</div>
-            <div class="macro-card-unit">g</div>
-            <div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-prot-bar" style="background:#3b82f6;"></div></div>
-          </div>
-          <div class="macro-card carb">
-            <div class="macro-card-label">Carboidrato</div>
-            <div class="macro-card-val" id="mc-carb">0</div>
-            <div class="macro-card-unit">g</div>
-            <div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-carb-bar" style="background:#f59e0b;"></div></div>
-          </div>
-          <div class="macro-card gord">
-            <div class="macro-card-label">Gordura</div>
-            <div class="macro-card-val" id="mc-gord">0</div>
-            <div class="macro-card-unit">g</div>
-            <div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-gord-bar" style="background:#ef4444;"></div></div>
-          </div>
+          <div class="macro-card kcal"><div class="macro-card-label">Calorias</div><div class="macro-card-val" id="mc-kcal">0</div><div class="macro-card-unit">kcal</div><div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-kcal-bar" style="background:#f5c518;"></div></div><div class="macro-card-meta" id="mc-kcal-meta"></div></div>
+          <div class="macro-card prot"><div class="macro-card-label">Proteína</div><div class="macro-card-val" id="mc-prot">0</div><div class="macro-card-unit">g</div><div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-prot-bar" style="background:#3b82f6;"></div></div></div>
+          <div class="macro-card carb"><div class="macro-card-label">Carboidrato</div><div class="macro-card-val" id="mc-carb">0</div><div class="macro-card-unit">g</div><div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-carb-bar" style="background:#f59e0b;"></div></div></div>
+          <div class="macro-card gord"><div class="macro-card-label">Gordura</div><div class="macro-card-val" id="mc-gord">0</div><div class="macro-card-unit">g</div><div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-gord-bar" style="background:#ef4444;"></div></div></div>
         </div>
-
-        <!-- META DE KCAL -->
         <div class="water-section-block">
           <h3 class="water-block-title">Meta calórica diária</h3>
           <div class="w-meta-row">
@@ -464,15 +350,13 @@
           </div>
           <p class="w-hint" id="mc-meta-hint">💡 Para emagrecer, consuma ~500 kcal abaixo do seu gasto diário.</p>
         </div>
-
-        <!-- ADICIONAR ALIMENTO -->
         <div class="water-section-block">
           <h3 class="water-block-title">Adicionar alimento</h3>
           <div class="mc-autocomplete-wrap">
             <input type="text" id="mc-food-input" placeholder="Buscar alimento..." autocomplete="off" />
-             <ul id="mc-food-suggestions" class="mc-suggestions-list"></ul>
-             <input type="hidden" id="mc-food-index" />
-            </div>
+            <ul id="mc-food-suggestions" class="mc-suggestions-list"></ul>
+            <input type="hidden" id="mc-food-index" />
+          </div>
           <div class="macros-add-row" style="margin-top:8px;">
             <input type="number" id="mc-grams-input" placeholder="Quantidade (g)" min="1" max="2000" step="1"/>
             <span class="w-meta-unit">g</span>
@@ -480,20 +364,87 @@
           </div>
           <div id="mc-preview" class="mc-preview" style="display:none;"></div>
         </div>
-
-        <!-- LOG DO DIA -->
         <div class="water-section-block">
           <div class="w-log-header">
             <h3 class="water-block-title" style="margin:0;">Refeições de hoje</h3>
             <button id="mc-clear-btn" class="w-danger-btn">Zerar dia</button>
           </div>
-          <ul id="mc-log-list" class="w-log-list" style="margin-top:12px;">
-            <li class="w-log-empty">Nenhum alimento registrado.</li>
-          </ul>
+          <ul id="mc-log-list" class="w-log-list" style="margin-top:12px;"><li class="w-log-empty">Nenhum alimento registrado.</li></ul>
+        </div>
+      </div>
+    </div><!-- /tab-macros -->
+
+    <!-- ══════════════════════════════
+         ABA: ESTATÍSTICAS
+    ══════════════════════════════ -->
+    <div id="tab-stats" class="tab">
+      <div class="static-wrap">
+        <h2 class="static-title">📊 Estatísticas</h2>
+        <p class="static-sub">Visão dos últimos 30 dias</p>
+
+        <!-- cards resumo -->
+        <div class="stats-cards" id="stats-cards">
+          <div class="stats-card">
+            <div class="stats-card-label">Média água/dia</div>
+            <div class="stats-card-val" id="st-agua-media">—</div>
+            <div class="stats-card-sub" id="st-agua-sub"></div>
+          </div>
+          <div class="stats-card">
+            <div class="stats-card-label">Variação de peso</div>
+            <div class="stats-card-val" id="st-peso-var">—</div>
+            <div class="stats-card-sub" id="st-peso-sub"></div>
+          </div>
+          <div class="stats-card">
+            <div class="stats-card-label">Hábitos</div>
+            <div class="stats-card-val" id="st-habitos-pct">—</div>
+            <div class="stats-card-sub" id="st-habitos-sub"></div>
+          </div>
+          <div class="stats-card">
+            <div class="stats-card-label">Média kcal/dia</div>
+            <div class="stats-card-val" id="st-kcal-media">—</div>
+            <div class="stats-card-sub" id="st-kcal-sub"></div>
+          </div>
+        </div>
+
+        <!-- gráfico água -->
+        <div class="stats-section-block">
+          <h3 class="stats-block-title">💧 Consumo de água (30 dias)</h3>
+          <div style="position:relative;width:100%;height:200px;">
+            <canvas id="statsAguaChart"></canvas>
+          </div>
+        </div>
+
+        <!-- gráfico peso -->
+        <div class="stats-section-block">
+          <h3 class="stats-block-title">⚖️ Evolução do peso (30 dias)</h3>
+          <div style="position:relative;width:100%;height:200px;">
+            <canvas id="statsPesoChart"></canvas>
+          </div>
+          <p class="p-chart-empty" id="st-peso-empty" style="display:none;">Registre pelo menos 2 pesos para ver o gráfico.</p>
+        </div>
+
+        <!-- heatmap hábitos -->
+        <div class="stats-section-block">
+          <h3 class="stats-block-title">✅ Hábitos cumpridos (30 dias)</h3>
+          <div id="stats-habits-heatmap" class="stats-heatmap"></div>
+          <div class="stats-heatmap-legend">
+            <span class="hm-0"></span> 0
+            <span class="hm-1"></span> 1–2
+            <span class="hm-2"></span> 3–4
+            <span class="hm-3"></span> 5–6 hábitos
+          </div>
+        </div>
+
+        <!-- gráfico macros -->
+        <div class="stats-section-block">
+          <h3 class="stats-block-title">🍽️ Calorias por dia (30 dias)</h3>
+          <div style="position:relative;width:100%;height:200px;">
+            <canvas id="statsMacrosChart"></canvas>
+          </div>
         </div>
 
       </div>
-    </div><!-- /tab-macros -->
+    </div><!-- /tab-stats -->
 
     <!-- ══════════════════════════════
          ABA: AJUDA
@@ -501,44 +452,26 @@
     <div id="tab-ajuda" class="tab">
       <div class="static-wrap">
         <h2 class="static-title">❓ Como usar o app</h2>
-
         <div class="help-group-title">🏠 Início (Dashboard)</div>
-        <div class="help-item"><div class="help-num">1</div><div class="help-body"><strong>Visão geral do seu dia</strong><p>A aba Início mostra um resumo completo: saudação com seu nome, data, frase motivacional, cards de água e peso, hábitos do dia e tarefas de hoje.</p></div></div>
-        <div class="help-item"><div class="help-num">2</div><div class="help-body"><strong>Hábitos diários</strong><p>Toque em qualquer hábito (Treino, Estudo, Sono, Hidratação, Alimentação, Produtividade) para marcá-lo como feito. Fica verde quando concluído e reseta automaticamente todo dia.</p></div></div>
-        <div class="help-item"><div class="help-num">3</div><div class="help-body"><strong>Streak de dias consecutivos 🔥</strong><p>Contador no topo que mostra quantos dias seguidos você usou o app e marcou pelo menos um hábito.</p></div></div>
-        <div class="help-item"><div class="help-num">4</div><div class="help-body"><strong>Relatório semanal 📊</strong><p>Todo sábado aparece automaticamente um relatório com média de água, variação de peso, % de hábitos cumpridos e média calórica da semana.</p></div></div>
-        <div class="help-item"><div class="help-num">5</div><div class="help-body"><strong>Tarefas de hoje</strong><p>Puxa automaticamente as tarefas da aba Rotina que correspondem ao dia atual, com o status de cada uma.</p></div></div>
-
+        <div class="help-item"><div class="help-num">1</div><div class="help-body"><strong>Visão geral do seu dia</strong><p>Saudação, data, contador de dias até fim do ano, frase motivacional, cards de água e peso, hábitos do dia e tarefas de hoje.</p></div></div>
+        <div class="help-item"><div class="help-num">2</div><div class="help-body"><strong>Hábitos diários</strong><p>Toque em qualquer hábito (Treino, Estudo, Sono, Hidratação, Alimentação, Produtividade) para marcá-lo. Reseta automaticamente todo dia.</p></div></div>
+        <div class="help-item"><div class="help-num">3</div><div class="help-body"><strong>Streak 🔥</strong><p>Mostra quantos dias seguidos você usou o app e marcou pelo menos um hábito.</p></div></div>
+        <div class="help-item"><div class="help-num">4</div><div class="help-body"><strong>Relatório semanal 📊</strong><p>Todo sábado aparece automaticamente com média de água, variação de peso, % de hábitos e média calórica da semana.</p></div></div>
         <div class="help-group-title">📋 Rotina</div>
-        <div class="help-item"><div class="help-num">6</div><div class="help-body"><strong>Gerar rotina por período</strong><p>Escolha a <em>Data inicial</em> e <em>Data final</em> e clique em <strong>Gerar Rotina</strong>. Um bloco é criado para cada dia com 4 períodos: Acordar, Manhã, Tarde e Noite.</p></div></div>
-        <div class="help-item"><div class="help-num">7</div><div class="help-body"><strong>Adicionar e editar tarefas</strong><p>Clique em <strong>+ Nova tarefa</strong> para adicionar. Clique no texto para editar. Pressione <kbd>Enter</kbd> para criar a próxima rapidamente. Clique em <strong>✕</strong> para excluir.</p></div></div>
-        <div class="help-item"><div class="help-num">8</div><div class="help-body"><strong>Reordenar tarefas (drag & drop)</strong><p>Segure o ícone <strong>⠿</strong> à esquerda da tarefa e arraste para cima ou para baixo. Funciona no desktop e no celular com toque.</p></div></div>
-        <div class="help-item"><div class="help-num">9</div><div class="help-body"><strong>Resetar rotina</strong><p>O botão <strong>Resetar Tudo</strong> apaga apenas a rotina (dias e tarefas). Seus dados de água, peso, macros, hábitos e perfil <strong>não são apagados</strong>.</p></div></div>
-
+        <div class="help-item"><div class="help-num">5</div><div class="help-body"><strong>Gerar rotina</strong><p>Escolha datas e clique em <strong>Gerar Rotina</strong>. Um bloco por dia com 4 períodos: Acordar, Manhã, Tarde e Noite.</p></div></div>
+        <div class="help-item"><div class="help-num">6</div><div class="help-body"><strong>Tarefas</strong><p>Clique em <strong>+ Nova tarefa</strong> para adicionar. Enter cria a próxima. ✕ exclui. ⠿ arrasta para reordenar.</p></div></div>
+        <div class="help-item"><div class="help-num">7</div><div class="help-body"><strong>Resetar rotina</strong><p>Apaga apenas a rotina. Água, peso, macros, hábitos e perfil <strong>não são apagados</strong>.</p></div></div>
         <div class="help-group-title">💧 Controle de Água</div>
-        <div class="help-item"><div class="help-num">10</div><div class="help-body"><strong>Meta diária</strong><p>A meta padrão é 2.500 ml. Personalize em <em>Ajustar meta</em>. A fórmula recomendada é <strong>peso (kg) × 35 ml</strong> — ex: 110 kg = 3.850 ml/dia.</p></div></div>
-        <div class="help-item"><div class="help-num">11</div><div class="help-body"><strong>Registrar consumo</strong><p>Use os botões rápidos (180ml, 300ml, 500ml, 1000ml) ou digite qualquer valor no campo manual e pressione <kbd>Enter</kbd>. Cada registro é salvo com o horário exato.</p></div></div>
-        <div class="help-item"><div class="help-num">12</div><div class="help-body"><strong>Barra de progresso</strong><p>Fica <span style="color:#3b82f6;font-weight:500;">azul</span> abaixo da meta e vira <span style="color:#1D9E75;font-weight:500;">verde</span> ao bater 100%. O histórico mostra os últimos 7 dias.</p></div></div>
-
+        <div class="help-item"><div class="help-num">8</div><div class="help-body"><strong>Meta e registro</strong><p>Meta padrão: peso × 35 ml. Botões rápidos: 180ml, 300ml, 500ml, 1000ml. Cada registro tem horário exato.</p></div></div>
         <div class="help-group-title">⚖️ Controle de Peso</div>
-        <div class="help-item"><div class="help-num">13</div><div class="help-body"><strong>Configurar altura e idade</strong><p>Configure em <em>Suas medidas</em> antes de registrar o peso. Esses dados são usados para calcular IMC e gordura corporal.</p></div></div>
-        <div class="help-item"><div class="help-num">14</div><div class="help-body"><strong>IMC — Índice de Massa Corporal</strong><p>Fórmula: <strong>peso ÷ altura²</strong>. Classificação: <span style="color:#85B7EB;font-weight:500;">Abaixo</span> &lt;18,5 · <span style="color:#97C459;font-weight:500;">Normal</span> 18,5–24,9 · <span style="color:#FAC775;font-weight:500;">Sobrepeso</span> 25–29,9 · <span style="color:#EF9F27;font-weight:500;">Ob. I</span> 30–34,9 · <span style="color:#F09595;font-weight:500;">Ob. II+</span> ≥35</p></div></div>
-        <div class="help-item"><div class="help-num">15</div><div class="help-body"><strong>Estimativa de gordura corporal</strong><p>Baseada na <strong>Fórmula de Deurenberg</strong>: <em>(1,20 × IMC) + (0,23 × idade) − 10,8 − 5,4</em>. É uma estimativa — não substitui avaliação profissional.</p></div></div>
-        <div class="help-item"><div class="help-num">16</div><div class="help-body"><strong>Meta de peso</strong><p>Defina um peso alvo em <em>Meta de peso</em>. O app mostra quanto falta e faz uma projeção de quando você vai chegar lá baseada na sua média semanal atual.</p></div></div>
-        <div class="help-item"><div class="help-num">17</div><div class="help-body"><strong>Gráfico e média semanal</strong><p>O gráfico de evolução aparece após 2 registros. Clique em <strong>Ver média ↗</strong> para calcular variação nos últimos 7 registros e a média diária de perda ou ganho.</p></div></div>
-
+        <div class="help-item"><div class="help-num">9</div><div class="help-body"><strong>IMC e gordura</strong><p>Configure altura e idade. Cálculo automático de IMC, gordura estimada (Deurenberg), peso ideal e projeção da meta.</p></div></div>
         <div class="help-group-title">🍽️ Controle de Macros</div>
-        <div class="help-item"><div class="help-num">18</div><div class="help-body"><strong>Meta calórica</strong><p>Defina sua meta de calorias diária. Para emagrecer, consuma ~500 kcal abaixo do seu gasto diário. A barra mostra o % atingido.</p></div></div>
-        <div class="help-item"><div class="help-num">19</div><div class="help-body"><strong>Registrar alimentos</strong><p>Selecione o alimento na tabela (20 opções comuns), digite a quantidade em gramas e veja o preview de kcal, proteína, carbo e gordura antes de adicionar.</p></div></div>
-        <div class="help-item"><div class="help-num">20</div><div class="help-body"><strong>Resumo do dia</strong><p>Os 4 cards no topo mostram o total de calorias, proteína, carboidrato e gordura consumidos no dia, atualizados em tempo real a cada registro.</p></div></div>
-
+        <div class="help-item"><div class="help-num">10</div><div class="help-body"><strong>35 alimentos com autocomplete</strong><p>Digite para buscar, selecione, informe os gramas e veja o preview de kcal, proteína, carbo e gordura antes de adicionar.</p></div></div>
+        <div class="help-group-title">📊 Estatísticas</div>
+        <div class="help-item"><div class="help-num">11</div><div class="help-body"><strong>Visão de 30 dias</strong><p>Gráficos de água, peso, calorias e heatmap de hábitos dos últimos 30 dias. Acesse pelo menu lateral.</p></div></div>
         <div class="help-group-title">⚙️ Geral</div>
-        <div class="help-item"><div class="help-num">21</div><div class="help-body"><strong>Perfil do usuário 👤</strong><p>Clique no botão 👤 na barra superior para configurar nome, sexo e idade. O nome aparece na saudação do dashboard e os dados são usados nos cálculos de saúde.</p></div></div>
-        <div class="help-item"><div class="help-num">22</div><div class="help-body"><strong>Tema claro / escuro 🌙</strong><p>Clique em 🌙 / ☀️ para alternar. A preferência é salva automaticamente entre sessões.</p></div></div>
-        <div class="help-item"><div class="help-num">23</div><div class="help-body"><strong>Exportar PDF 📄</strong><p>Clique em <strong>📄 PDF</strong> para gerar um PDF imprimível com sua rotina completa.</p></div></div>
-        <div class="help-item"><div class="help-num">24</div><div class="help-body"><strong>Salvo automaticamente 💾</strong><p>Tudo salvo via <em>localStorage</em>. Sem conta, sem servidor. Os dados ficam no seu dispositivo e persistem entre sessões.</p></div></div>
-        <div class="help-item"><div class="help-num">25</div><div class="help-body"><strong>Instalar como app (PWA) 📱</strong><p><strong>Android (Chrome):</strong> três pontinhos → Instalar aplicativo.<br><strong>iPhone (Safari):</strong> Compartilhar → Adicionar à Tela de Início.<br>Após instalar, abre em tela cheia e funciona offline.</p></div></div>
-
+        <div class="help-item"><div class="help-num">12</div><div class="help-body"><strong>Menu lateral</strong><p>Clique no ≡ no canto superior esquerdo para navegar entre as abas. Perfil, tema e PDF ficam no rodapé do menu.</p></div></div>
+        <div class="help-item"><div class="help-num">13</div><div class="help-body"><strong>PWA 📱</strong><p><strong>Android:</strong> três pontinhos → Instalar aplicativo. <strong>iPhone:</strong> Compartilhar → Adicionar à Tela de Início.</p></div></div>
       </div>
     </div><!-- /tab-ajuda -->
 
@@ -549,7 +482,6 @@
       <div class="static-wrap">
         <h2 class="static-title">📬 Contato</h2>
         <p class="static-sub">Fale comigo, reporte um bug, dê uma sugestão ou peça um site personalizado!</p>
-
         <div class="contact-grid">
           <a href="https://wa.me/5555991975065" target="_blank" class="contact-card">
             <span class="contact-icon">
@@ -557,24 +489,15 @@
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
               </svg>
             </span>
-            <div>
-              <strong>WhatsApp</strong>
-              <p>Fale direto comigo</p>
-            </div>
+            <div><strong>WhatsApp</strong><p>Fale direto comigo</p></div>
           </a>
           <a href="https://www.linkedin.com/in/daniel-mscs/" target="_blank" class="contact-card">
             <span class="contact-icon">💼</span>
-            <div>
-              <strong>LinkedIn</strong>
-              <p>Conecte-se profissionalmente</p>
-            </div>
+            <div><strong>LinkedIn</strong><p>Conecte-se profissionalmente</p></div>
           </a>
           <a href="https://www.instagram.com/daniel.mscs/" target="_blank" class="contact-card">
             <span class="contact-icon">📸</span>
-            <div>
-              <strong>Instagram</strong>
-              <p>@daniel.mscs</p>
-            </div>
+            <div><strong>Instagram</strong><p>@daniel.mscs</p></div>
           </a>
           <a href="https://github.com/daniel-mscs" target="_blank" class="contact-card">
             <span class="contact-icon">
@@ -582,38 +505,15 @@
                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
               </svg>
             </span>
-            <div>
-              <strong>GitHub</strong>
-              <p>daniel-mscs</p>
-            </div>
+            <div><strong>GitHub</strong><p>daniel-mscs</p></div>
           </a>
         </div>
-
         <h3 class="reasons-title">O que você pode me enviar?</h3>
         <div class="reasons">
-          <div class="reason-card">
-            <span>🐛</span>
-            <div>
-              <strong>Bug encontrado</strong>
-              <p>Algo não funcionou? Me conta o que aconteceu e em qual dispositivo/navegador.</p>
-            </div>
-          </div>
-          <div class="reason-card">
-            <span>💡</span>
-            <div>
-              <strong>Sugestão de melhoria</strong>
-              <p>Tem ideia de funcionalidade nova ou algo que poderia ser melhor? Adoraria ouvir!</p>
-            </div>
-          </div>
-          <div class="reason-card">
-            <span>🌐</span>
-            <div>
-              <strong>Quero um site personalizado</strong>
-              <p>Precisa de um app, landing page ou sistema web? Entre em contato e vamos conversar.</p>
-            </div>
-          </div>
+          <div class="reason-card"><span>🐛</span><div><strong>Bug encontrado</strong><p>Algo não funcionou? Me conta o que aconteceu e em qual dispositivo/navegador.</p></div></div>
+          <div class="reason-card"><span>💡</span><div><strong>Sugestão de melhoria</strong><p>Tem ideia de funcionalidade nova ou algo que poderia ser melhor? Adoraria ouvir!</p></div></div>
+          <div class="reason-card"><span>🌐</span><div><strong>Quero um site personalizado</strong><p>Precisa de um app, landing page ou sistema web? Entre em contato e vamos conversar.</p></div></div>
         </div>
-
       </div>
     </div><!-- /tab-contato -->
 
@@ -622,24 +522,9 @@
       <div class="modal-box">
         <h3 class="modal-title">👤 Meu Perfil</h3>
         <p class="modal-sub">Personalize sua experiência no app.</p>
-
-        <div class="modal-field">
-          <label>Seu nome</label>
-          <input type="text" id="pf-nome" placeholder="Seu nome" maxlength="30" />
-        </div>
-        <div class="modal-field">
-          <label>Sexo biológico</label>
-          <select id="pf-sexo">
-            <option value="">Selecione...</option>
-            <option value="M">Masculino</option>
-            <option value="F">Feminino</option>
-          </select>
-        </div>
-        <div class="modal-field">
-          <label>Idade</label>
-          <input type="number" id="pf-idade" placeholder="Ex: 28" min="10" max="100" />
-        </div>
-
+        <div class="modal-field"><label>Seu nome</label><input type="text" id="pf-nome" placeholder="Seu nome" maxlength="30" /></div>
+        <div class="modal-field"><label>Sexo biológico</label><select id="pf-sexo"><option value="">Selecione...</option><option value="M">Masculino</option><option value="F">Feminino</option></select></div>
+        <div class="modal-field"><label>Idade</label><input type="number" id="pf-idade" placeholder="Ex: 28" min="10" max="100" /></div>
         <div class="modal-btns">
           <button id="pf-cancel-btn" class="modal-btn-cancel">Cancelar</button>
           <button id="pf-save-btn" class="modal-btn-save">Salvar perfil</button>

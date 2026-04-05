@@ -1,135 +1,91 @@
-# Minha Rotina
+# Minha Rotina - PWA
 
-Organizador de rotina pessoal com foco em saúde, produtividade e hábitos diários. Desenvolvido como PWA (Progressive Web App) com HTML, CSS e JavaScript puro — sem frameworks ou dependências externas além do Chart.js para gráficos.
+Organizador de rotina pessoal focado em saúde, produtividade e monitoramento de hábitos. Desenvolvido como um Progressive Web App (PWA) de alta performance, utilizando tecnologias web nativas para garantir leveza, privacidade e funcionamento offline.
 
-Acesse: https://daniel-mscs.github.io/minha-rotina/
-
----
-
-## Funcionalidades
-
-**Dashboard (Início)**
-- Saudação personalizada com nome do usuário e horário do dia
-- Frase motivacional e estoica diária (20 frases, muda uma vez por dia)
-- Cards de resumo: consumo de água e peso do dia com variação
-- Hábitos diários com marcação por toque (Treino, Estudo, Sono, Hidratação, Alimentação, Produtividade)
-- Streak de dias consecutivos de uso
-- Relatório semanal automático todo sábado (água, peso, hábitos, calorias)
-- Tarefas de hoje integradas com a aba Rotina
-
-**Rotina**
-- Geração de blocos de dias por intervalo de datas
-- 4 períodos por dia: Acordar, Manhã, Tarde e Noite
-- Tarefas editáveis inline com checkbox de conclusão
-- Drag and drop para reordenar tarefas (desktop e mobile touch)
-- Atalho Enter para criação rápida de itens
-- Reset seguro que apaga apenas a rotina, preservando todos os outros dados
-
-**Controle de Água**
-- Meta diária personalizável (padrão: peso × 35 ml)
-- Botões rápidos: 180ml, 300ml, 500ml e 1000ml
-- Campo manual para qualquer volume
-- Barra de progresso (azul → verde ao atingir a meta)
-- Log do dia com horário de cada registro
-- Histórico dos últimos 7 dias
-
-**Controle de Peso**
-- Registro diário com comparação ao dia anterior
-- Cálculo de IMC com barra visual de classificação
-- Estimativa de gordura corporal (Fórmula de Deurenberg)
-- Meta de peso com projeção de data baseada na média atual
-- Gráfico de linha com evolução do peso
-- Média semanal de perda ou ganho
-
-**Controle de Macros**
-- Tabela com 35 alimentos pré-cadastrados com busca por autocomplete
-- Cálculo automático de kcal, proteína, carboidrato e gordura por grama
-- Preview dos macros antes de confirmar o registro
-- Meta calórica diária personalizável
-- Cards de resumo atualizados em tempo real
-- Log do dia com opção de excluir registros individuais
-
-**Geral**
-- Perfil do usuário (nome, sexo biológico, idade)
-- Tema claro e escuro com persistência entre sessões
-- Exportação para PDF
-- Salvamento automático via localStorage
-- Instalável como app (PWA) no Android e iOS
-- Funciona offline após primeira visita
+Acesse o projeto: [https://daniel-mscs.github.io/minha-rotina/](https://daniel-mscs.github.io/minha-rotina/)
 
 ---
 
-## Alimentos cadastrados nos Macros
+## Atualizações de Implementação (v5.0)
 
-Carboidratos: arroz branco, arroz integral, batata doce, batata inglesa, batata frita, macarrão, pão francês, aveia, feijão, lentilha
+### Interface de Navegação
+- **Sistema de Menu Lateral:** Substituição da barra de navegação superior por uma topbar minimalista e menu lateral retrátil (sidebar).
+- **UX Adaptativa:** O menu centraliza navegação principal, configurações de perfil, alternância de tema e exportação de dados, otimizando o espaço de tela em dispositivos móveis.
 
-Proteínas: frango (peito e coxa), carne bovina, carne moída, tilápia, salmão, atum, sardinha, ovo inteiro, clara de ovo, whey protein, iogurte grego, queijo cottage
+### Monitoramento de Ciclo Anual
+- **Contador Regressivo:** Implementação de dashboard com dias restantes para o encerramento do ciclo anual.
+- **Visualização de Progresso:** Indicador percentual de conclusão do ano com barra de progresso em estilo dourado (Memento Mori digital).
 
-Laticínios: leite em pó integral, leite desnatado
-
-Frutas: banana, maçã, laranja, mamão
-
-Gorduras: azeite de oliva, amendoim, castanha do pará
-
-Vegetais: salada, tomate, brócolis, cenoura
-
----
-
-## Tecnologias
-
-- HTML5
-- CSS3 com variáveis para temas claro/escuro
-- JavaScript ES6+ sem frameworks
-- localStorage para persistência de dados
-- Service Worker para funcionamento offline
-- Web App Manifest para instalação como PWA
-- Chart.js para gráfico de evolução do peso
-- GitHub Pages para hospedagem
+### Módulo de Estatísticas
+- **Análise Reativa:** Aba dedicada com análise dos últimos 30 dias de dados.
+- **Visualização de Dados:** Integração avançada com Chart.js para:
+    - Balanço hídrico com diferenciação visual de metas atingidas.
+    - Evolução temporal de peso e composição corporal.
+    - Heatmap de consistência de hábitos diários.
+    - Monitoramento de balanço calórico.
 
 ---
 
-## Estrutura do projeto
+## Funcionalidades Detalhadas
 
-```
-├── index.html       — estrutura e abas
-├── style.css        — estilos e temas
-├── script.js        — lógica e persistência
-├── manifest.json    — configurações do PWA
-└── sw.js            — service worker (offline)
-```
+### Gestão de Rotina e Tarefas
+- **Estrutura por Períodos:** Planejamento dividido em Acordar, Manhã, Tarde e Noite.
+- **Interatividade:** Suporte a edição inline e sistema de Drag and Drop para reordenamento de tarefas em desktop e dispositivos touch.
+- **Persistência de Dados:** Sincronização em tempo real com o armazenamento local do navegador.
 
----
+### Saúde e Composição Corporal
+- **Antropometria:** Cálculo automatizado de IMC e estimativa de percentual de gordura via Fórmula de Deurenberg.
+- **Hidratação:** Gestão de meta diária personalizada baseada em massa corporal e registro de histórico com marcação temporal.
+- **Nutrição:** Registro de macronutrientes com base de dados interna de +35 alimentos e suporte a busca por autocomplete.
 
-## Dados salvos (localStorage)
-
-| Chave | Conteúdo |
-|---|---|
-| `my_routine_data` | Rotina (dias e tarefas) |
-| `water_data` | Registros de água por data |
-| `water_meta` | Meta diária de água |
-| `peso_data` | Registros de peso por data |
-| `peso_config` | Altura e idade |
-| `peso_meta` | Meta de peso alvo |
-| `macros_data` | Registros de alimentos por data |
-| `macros_meta` | Meta calórica diária |
-| `habits_data` | Hábitos por data |
-| `user_perfil` | Nome, sexo e idade |
-| `tema` | Preferência de tema |
+### Sistema PWA e Segurança
+- **Funcionamento Offline:** Service Workers configurados para cache de ativos e funcionamento sem conexão à rede.
+- **Instalação Nativa:** Manifesto configurado para instalação em sistemas Android e iOS.
+- **Privacidade:** Todos os dados são processados e armazenados localmente (localStorage), sem tráfego de informações pessoais para servidores externos.
 
 ---
 
-## Como instalar como app
+## Especificações Técnicas
 
-**Android (Chrome):** três pontinhos no menu → Instalar aplicativo
-
-**iPhone (Safari):** botão compartilhar → Adicionar à Tela de Início
-
----
-
-## Como rodar localmente
-
-Basta abrir o `index.html` no navegador ou usar o Live Server do VS Code.
+- **Linguagens:** HTML5, CSS3 (Custom Properties), JavaScript ES6+.
+- **Dependências Externas:** Chart.js (via CDN).
+- **Hospedagem:** GitHub Pages.
+- **Padrão de Design:** Interface minimalista com suporte nativo a temas Light/Dark.
 
 ---
 
-Desenvolvido por [Daniel](https://github.com/daniel-mscs) — v4.0
+## Estrutura de Arquivos
+
+```text
+├── index.html       — Estrutura semântica e containers das views
+├── style.css        — Definições de estilo, temas e animações de transição
+├── script.js        — Lógica de negócio, manipulação de DOM e gráficos
+├── manifest.json    — Configurações de aplicação instalável
+└── sw.js            — Estratégias de cache e service worker
+---
+
+## Dicionário de Armazenamento (localStorage)
+
+| Chave | Descrição do Dado |
+| :--- | :--- |
+| `my_routine_data` | Estrutura de tarefas e blocos diários |
+| `water_data` | Histórico cronológico de consumo hídrico |
+| `peso_data` | Registros históricos de massa corporal |
+| `macros_data` | Log de ingestão de macronutrientes |
+| `habits_data` | Matriz de consistência de hábitos (Heatmap) |
+| `user_perfil` | Metadados do usuário (Nome, Sexo, Idade) |
+
+---
+
+## Instalação e Execução
+
+#### Como Web App
+- **Android (Chrome):** Menu de opções -> Instalar aplicativo.
+- **iOS (Safari):** Botão compartilhar -> Adicionar à Tela de Início.
+
+#### Ambiente de Desenvolvimento
+Para execução local, recomenda-se o uso de um servidor estático simples ou a extensão Live Server (VS Code) para garantir o funcionamento correto do Service Worker e das rotas internas de manifesto.
+
+---
+
+Desenvolvido por [Daniel](https://github.com/daniel-mscs) — Versão 5.0

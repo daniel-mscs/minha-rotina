@@ -21,13 +21,42 @@ themeBtn.addEventListener('click', () => {
 // NAVEGAÇÃO DE ABAS
 // ============================================
 
-document.querySelectorAll('.nav-tab').forEach(tab => {
+// ============================================
+// MENU HAMBURGUER
+// ============================================
+
+const TAB_TITLES = {
+    dashboard: 'Início', rotina: 'Rotina', agua: 'Água',
+    peso: 'Peso', macros: 'Macros', stats: 'Estatísticas',
+    ajuda: 'Ajuda', contato: 'Contato'
+};
+
+function openMenu() {
+    document.getElementById('side-menu').classList.add('open');
+    document.getElementById('menu-overlay').classList.add('active');
+}
+
+function closeMenu() {
+    document.getElementById('side-menu').classList.remove('open');
+    document.getElementById('menu-overlay').classList.remove('active');
+}
+
+document.getElementById('menu-open-btn').addEventListener('click', openMenu);
+document.getElementById('menu-close-btn').addEventListener('click', closeMenu);
+document.getElementById('menu-overlay').addEventListener('click', closeMenu);
+
+document.querySelectorAll('.side-tab').forEach(tab => {
     tab.addEventListener('click', () => {
         const alvo = tab.dataset.tab;
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.side-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(c => c.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById('tab-' + alvo).classList.add('active');
+        const titleEl = document.getElementById('topbar-title');
+        if (titleEl) titleEl.textContent = TAB_TITLES[alvo] || alvo;
+        closeMenu();
+        if (alvo === 'dashboard') setTimeout(renderDashboard, 50);
+        if (alvo === 'stats') setTimeout(renderStats, 100);
     });
 });
 
@@ -36,10 +65,13 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
 // ============================================
 
 document.getElementById('exportPdfBtn').addEventListener('click', () => {
-    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.side-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(c => c.classList.remove('active'));
     document.querySelector('[data-tab="rotina"]').classList.add('active');
     document.getElementById('tab-rotina').classList.add('active');
+    const titleEl = document.getElementById('topbar-title');
+    if (titleEl) titleEl.textContent = 'Rotina';
+    closeMenu();
     setTimeout(() => window.print(), 150);
 });
 
@@ -650,7 +682,7 @@ foodInput.addEventListener('focus', (e) => {
 });
 
 document.addEventListener('click', (e) => {
-    if (!e.target.closest('.mc-autocomplete-wrap')) hideSuggestions();
+    if (!e.target.closest('.autocomplete-wrapper')) hideSuggestions();
 });
 
 gramsInput.addEventListener('input', renderMacrosPreview);
@@ -1140,12 +1172,14 @@ function toggleHabit(key) {
 }
 
 function switchTab(tabName) {
-    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.side-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(c => c.classList.remove('active'));
-    const tab = document.querySelector(`[data-tab="${tabName}"]`);
+    const tab = document.querySelector(`.side-tab[data-tab="${tabName}"]`);
     if (tab) tab.classList.add('active');
     const content = document.getElementById('tab-' + tabName);
     if (content) content.classList.add('active');
+    const titleEl = document.getElementById('topbar-title');
+    if (titleEl) titleEl.textContent = TAB_TITLES[tabName] || tabName;
 }
 
 function renderDashboard() {
@@ -1161,6 +1195,25 @@ function renderDashboard() {
         dateEl.textContent = new Date().toLocaleDateString('pt-BR', {
             weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
         });
+    }
+
+    // contador de dias até fim do ano
+    const ycEl = document.getElementById('year-countdown');
+    if (ycEl) {
+        const now      = new Date();
+        const endYear  = new Date(now.getFullYear(), 11, 31);
+        const dayOfYear= Math.ceil((now - new Date(now.getFullYear(), 0, 1)) / 86400000);
+        const totalDays= now.getFullYear() % 4 === 0 ? 366 : 365;
+        const remaining= Math.ceil((endYear - now) / 86400000);
+        const pctYear  = Math.round((dayOfYear / totalDays) * 100);
+        ycEl.innerHTML = `
+            <span class="yc-icon">⏳</span>
+            <div class="yc-body">
+                <div class="yc-days">${remaining} dias</div>
+                <div class="yc-label">restam até o fim de ${now.getFullYear()} · ${pctYear}% do ano passou</div>
+                <div class="yc-bar-wrap"><div class="yc-bar" style="width:${pctYear}%"></div></div>
+            </div>
+        `;
     }
 
     const quoteEl = document.getElementById('dash-quote');
@@ -1280,11 +1333,7 @@ function renderDashTasks() {
 
 renderDashboard();
 
-document.querySelectorAll('.nav-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        if (tab.dataset.tab === 'dashboard') setTimeout(renderDashboard, 50);
-    });
-});
+// side-tab navigation handles dashboard refresh above
 
 // ============================================
 // 1. GERAR DIAS
@@ -1613,6 +1662,187 @@ document.getElementById('resetBtn').addEventListener('click', () => {
         location.reload();
     }
 });
+
+
+// ============================================
+// ESTATÍSTICAS (30 dias)
+// ============================================
+
+let statsAguaChart = null, statsPesoChart = null, statsMacrosChart = null;
+
+function getLast30Days() {
+    const days = [];
+    const hoje = new Date();
+    for (let i = 29; i >= 0; i--) {
+        const d = new Date(hoje);
+        d.setDate(hoje.getDate() - i);
+        days.push(d.toLocaleDateString('pt-BR'));
+    }
+    return days;
+}
+
+function renderStats() {
+    if (!window.Chart) {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js';
+        s.onload = () => renderStats();
+        document.head.appendChild(s);
+        return;
+    }
+
+    const days    = getLast30Days();
+    const wData   = getWaterData();
+    const pData   = getPesoData();
+    const hData   = getHabitsData();
+    const mData   = getMacrosData();
+    const wMeta   = getWaterMeta();
+
+    // --- ÁGUA ---
+    const aguaVals = days.map(d => {
+        const entries = wData[d] || [];
+        return entries.reduce((s, e) => s + e.ml, 0);
+    });
+    const mediaAgua = Math.round(aguaVals.reduce((s,v) => s+v, 0) / aguaVals.filter(v=>v>0).length) || 0;
+    const diasMetaAgua = aguaVals.filter(v => v >= wMeta).length;
+
+    const stAguaMedia = document.getElementById('st-agua-media');
+    const stAguaSub   = document.getElementById('st-agua-sub');
+    if (stAguaMedia) stAguaMedia.textContent = mediaAgua > 0 ? mediaAgua.toLocaleString('pt-BR') + ' ml' : '—';
+    if (stAguaSub)   stAguaSub.textContent   = diasMetaAgua + ' dias bateu a meta';
+
+    const aguaCtx = document.getElementById('statsAguaChart');
+    if (aguaCtx) {
+        if (statsAguaChart) statsAguaChart.destroy();
+        statsAguaChart = new Chart(aguaCtx, {
+            type: 'bar',
+            data: {
+                labels: days.map(d => d.split('/').slice(0,2).join('/')),
+                datasets: [{
+                    data: aguaVals,
+                    backgroundColor: aguaVals.map(v => v >= wMeta ? 'rgba(29,158,117,0.7)' : 'rgba(59,130,246,0.5)'),
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y.toLocaleString('pt-BR') + ' ml' } } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 9 }, color: '#888', maxRotation: 45, autoSkip: true, maxTicksLimit: 10 } },
+                    y: { grid: { color: 'rgba(136,135,128,0.15)' }, ticks: { font: { size: 10 }, color: '#888', callback: v => v >= 1000 ? (v/1000).toFixed(1)+'L' : v+'ml' } }
+                }
+            }
+        });
+    }
+
+    // --- PESO ---
+    const pesoRecent = pData.filter(e => {
+        const [d,m,y] = e.date.split('/');
+        return new Date(y,m-1,d) >= new Date(new Date().setDate(new Date().getDate()-29));
+    });
+
+    const stPesoVar = document.getElementById('st-peso-var');
+    const stPesoSub = document.getElementById('st-peso-sub');
+    if (pesoRecent.length >= 2) {
+        const varPeso = (pesoRecent[pesoRecent.length-1].peso - pesoRecent[0].peso).toFixed(1);
+        if (stPesoVar) {
+            stPesoVar.textContent = (parseFloat(varPeso) > 0 ? '+' : '') + varPeso + ' kg';
+            stPesoVar.style.color = parseFloat(varPeso) < 0 ? '#1D9E75' : parseFloat(varPeso) > 0 ? '#ef4444' : 'var(--text)';
+        }
+        if (stPesoSub) stPesoSub.textContent = pesoRecent[0].peso.toFixed(1) + ' → ' + pesoRecent[pesoRecent.length-1].peso.toFixed(1) + ' kg';
+    } else {
+        if (stPesoVar) stPesoVar.textContent = '—';
+        if (stPesoSub) stPesoSub.textContent = 'poucos registros';
+    }
+
+    const pesoCvsEl  = document.getElementById('statsPesoChart');
+    const pesoEmpty  = document.getElementById('st-peso-empty');
+    if (pesoCvsEl) {
+        if (pesoRecent.length >= 2) {
+            pesoCvsEl.style.display = 'block';
+            if (pesoEmpty) pesoEmpty.style.display = 'none';
+            if (statsPesoChart) statsPesoChart.destroy();
+            statsPesoChart = new Chart(pesoCvsEl, {
+                type: 'line',
+                data: {
+                    labels: pesoRecent.map(e => e.date.split('/').slice(0,2).join('/')),
+                    datasets: [{ data: pesoRecent.map(e => e.peso), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.08)', pointRadius: 4, borderWidth: 2, tension: 0.3, fill: true }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y.toFixed(1) + ' kg' } } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#888' } },
+                        y: { grid: { color: 'rgba(136,135,128,0.15)' }, ticks: { font: { size: 10 }, color: '#888', callback: v => v + ' kg' } }
+                    }
+                }
+            });
+        } else {
+            pesoCvsEl.style.display = 'none';
+            if (pesoEmpty) pesoEmpty.style.display = 'block';
+        }
+    }
+
+    // --- HÁBITOS ---
+    const habitKeys = ['treino','estudo','sono','hidratacao','alimentacao','produtividade'];
+    let totalH = 0, doneH = 0;
+    const heatmap = document.getElementById('stats-habits-heatmap');
+    if (heatmap) {
+        heatmap.innerHTML = '';
+        days.forEach(d => {
+            const h = hData[d] || {};
+            const count = habitKeys.filter(k => h[k]).length;
+            totalH += habitKeys.length;
+            doneH  += count;
+            const cell = document.createElement('div');
+            cell.className = 'hm-cell';
+            cell.dataset.level = count === 0 ? '0' : count <= 2 ? '1' : count <= 4 ? '2' : '3';
+            cell.title = d + ': ' + count + ' hábitos';
+            heatmap.appendChild(cell);
+        });
+    }
+    const pctH = totalH > 0 ? Math.round((doneH/totalH)*100) : 0;
+    const stHPct = document.getElementById('st-habitos-pct');
+    const stHSub = document.getElementById('st-habitos-sub');
+    if (stHPct) stHPct.textContent = pctH + '%';
+    if (stHSub) stHSub.textContent = doneH + ' de ' + totalH + ' hábitos';
+
+    // --- MACROS ---
+    const kcalVals = days.map(d => {
+        const entries = mData[d] || [];
+        return entries.reduce((s, e) => s + e.kcal, 0);
+    });
+    const diasComKcal = kcalVals.filter(v => v > 0).length;
+    const mediaKcal   = diasComKcal > 0 ? Math.round(kcalVals.reduce((s,v) => s+v, 0) / diasComKcal) : 0;
+
+    const stKcal = document.getElementById('st-kcal-media');
+    const stKSub = document.getElementById('st-kcal-sub');
+    if (stKcal) stKcal.textContent = mediaKcal > 0 ? mediaKcal.toLocaleString('pt-BR') + ' kcal' : '—';
+    if (stKSub) stKSub.textContent = diasComKcal + ' dias com registro';
+
+    const macroCtx = document.getElementById('statsMacrosChart');
+    if (macroCtx) {
+        if (statsMacrosChart) statsMacrosChart.destroy();
+        statsMacrosChart = new Chart(macroCtx, {
+            type: 'bar',
+            data: {
+                labels: days.map(d => d.split('/').slice(0,2).join('/')),
+                datasets: [{
+                    data: kcalVals,
+                    backgroundColor: 'rgba(245,197,24,0.6)',
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + ' kcal' } } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 9 }, color: '#888', maxRotation: 45, autoSkip: true, maxTicksLimit: 10 } },
+                    y: { grid: { color: 'rgba(136,135,128,0.15)' }, ticks: { font: { size: 10 }, color: '#888', callback: v => v + ' kcal' } }
+                }
+            }
+        });
+    }
+}
 
 // ============================================
 // 9. INICIALIZAR
