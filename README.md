@@ -14,15 +14,15 @@ Acesse o projeto: [https://daniel-mscs.github.io/minha-rotina/](https://daniel-m
 
 ### Monitoramento de Ciclo Anual
 - **Contador Regressivo:** Implementação de dashboard com dias restantes para o encerramento do ciclo anual.
-- **Visualização de Progresso:** Indicador percentual de conclusão do ano com barra de progresso em estilo dourado (Memento Mori digital).
+- **Visualização de Progresso:** Indicador percentual de conclusão do ano com barra de progresso.
 
 ### Módulo de Estatísticas
 - **Análise Reativa:** Aba dedicada com análise dos últimos 30 dias de dados.
 - **Visualização de Dados:** Integração avançada com Chart.js para:
-    - Balanço hídrico com diferenciação visual de metas atingidas.
-    - Evolução temporal de peso e composição corporal.
-    - Heatmap de consistência de hábitos diários.
-    - Monitoramento de balanço calórico.
+  - Balanço hídrico com diferenciação visual de metas atingidas.
+  - Evolução temporal de peso e composição corporal.
+  - Heatmap de consistência de hábitos diários.
+  - Monitoramento de balanço calórico.
 
 ---
 
@@ -56,18 +56,20 @@ Acesse o projeto: [https://daniel-mscs.github.io/minha-rotina/](https://daniel-m
 
 ## Estrutura de Arquivos
 
-```text
+```
 ├── index.html       — Estrutura semântica e containers das views
 ├── style.css        — Definições de estilo, temas e animações de transição
 ├── script.js        — Lógica de negócio, manipulação de DOM e gráficos
 ├── manifest.json    — Configurações de aplicação instalável
 └── sw.js            — Estratégias de cache e service worker
+```
+
 ---
 
 ## Dicionário de Armazenamento (localStorage)
 
 | Chave | Descrição do Dado |
-| :--- | :--- |
+|:--- |:--- |
 | `my_routine_data` | Estrutura de tarefas e blocos diários |
 | `water_data` | Histórico cronológico de consumo hídrico |
 | `peso_data` | Registros históricos de massa corporal |
@@ -79,12 +81,14 @@ Acesse o projeto: [https://daniel-mscs.github.io/minha-rotina/](https://daniel-m
 
 ## Instalação e Execução
 
-#### Como Web App
-- **Android (Chrome):** Menu de opções -> Instalar aplicativo.
-- **iOS (Safari):** Botão compartilhar -> Adicionar à Tela de Início.
+### Como Web App
 
-#### Ambiente de Desenvolvimento
-Para execução local, recomenda-se o uso de um servidor estático simples ou a extensão Live Server (VS Code) para garantir o funcionamento correto do Service Worker e das rotas internas de manifesto.
+- **Android (Chrome):** Menu de opções -> Instalar aplicativo.
+- **iOS (Safari):** Compartilhar -> Adicionar à Tela de Início.
+
+### Ambiente de Desenvolvimento
+
+Para execução local, recomenda-se o uso de um servidor estático simples ou a extensão Live Server para garantir o funcionamento correto do Service Worker e das rotas internas.
 
 ---
 
