@@ -282,9 +282,9 @@
         </div>
         <div class="peso-section-block">
           <h3 class="peso-block-title">Suas medidas</h3>
+          <p class="w-hint" style="margin-bottom:10px;">💡 Idade vem do seu <strong>Perfil</strong> (botão 👤 no menu).</p>
           <div class="peso-config-row">
             <div class="peso-config-item"><label>Altura (cm)</label><input type="number" id="p-altura" placeholder="Ex: 180" min="100" max="250" /></div>
-            <div class="peso-config-item"><label>Idade</label><input type="number" id="p-idade" placeholder="Ex: 28" min="10" max="100" /></div>
             <button id="p-config-save-btn">Salvar</button>
           </div>
         </div>
@@ -341,6 +341,39 @@
           <div class="macro-card carb"><div class="macro-card-label">Carboidrato</div><div class="macro-card-val" id="mc-carb">0</div><div class="macro-card-unit">g</div><div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-carb-bar" style="background:#f59e0b;"></div></div></div>
           <div class="macro-card gord"><div class="macro-card-label">Gordura</div><div class="macro-card-val" id="mc-gord">0</div><div class="macro-card-unit">g</div><div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-gord-bar" style="background:#ef4444;"></div></div></div>
         </div>
+        <!-- ── ALIMENTOS PERSONALIZADOS ── -->
+<div class="water-section-block">
+  <h3 class="water-block-title">Cadastrar alimento personalizado</h3>
+  <button id="mc-custom-toggle-btn" class="mc-custom-toggle">+ Novo alimento</button>
+  <div id="mc-custom-form" class="mc-custom-form" style="display:none;">
+    <div class="mc-custom-fields">
+      <input type="text" id="cf-nome" placeholder="Nome do alimento">
+      <div class="mc-custom-macros-grid">
+        <div class="mc-custom-field-item">
+          <label>kcal / 100g</label>
+          <input type="number" id="cf-kcal" placeholder="Ex: 250">
+        </div>
+        <div class="mc-custom-field-item">
+          <label>Proteína (g)</label>
+          <input type="number" step="0.1" id="cf-prot" placeholder="Ex: 12.5">
+        </div>
+        <div class="mc-custom-field-item">
+          <label>Carboidrato (g)</label>
+          <input type="number" step="0.1" id="cf-carb" placeholder="Ex: 30">
+        </div>
+        <div class="mc-custom-field-item">
+          <label>Gordura (g)</label>
+          <input type="number" step="0.1" id="cf-gord" placeholder="Ex: 5">
+        </div>
+      </div>
+      <div class="mc-custom-btns">
+        <button id="cf-cancel-btn" class="mc-custom-cancel-btn">Cancelar</button>
+        <button id="cf-save-btn" class="mc-custom-save-btn">Salvar</button>
+      </div>
+    </div>
+  </div>
+  <div id="mc-custom-list" class="mc-custom-list"></div>
+</div>
         <div class="water-section-block">
           <h3 class="water-block-title">Meta calórica diária</h3>
           <div class="w-meta-row">

@@ -480,7 +480,7 @@ function normalizeText(text) {
 function filterFoods(query) {
     if (!query) return [];
     const normalizedQuery = normalizeText(query);
-    return FOOD_TABLE
+    return getAllFoods()
         .map((food, index) => ({ food, index }))
         .filter(({ food }) => normalizeText(food.name).includes(normalizedQuery));
 }
@@ -536,6 +536,10 @@ function selectFood(index, name) {
     document.getElementById('mc-grams-input').focus();
 }
 
+function getSelectedFood() {
+    return getAllFoods()[selectedFoodIndex] || null;
+}
+
 function hideSuggestions() {
     const suggestionsList = document.getElementById('mc-food-suggestions');
     suggestionsList.classList.remove('show');
@@ -579,7 +583,8 @@ function renderMacrosPreview() {
         return;
     }
 
-    const food = FOOD_TABLE[selectedFoodIndex];
+    const food = getSelectedFood();
+    if (!food) { preview.style.display = 'none'; return; }
     const m    = calcMacros(food, grams);
     preview.style.display = 'block';
     preview.innerHTML = `⚡ ${m.kcal} kcal &nbsp;|&nbsp; 🥩 ${m.prot}g prot &nbsp;|&nbsp; 🍞 ${m.carb}g carb &nbsp;|&nbsp; 🧈 ${m.gord}g gord`;
@@ -695,7 +700,8 @@ document.getElementById('mc-add-btn').addEventListener('click', () => {
     if (selectedFoodIndex === -1) { alert('Selecione um alimento!'); foodInput.focus(); return; }
     if (!grams || grams <= 0)    { alert('Digite a quantidade em gramas!'); gramsInput.focus(); return; }
 
-    const food  = FOOD_TABLE[selectedFoodIndex];
+    const food  = getSelectedFood();
+    if (!food) { alert('Selecione um alimento!'); foodInput.focus(); return; }
     const m     = calcMacros(food, grams);
     const data  = getMacrosData();
     const today = new Date().toLocaleDateString('pt-BR');
@@ -726,6 +732,94 @@ document.getElementById('mc-clear-btn').addEventListener('click', () => {
     saveMacrosData(data);
     renderMacros();
 });
+
+
+// ============================================
+// ALIMENTOS PERSONALIZADOS
+// ============================================
+
+const CUSTOM_FOOD_KEY = 'custom_foods';
+
+function getCustomFoods() {
+    const raw = localStorage.getItem(CUSTOM_FOOD_KEY);
+    return raw ? JSON.parse(raw) : [];
+}
+
+function saveCustomFoods(data) {
+    localStorage.setItem(CUSTOM_FOOD_KEY, JSON.stringify(data));
+}
+
+function getAllFoods() {
+    return [...FOOD_TABLE, ...getCustomFoods()];
+}
+
+function renderCustomFoodList() {
+    const list = document.getElementById('mc-custom-list');
+    if (!list) return;
+    const customs = getCustomFoods();
+    if (customs.length === 0) {
+        list.innerHTML = '<div class="mc-custom-empty">Nenhum alimento cadastrado ainda.</div>';
+        return;
+    }
+    list.innerHTML = '';
+    customs.forEach((food, idx) => {
+        const div = document.createElement('div');
+        div.className = 'mc-custom-item';
+        div.innerHTML = `
+            <div class="mc-custom-item-info">
+                <div class="mc-custom-item-name">${food.name}</div>
+                <div class="mc-custom-item-macros">${food.kcal} kcal · P: ${food.prot}g · C: ${food.carb}g · G: ${food.gord}g (por 100g)</div>
+            </div>
+            <button class="mc-custom-item-del" data-idx="${idx}">✕</button>
+        `;
+        div.querySelector('.mc-custom-item-del').addEventListener('click', () => {
+            const customs = getCustomFoods();
+            customs.splice(idx, 1);
+            saveCustomFoods(customs);
+            renderCustomFoodList();
+        });
+        list.appendChild(div);
+    });
+}
+
+// toggle form
+document.getElementById('mc-custom-toggle-btn').addEventListener('click', () => {
+    const form = document.getElementById('mc-custom-form');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+});
+
+document.getElementById('cf-cancel-btn').addEventListener('click', () => {
+    document.getElementById('mc-custom-form').style.display = 'none';
+    ['cf-nome','cf-kcal','cf-prot','cf-carb','cf-gord'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+});
+
+document.getElementById('cf-save-btn').addEventListener('click', () => {
+    const nome = document.getElementById('cf-nome').value.trim();
+    const kcal = parseFloat(document.getElementById('cf-kcal').value);
+    const prot = parseFloat(document.getElementById('cf-prot').value);
+    const carb = parseFloat(document.getElementById('cf-carb').value);
+    const gord = parseFloat(document.getElementById('cf-gord').value);
+
+    if (!nome)             { alert('Digite o nome do alimento!'); return; }
+    if (isNaN(kcal) || kcal < 0) { alert('Digite as calorias válidas!'); return; }
+    if (isNaN(prot) || isNaN(carb) || isNaN(gord)) { alert('Preencha todos os macros!'); return; }
+
+    const customs = getCustomFoods();
+    customs.push({ name: nome, kcal, prot, carb, gord, custom: true });
+    saveCustomFoods(customs);
+
+    // limpa form
+    ['cf-nome','cf-kcal','cf-prot','cf-carb','cf-gord'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    document.getElementById('mc-custom-form').style.display = 'none';
+    renderCustomFoodList();
+    alert(`✅ "${nome}" salvo! Agora aparece na busca de alimentos.`);
+});
+
+renderCustomFoodList();
 
 renderMacros();
 
@@ -883,7 +977,12 @@ function renderPeso() {
     const cfg  = getPesoConfig();
 
     if (cfg.altura) document.getElementById('p-altura').value = cfg.altura;
-    if (cfg.idade)  document.getElementById('p-idade').value  = cfg.idade;
+    // sincroniza idade do perfil na config de peso
+    const perfilAtual = getPerfil();
+    if (perfilAtual.idade && (!cfg.idade || cfg.idade !== perfilAtual.idade)) {
+        cfg.idade = perfilAtual.idade;
+        savePesoConfig(cfg);
+    }
 
     const ultimo = data.length > 0 ? data[data.length - 1] : null;
 
@@ -1024,9 +1123,10 @@ function renderPesoChart(data) {
 
 document.getElementById('p-config-save-btn').addEventListener('click', () => {
     const altura = parseInt(document.getElementById('p-altura').value);
-    const idade  = parseInt(document.getElementById('p-idade').value);
     if (!altura || altura < 100 || altura > 250) { alert('Digite uma altura válida (cm)!'); return; }
-    if (!idade  || idade  < 10  || idade  > 100) { alert('Digite uma idade válida!'); return; }
+    // idade vem do perfil
+    const perfil = getPerfil();
+    const idade  = perfil.idade || null;
     savePesoConfig({ altura, idade });
     renderPeso();
 });
