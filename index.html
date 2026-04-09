@@ -2,7 +2,8 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- ✅ FIX ZOOM: maximum-scale=1.0, user-scalable=no -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Minha Rotina</title>
     <link rel="stylesheet" href="./style.css" />
     <link rel="icon" href="./icon.png" type="image/png">
@@ -341,8 +342,7 @@
           <div class="macro-card carb"><div class="macro-card-label">Carboidrato</div><div class="macro-card-val" id="mc-carb">0</div><div class="macro-card-unit">g</div><div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-carb-bar" style="background:#f59e0b;"></div></div></div>
           <div class="macro-card gord"><div class="macro-card-label">Gordura</div><div class="macro-card-val" id="mc-gord">0</div><div class="macro-card-unit">g</div><div class="dc-bar-wrap" style="margin-top:8px;"><div class="dc-bar" id="mc-gord-bar" style="background:#ef4444;"></div></div></div>
         </div>
-        <!-- ── ALIMENTOS PERSONALIZADOS ── -->
-<div class="water-section-block">
+        <div class="water-section-block">
   <h3 class="water-block-title">Cadastrar alimento personalizado</h3>
   <button id="mc-custom-toggle-btn" class="mc-custom-toggle">+ Novo alimento</button>
   <div id="mc-custom-form" class="mc-custom-form" style="display:none;">
@@ -414,49 +414,21 @@
       <div class="static-wrap">
         <h2 class="static-title">📊 Estatísticas</h2>
         <p class="static-sub">Visão dos últimos 30 dias</p>
-
-        <!-- cards resumo -->
         <div class="stats-cards" id="stats-cards">
-          <div class="stats-card">
-            <div class="stats-card-label">Média água/dia</div>
-            <div class="stats-card-val" id="st-agua-media">—</div>
-            <div class="stats-card-sub" id="st-agua-sub"></div>
-          </div>
-          <div class="stats-card">
-            <div class="stats-card-label">Variação de peso</div>
-            <div class="stats-card-val" id="st-peso-var">—</div>
-            <div class="stats-card-sub" id="st-peso-sub"></div>
-          </div>
-          <div class="stats-card">
-            <div class="stats-card-label">Hábitos</div>
-            <div class="stats-card-val" id="st-habitos-pct">—</div>
-            <div class="stats-card-sub" id="st-habitos-sub"></div>
-          </div>
-          <div class="stats-card">
-            <div class="stats-card-label">Média kcal/dia</div>
-            <div class="stats-card-val" id="st-kcal-media">—</div>
-            <div class="stats-card-sub" id="st-kcal-sub"></div>
-          </div>
+          <div class="stats-card"><div class="stats-card-label">Média água/dia</div><div class="stats-card-val" id="st-agua-media">—</div><div class="stats-card-sub" id="st-agua-sub"></div></div>
+          <div class="stats-card"><div class="stats-card-label">Variação de peso</div><div class="stats-card-val" id="st-peso-var">—</div><div class="stats-card-sub" id="st-peso-sub"></div></div>
+          <div class="stats-card"><div class="stats-card-label">Hábitos</div><div class="stats-card-val" id="st-habitos-pct">—</div><div class="stats-card-sub" id="st-habitos-sub"></div></div>
+          <div class="stats-card"><div class="stats-card-label">Média kcal/dia</div><div class="stats-card-val" id="st-kcal-media">—</div><div class="stats-card-sub" id="st-kcal-sub"></div></div>
         </div>
-
-        <!-- gráfico água -->
         <div class="stats-section-block">
           <h3 class="stats-block-title">💧 Consumo de água (30 dias)</h3>
-          <div style="position:relative;width:100%;height:200px;">
-            <canvas id="statsAguaChart"></canvas>
-          </div>
+          <div style="position:relative;width:100%;height:200px;"><canvas id="statsAguaChart"></canvas></div>
         </div>
-
-        <!-- gráfico peso -->
         <div class="stats-section-block">
           <h3 class="stats-block-title">⚖️ Evolução do peso (30 dias)</h3>
-          <div style="position:relative;width:100%;height:200px;">
-            <canvas id="statsPesoChart"></canvas>
-          </div>
+          <div style="position:relative;width:100%;height:200px;"><canvas id="statsPesoChart"></canvas></div>
           <p class="p-chart-empty" id="st-peso-empty" style="display:none;">Registre pelo menos 2 pesos para ver o gráfico.</p>
         </div>
-
-        <!-- heatmap hábitos -->
         <div class="stats-section-block">
           <h3 class="stats-block-title">✅ Hábitos cumpridos (30 dias)</h3>
           <div id="stats-habits-heatmap" class="stats-heatmap"></div>
@@ -467,15 +439,10 @@
             <span class="hm-3"></span> 5–6 hábitos
           </div>
         </div>
-
-        <!-- gráfico macros -->
         <div class="stats-section-block">
           <h3 class="stats-block-title">🍽️ Calorias por dia (30 dias)</h3>
-          <div style="position:relative;width:100%;height:200px;">
-            <canvas id="statsMacrosChart"></canvas>
-          </div>
+          <div style="position:relative;width:100%;height:200px;"><canvas id="statsMacrosChart"></canvas></div>
         </div>
-
       </div>
     </div><!-- /tab-stats -->
 

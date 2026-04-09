@@ -2227,3 +2227,29 @@ body:not(.light) .social-links a img { filter: invert(1); }
 
   .static-wrap { padding: 20px 15px 50px; }
 }
+
+/* ══════════════════════════════════════
+   ANTI-ZOOM — Cole no FINAL do style.css
+   Previne autozoom iOS/Android em todos
+   os elementos interativos
+══════════════════════════════════════ */
+button,
+a,
+input,
+select,
+textarea,
+label,
+[contenteditable],
+.w-quick,
+.habit-item,
+.dash-card,
+.side-tab,
+.side-action-btn,
+.contact-card,
+.add-period-btn,
+.delete-item-btn,
+.w-log-del,
+.mc-custom-item-del,
+input[type="checkbox"] {
+  touch-action: manipulation;
+}

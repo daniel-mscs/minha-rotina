@@ -1209,7 +1209,6 @@ document.getElementById('p-clear-btn').addEventListener('click', () => {
 const HABITS_KEY = 'habits_data';
 
 const FRASES = [
-    // Motivacionais pessoais
     "Disciplina é fazer o que precisa ser feito, mesmo quando não quer. 💪",
     "Pequenas ações consistentes constroem grandes resultados. 🎯",
     "Você está construindo o futuro enquanto cuida do presente. 🚀",
@@ -1217,18 +1216,15 @@ const FRASES = [
     "A jornada de mil km começa com um passo. Você já está andando. 👣",
     "Consistência bate talento quando o talento não é consistente. 🔥",
     "Engenharia, enfermagem e paternidade — você carrega muito. Descanse quando precisar. 🌙",
-    // Estoicismo — Marco Aurélio
     "Você tem poder sobre sua mente, não sobre os eventos externos. Perceba isso e encontrará força. — Marco Aurélio 🏛️",
     "Faça cada ato de sua vida como se fosse o último. — Marco Aurélio 🏛️",
     "A melhor vingança é não ser como o seu inimigo. — Marco Aurélio 🏛️",
     "Perca o tempo que você tem e você perderá o que você não tem. — Marco Aurélio 🏛️",
     "Nunca estime que algo seja do seu interesse se isso o forçar a quebrar uma promessa. — Marco Aurélio 🏛️",
-    // Estoicismo — Epicteto
     "Não procure que os eventos que acontecem sejam como você quer, mas deseje os eventos como eles são e encontrará tranquilidade. — Epicteto 🏛️",
     "Temos dois ouvidos e uma boca para que possamos ouvir o dobro do que falamos. — Epicteto 🏛️",
     "É impossível para um homem aprender o que ele acha que já sabe. — Epicteto 🏛️",
     "Não é o que acontece com você, mas como você reage a isso que importa. — Epicteto 🏛️",
-    // Estoicismo — Sêneca
     "Não é porque as coisas são difíceis que não ousamos. É porque não ousamos que as coisas são difíceis. — Sêneca 🏛️",
     "Enquanto adiamos, a vida passa. — Sêneca 🏛️",
     "Trate a cada novo dia como um novo começo. — Sêneca 🏛️",
@@ -1382,58 +1378,123 @@ function renderDashboard() {
     renderDashTasks();
 }
 
+// ============================================
+// ============================================
+// renderDashTasks — lê do localStorage e permite
+// marcar/desmarcar tarefas direto no Dashboard
+// ============================================
+function toggleDashTask(dayIndex, periodIndex, itemIndex) {
+    const saved = localStorage.getItem('my_routine_data');
+    if (!saved) return;
+    let data;
+    try { data = JSON.parse(saved); } catch(e) { return; }
+
+    const item = data.days[dayIndex].periods[periodIndex].items[itemIndex];
+    item.checked = !item.checked;
+    localStorage.setItem('my_routine_data', JSON.stringify(data));
+
+    // Sincroniza o DOM da aba Rotina se ela já estiver renderizada
+    const allLis = document.querySelectorAll('#daysContainer .day-block');
+    if (allLis.length > 0) {
+        const dayBlock  = allLis[dayIndex];
+        if (dayBlock) {
+            const periods = dayBlock.querySelectorAll('.period');
+            const period  = periods[periodIndex];
+            if (period) {
+                const lis  = period.querySelectorAll('li');
+                const liEl = lis[itemIndex];
+                if (liEl) {
+                    const cb   = liEl.querySelector('input[type="checkbox"]');
+                    const span = liEl.querySelector('.item-text');
+                    if (cb)   cb.checked = item.checked;
+                    if (span) span.style.textDecoration = item.checked ? 'line-through' : 'none';
+                }
+            }
+        }
+    }
+
+    renderDashTasks();
+}
+
 function renderDashTasks() {
     const container = document.getElementById('dash-tasks');
     if (!container) return;
 
-    const today = new Date().toLocaleDateString('pt-BR', {
-        weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric'
-    });
-
-    const dayBlocks = document.querySelectorAll('#daysContainer .day-block');
-    let todayBlock  = null;
-    dayBlocks.forEach(block => {
-        const title = block.querySelector('.day-title');
-        if (title && title.innerText.toLowerCase() === today.toLowerCase()) {
-            todayBlock = block;
-        }
-    });
-
-    if (!todayBlock) {
+    const saved = localStorage.getItem('my_routine_data');
+    if (!saved) {
         container.innerHTML = '<div class="dash-empty">Nenhuma rotina gerada para hoje.<br>Vá até a aba Rotina e gere os dias.</div>';
         return;
     }
 
-    let html = '', hasItems = false;
+    let data;
+    try { data = JSON.parse(saved); } catch(e) {
+        container.innerHTML = '<div class="dash-empty">Erro ao ler rotina.</div>';
+        return;
+    }
 
-    todayBlock.querySelectorAll('.period').forEach(period => {
-        const items = period.querySelectorAll('li');
-        const validItems = Array.from(items).filter(li => {
-            const text = li.querySelector('.item-text');
-            return text && !text.classList.contains('placeholder') && text.innerText !== 'Digite aqui...';
-        });
+    if (!data.days || data.days.length === 0) {
+        container.innerHTML = '<div class="dash-empty">Nenhuma rotina gerada para hoje.<br>Vá até a aba Rotina e gere os dias.</div>';
+        return;
+    }
+
+    const hoje = new Date().toLocaleDateString('pt-BR', {
+        weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric'
+    });
+
+    const normalize  = s => s.toLowerCase().replace(/\s+/g, ' ').trim();
+    const dayIndex   = data.days.findIndex(d => normalize(d.date) === normalize(hoje));
+    const todayData  = dayIndex >= 0 ? data.days[dayIndex] : null;
+
+    if (!todayData) {
+        container.innerHTML = '<div class="dash-empty">Nenhuma rotina gerada para hoje.<br>Vá até a aba Rotina e gere os dias.</div>';
+        return;
+    }
+
+    container.innerHTML = '';
+    let hasItems = false;
+
+    (todayData.periods || []).forEach((period, pIdx) => {
+        const validItems = (period.items || []).map((item, iIdx) => ({ item, iIdx }))
+            .filter(({ item }) => item.text && item.text.trim() !== '' && item.text !== 'Digite aqui...');
 
         if (validItems.length === 0) return;
         hasItems = true;
 
-        html += `<div class="dash-task-period">${period.dataset.periodName}</div>`;
-        validItems.forEach(li => {
-            const checked = li.querySelector('input[type="checkbox"]').checked;
-            const text    = li.querySelector('.item-text').innerText;
-            html += `
-                <div class="dash-task-item ${checked ? 'done' : ''}">
-                    <input type="checkbox" ${checked ? 'checked' : ''} disabled>
-                    ${text}
-                </div>`;
+        const periodLabel = document.createElement('div');
+        periodLabel.className = 'dash-task-period';
+        periodLabel.textContent = period.name;
+        container.appendChild(periodLabel);
+
+        validItems.forEach(({ item, iIdx }) => {
+            const row = document.createElement('label');
+            row.className = 'dash-task-item' + (item.checked ? ' done' : '');
+            row.style.cssText = 'cursor:pointer; display:flex; align-items:center; gap:10px; padding:7px 6px; border-radius:8px; font-size:14px; user-select:none; transition: background .15s;';
+
+            const cb = document.createElement('input');
+            cb.type    = 'checkbox';
+            cb.checked = !!item.checked;
+            cb.style.cssText = 'width:16px; height:16px; accent-color:var(--accent); cursor:pointer; flex-shrink:0; touch-action:manipulation;';
+
+            cb.addEventListener('change', () => {
+                toggleDashTask(dayIndex, pIdx, iIdx);
+            });
+
+            const txt = document.createElement('span');
+            txt.textContent = item.text;
+            if (item.checked) txt.style.textDecoration = 'line-through';
+
+            row.appendChild(cb);
+            row.appendChild(txt);
+            container.appendChild(row);
         });
     });
 
-    container.innerHTML = hasItems ? html : '<div class="dash-empty">Nenhuma tarefa adicionada para hoje.</div>';
+    if (!hasItems) {
+        container.innerHTML = '<div class="dash-empty">Nenhuma tarefa adicionada para hoje.</div>';
+    }
 }
 
 renderDashboard();
-
-// side-tab navigation handles dashboard refresh above
 
 // ============================================
 // 1. GERAR DIAS
@@ -1468,6 +1529,8 @@ document.getElementById('generateDays').addEventListener('click', () => {
     }
 
     saveAll();
+    // Atualiza dashboard imediatamente após gerar
+    renderDashTasks();
 });
 
 // ============================================
@@ -1520,9 +1583,9 @@ function addDynamicItem(button, text = "", checked = false) {
         <button class="delete-item-btn" style="margin-left:auto; opacity:0.3; border:none; background:none; color:inherit; cursor:pointer;">✕</button>
     `;
 
-    const span    = li.querySelector('.item-text');
+    const span     = li.querySelector('.item-text');
     const checkbox = li.querySelector('input');
-    const handle  = li.querySelector('.drag-handle');
+    const handle   = li.querySelector('.drag-handle');
 
     if (checked) span.style.textDecoration = "line-through";
 
@@ -1540,12 +1603,43 @@ function addDynamicItem(button, text = "", checked = false) {
     checkbox.addEventListener('change', () => {
         span.style.textDecoration = checkbox.checked ? "line-through" : "none";
         saveAll();
+        // Atualiza o dashboard quando marcar/desmarcar
+        renderDashTasks();
     });
 
-    li.querySelector('.delete-item-btn').addEventListener('click', () => { li.remove(); saveAll(); });
+    li.querySelector('.delete-item-btn').addEventListener('click', () => {
+        li.remove();
+        saveAll();
+        renderDashTasks();
+    });
 
     span.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') { e.preventDefault(); addDynamicItem(button); }
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addDynamicItem(button);
+        }
+        // FIX: Delete/Backspace com campo vazio apaga o item inteiro
+        if ((e.key === 'Backspace' || e.key === 'Delete') && span.innerText.trim() === '') {
+            e.preventDefault();
+            // Foca no item anterior, se existir
+            const prevLi = li.previousElementSibling;
+            if (prevLi) {
+                const prevSpan = prevLi.querySelector('.item-text');
+                if (prevSpan) {
+                    // Posiciona cursor no final do texto anterior
+                    prevSpan.focus();
+                    const range = document.createRange();
+                    const sel   = window.getSelection();
+                    range.selectNodeContents(prevSpan);
+                    range.collapse(false);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }
+            }
+            li.remove();
+            saveAll();
+            renderDashTasks();
+        }
     });
 
     // Drag mouse
@@ -1949,3 +2043,5 @@ function renderStats() {
 // ============================================
 
 loadAll();
+// Atualiza tarefas de hoje após carregar rotina do localStorage
+renderDashTasks();
