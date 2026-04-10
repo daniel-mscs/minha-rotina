@@ -2045,3 +2045,87 @@ function renderStats() {
 loadAll();
 // Atualiza tarefas de hoje após carregar rotina do localStorage
 renderDashTasks();
+
+// ============================================
+// BACKUP — EXPORTAR / IMPORTAR
+// ============================================
+
+const BACKUP_KEYS = [
+    'my_routine_data',
+    'water_data',
+    'water_meta',
+    'peso_data',
+    'peso_config',
+    'peso_meta',
+    'macros_data',
+    'macros_meta',
+    'habits_data',
+    'user_perfil',
+    'custom_foods',
+    'tema',
+];
+
+function exportBackup() {
+    const backup = {};
+    BACKUP_KEYS.forEach(key => {
+        const val = localStorage.getItem(key);
+        if (val !== null) {
+            try { backup[key] = JSON.parse(val); } catch { backup[key] = val; }
+        }
+    });
+
+    const json  = JSON.stringify(backup, null, 2);
+    const blob  = new Blob([json], { type: 'application/json' });
+    const url   = URL.createObjectURL(blob);
+    const date  = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+    const a     = document.createElement('a');
+    a.href      = url;
+    a.download  = `minha-rotina-backup-${date}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importBackup(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        let backup;
+        try {
+            backup = JSON.parse(e.target.result);
+        } catch {
+            alert('Arquivo inválido! Use um backup gerado por este app.');
+            return;
+        }
+
+        const keys = Object.keys(backup).filter(k => BACKUP_KEYS.includes(k));
+        if (keys.length === 0) {
+            alert('Nenhum dado reconhecido neste arquivo.');
+            return;
+        }
+
+        if (!confirm(`Backup reconhecido com ${keys.length} entradas.\n\nIsso vai SUBSTITUIR todos os seus dados atuais.\n\nDeseja continuar?`)) return;
+
+        keys.forEach(key => {
+            localStorage.setItem(key, JSON.stringify(backup[key]));
+        });
+
+        alert('Backup importado! O app vai recarregar.');
+        location.reload();
+    };
+    reader.readAsText(file);
+}
+
+document.getElementById('exportBackupBtn').addEventListener('click', () => {
+    exportBackup();
+    closeMenu();
+});
+
+document.getElementById('importBackupBtn').addEventListener('click', () => {
+    document.getElementById('importBackupInput').click();
+    closeMenu();
+});
+
+document.getElementById('importBackupInput').addEventListener('change', (e) => {
+    importBackup(e.target.files[0]);
+    e.target.value = '';
+});
