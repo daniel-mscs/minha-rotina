@@ -1619,7 +1619,7 @@ function addDynamicItem(button, text = "", checked = false) {
             addDynamicItem(button);
         }
         // FIX: Delete/Backspace com campo vazio apaga o item inteiro
-        if ((e.key === 'Backspace' || e.key === 'Delete') && span.innerText.trim() === '') {
+        if ((e.key === 'Backspace' || e.key === 'Delete') && (span.innerText.trim() === '' || span.classList.contains('placeholder'))) {
             e.preventDefault();
             // Foca no item anterior, se existir
             const prevLi = li.previousElementSibling;
