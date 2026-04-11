@@ -27,8 +27,8 @@ themeBtn.addEventListener('click', () => {
 
 const TAB_TITLES = {
     dashboard: 'Início', rotina: 'Rotina', agua: 'Água',
-    peso: 'Peso', macros: 'Macros', stats: 'Estatísticas',
-    ajuda: 'Ajuda', contato: 'Contato'
+    peso: 'Peso', macros: 'Macros', dieta: 'Dieta',
+    stats: 'Estatísticas', ajuda: 'Ajuda', contato: 'Contato'
 };
 
 function openMenu() {
@@ -57,6 +57,7 @@ document.querySelectorAll('.side-tab').forEach(tab => {
         closeMenu();
         if (alvo === 'dashboard') setTimeout(renderDashboard, 50);
         if (alvo === 'stats') setTimeout(renderStats, 100);
+        if (alvo === 'dieta') setTimeout(renderDieta, 50);
     });
 });
 
@@ -1531,6 +1532,7 @@ document.getElementById('generateDays').addEventListener('click', () => {
     saveAll();
     // Atualiza dashboard imediatamente após gerar
     renderDashTasks();
+    renderDashDieta();
 });
 
 // ============================================
@@ -1618,15 +1620,12 @@ function addDynamicItem(button, text = "", checked = false) {
             e.preventDefault();
             addDynamicItem(button);
         }
-        // FIX: Delete/Backspace com campo vazio apaga o item inteiro
         if ((e.key === 'Backspace' || e.key === 'Delete') && (span.innerText.trim() === '' || span.classList.contains('placeholder'))) {
             e.preventDefault();
-            // Foca no item anterior, se existir
             const prevLi = li.previousElementSibling;
             if (prevLi) {
                 const prevSpan = prevLi.querySelector('.item-text');
                 if (prevSpan) {
-                    // Posiciona cursor no final do texto anterior
                     prevSpan.focus();
                     const range = document.createRange();
                     const sel   = window.getSelection();
@@ -2045,6 +2044,107 @@ function renderStats() {
 loadAll();
 // Atualiza tarefas de hoje após carregar rotina do localStorage
 renderDashTasks();
+// ============================================
+// DIETA
+// ============================================
+
+const DIETA_KEY = 'dieta_plano';
+
+const REFEICOES = [
+    { id: 'cafe',      label: '☀️ Café da manhã',  periodo: 'manha', placeholder: 'Ex: 3 ovos mexidos, 1 banana, café preto...'  },
+    { id: 'lanche1',   label: '🍎 Lanche da manhã', periodo: 'manha', placeholder: 'Ex: 50g de aveia, 30g de leite em pó...'       },
+    { id: 'almoco',    label: '🍽️ Almoço',          periodo: 'manha', placeholder: 'Ex: 120g de arroz, 200g de frango grelhado...' },
+    { id: 'cafetarde', label: '☕ Café da tarde',   periodo: 'tarde', placeholder: 'Ex: 1 ovo cozido, café preto...'               },
+    { id: 'janta',     label: '🌙 Janta',           periodo: 'tarde', placeholder: 'Ex: 120g de frango desfiado, 120g de arroz...' },
+];
+
+function getDietaPlano() {
+    const raw = localStorage.getItem(DIETA_KEY);
+    return raw ? JSON.parse(raw) : {};
+}
+
+function saveDietaPlano(data) {
+    localStorage.setItem(DIETA_KEY, JSON.stringify(data));
+}
+
+function renderDieta() {
+    const container = document.getElementById('dieta-refeicoes');
+    if (!container) return;
+    const plano = getDietaPlano();
+    container.innerHTML = '';
+
+    REFEICOES.forEach(r => {
+        const block = document.createElement('div');
+        block.className = 'water-section-block';
+        block.innerHTML = `
+            <h3 class="water-block-title" style="margin-bottom:8px;">${r.label}</h3>
+            <textarea
+                id="dieta-input-${r.id}"
+                class="dieta-textarea"
+                placeholder="${r.placeholder}"
+                rows="3"
+            >${plano[r.id] || ''}</textarea>
+        `;
+        container.appendChild(block);
+
+        block.querySelector(`#dieta-input-${r.id}`).addEventListener('input', () => {
+            const p = getDietaPlano();
+            p[r.id] = document.getElementById(`dieta-input-${r.id}`).value;
+            saveDietaPlano(p);
+            renderDashDieta();
+        });
+    });
+
+    const saveBtn = document.createElement('div');
+    saveBtn.className = 'water-section-block';
+    saveBtn.innerHTML = `<button id="dieta-salvar-btn" style="width:100%;background:var(--accent);color:#fff;border:none;padding:12px;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;">💾 Salvar dieta</button>`;
+    container.appendChild(saveBtn);
+    saveBtn.querySelector('#dieta-salvar-btn').addEventListener('click', () => {
+        const p = {};
+        REFEICOES.forEach(r => {
+            const el = document.getElementById(`dieta-input-${r.id}`);
+            if (el) p[r.id] = el.value.trim();
+        });
+        saveDietaPlano(p);
+        renderDashDieta();
+        alert('✅ Dieta salva!');
+    });
+}
+
+function renderDashDieta() {
+    const el = document.getElementById('dash-dieta');
+    if (!el) return;
+
+    const plano = getDietaPlano();
+    const hora  = new Date().getHours();
+
+    // Descobre qual refeição está no horário agora
+    const horarios = [
+        { id: 'cafe',      de: 5,  ate: 9  },
+        { id: 'lanche1',   de: 10, ate: 11 },
+        { id: 'almoco',    de: 12, ate: 13 },
+        { id: 'cafetarde', de: 14, ate: 17 },
+        { id: 'janta',     de: 18, ate: 22 },
+    ];
+
+    const atual = horarios.find(h => hora >= h.de && hora <= h.ate);
+
+    if (!atual) { el.style.display = 'none'; return; }
+
+    const ref    = REFEICOES.find(r => r.id === atual.id);
+    const texto  = plano[atual.id] ? plano[atual.id].trim() : '';
+
+    if (!texto) { el.style.display = 'none'; return; }
+
+    const linhas = texto.split('\n').filter(l => l.trim());
+
+    el.style.display = 'block';
+    el.innerHTML = `
+        <div class="dash-section-title">🥗 ${ref.label}</div>
+        ${linhas.map(l => `<div class="dieta-dash-texto">· ${l.trim()}</div>`).join('')}
+    `;
+}
+
 
 // ============================================
 // BACKUP — EXPORTAR / IMPORTAR
@@ -2062,6 +2162,7 @@ const BACKUP_KEYS = [
     'habits_data',
     'user_perfil',
     'custom_foods',
+    'dieta_plano', 
     'tema',
 ];
 

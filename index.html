@@ -29,6 +29,7 @@
         <button class="side-tab" data-tab="agua">💧 Água</button>
         <button class="side-tab" data-tab="peso">⚖️ Peso</button>
         <button class="side-tab" data-tab="macros">🍽️ Macros</button>
+        <button class="side-tab" data-tab="dieta">🥗 Dieta</button>        
         <button class="side-tab" data-tab="stats">📊 Estatísticas</button>
         <button class="side-tab" data-tab="ajuda">❓ Ajuda</button>
         <button class="side-tab" data-tab="contato">📬 Contato</button>
@@ -53,96 +54,99 @@
       <div style="width:40px;"></div>
     </div>
 
-    <!-- ══════════════════════════════
-         ABA: DASHBOARD
+  <!-- ══════════════════════════════
+     ABA: DASHBOARD
     ══════════════════════════════ -->
     <div id="tab-dashboard" class="tab active">
       <div class="static-wrap">
 
-        <!-- saudação + data -->
-        <div class="dash-header">
-          <div>
-            <h2 class="dash-greeting" id="dash-greeting">Bom dia! 👋</h2>
-            <p class="dash-date" id="dash-date"></p>
-          </div>
-          <div class="dash-streak" id="dash-streak" title="Dias consecutivos usando o app"></div>
-        </div>
-
-        <!-- contador de dias até fim do ano -->
-        <div class="year-countdown" id="year-countdown"></div>
-
-        <!-- frase motivacional -->
-        <div class="dash-quote" id="dash-quote"></div>
-
-        <!-- cards rápidos -->
-        <div class="dash-cards">
-          <div class="dash-card" id="dc-agua" onclick="switchTab('agua')">
-            <div class="dc-icon">💧</div>
-            <div class="dc-info">
-              <div class="dc-label">Água hoje</div>
-              <div class="dc-val" id="dc-agua-val">0 ml</div>
-              <div class="dc-bar-wrap"><div class="dc-bar" id="dc-agua-bar"></div></div>
-              <div class="dc-sub" id="dc-agua-sub">0% da meta</div>
-            </div>
-          </div>
-          <div class="dash-card" id="dc-peso" onclick="switchTab('peso')">
-            <div class="dc-icon">⚖️</div>
-            <div class="dc-info">
-              <div class="dc-label">Peso hoje</div>
-              <div class="dc-val" id="dc-peso-val">—</div>
-              <div class="dc-sub" id="dc-peso-sub">Toque para registrar</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- hábitos do dia -->
-        <div class="dash-section">
-          <div class="dash-section-title">Hábitos do dia</div>
-          <div class="dash-habits">
-            <div class="habit-item" id="hab-treino" onclick="toggleHabit('treino')">
-              <span class="habit-icon">🏋️</span>
-              <span class="habit-label">Treino</span>
-              <span class="habit-check" id="hc-treino">○</span>
-            </div>
-            <div class="habit-item" id="hab-estudo" onclick="toggleHabit('estudo')">
-              <span class="habit-icon">📚</span>
-              <span class="habit-label">Estudo</span>
-              <span class="habit-check" id="hc-estudo">○</span>
-            </div>
-            <div class="habit-item" id="hab-sono" onclick="toggleHabit('sono')">
-              <span class="habit-icon">😴</span>
-              <span class="habit-label">Sono ok</span>
-              <span class="habit-check" id="hc-sono">○</span>
-            </div>
-            <div class="habit-item" id="hab-hidratacao" onclick="toggleHabit('hidratacao')">
-              <span class="habit-icon">💧</span>
-              <span class="habit-label">Hidratação</span>
-              <span class="habit-check" id="hc-hidratacao">○</span>
-            </div>
-            <div class="habit-item" id="hab-alimentacao" onclick="toggleHabit('alimentacao')">
-              <span class="habit-icon">🥗</span>
-              <span class="habit-label">Alimentação</span>
-              <span class="habit-check" id="hc-alimentacao">○</span>
-            </div>
-            <div class="habit-item" id="hab-produtividade" onclick="toggleHabit('produtividade')">
-              <span class="habit-icon">🎯</span>
-              <span class="habit-label">Produtividade</span>
-              <span class="habit-check" id="hc-produtividade">○</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- RELATÓRIO SEMANAL (aparece aos sábados) -->
-        <div id="dash-weekly-report" class="dash-section" style="display:none;"></div>
-
-        <!-- tarefas de hoje da rotina -->
-        <div class="dash-section">
-          <div class="dash-section-title">Tarefas de hoje</div>
-          <div id="dash-tasks" class="dash-tasks"></div>
-        </div>
-
+    <!-- saudação + data -->
+    <div class="dash-header">
+      <div>
+        <h2 class="dash-greeting" id="dash-greeting">Bom dia! 👋</h2>
+        <p class="dash-date" id="dash-date"></p>
       </div>
-    </div><!-- /tab-dashboard -->
+      <div class="dash-streak" id="dash-streak" title="Dias consecutivos usando o app"></div>
+    </div>
+
+    <!-- frase motivacional -->
+    <div class="dash-quote" id="dash-quote"></div>
+
+    <!-- contador de dias até fim do ano -->
+    <div class="year-countdown" id="year-countdown"></div>
+
+    <!-- tarefas de hoje da rotina -->
+    <div class="dash-section">
+      <div class="dash-section-title">Tarefas de hoje</div>
+      <div id="dash-tasks" class="dash-tasks"></div>
+    </div>
+
+    <!-- cards rápidos -->
+    <div class="dash-cards">
+      <div class="dash-card" id="dc-agua" onclick="switchTab('agua')">
+        <div class="dc-icon">💧</div>
+        <div class="dc-info">
+          <div class="dc-label">Água hoje</div>
+          <div class="dc-val" id="dc-agua-val">0 ml</div>
+          <div class="dc-bar-wrap"><div class="dc-bar" id="dc-agua-bar"></div></div>
+          <div class="dc-sub" id="dc-agua-sub">0% da meta</div>
+        </div>
+      </div>
+      <div class="dash-card" id="dc-peso" onclick="switchTab('peso')">
+        <div class="dc-icon">⚖️</div>
+        <div class="dc-info">
+          <div class="dc-label">Peso hoje</div>
+          <div class="dc-val" id="dc-peso-val">—</div>
+          <div class="dc-sub" id="dc-peso-sub">Toque para registrar</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- refeição atual por horário -->
+    <div class="dash-section" id="dash-dieta" style="display:none;"></div>
+
+    <!-- hábitos do dia -->
+    <div class="dash-section">
+      <div class="dash-section-title">Hábitos do dia</div>
+      <div class="dash-habits">
+        <div class="habit-item" id="hab-treino" onclick="toggleHabit('treino')">
+          <span class="habit-icon">🏋️</span>
+          <span class="habit-label">Treino</span>
+          <span class="habit-check" id="hc-treino">○</span>
+        </div>
+        <div class="habit-item" id="hab-estudo" onclick="toggleHabit('estudo')">
+          <span class="habit-icon">📚</span>
+          <span class="habit-label">Estudo</span>
+          <span class="habit-check" id="hc-estudo">○</span>
+        </div>
+        <div class="habit-item" id="hab-sono" onclick="toggleHabit('sono')">
+          <span class="habit-icon">😴</span>
+          <span class="habit-label">Sono ok</span>
+          <span class="habit-check" id="hc-sono">○</span>
+        </div>
+        <div class="habit-item" id="hab-hidratacao" onclick="toggleHabit('hidratacao')">
+          <span class="habit-icon">💧</span>
+          <span class="habit-label">Hidratação</span>
+          <span class="habit-check" id="hc-hidratacao">○</span>
+        </div>
+        <div class="habit-item" id="hab-alimentacao" onclick="toggleHabit('alimentacao')">
+          <span class="habit-icon">🥗</span>
+          <span class="habit-label">Alimentação</span>
+          <span class="habit-check" id="hc-alimentacao">○</span>
+        </div>
+        <div class="habit-item" id="hab-produtividade" onclick="toggleHabit('produtividade')">
+          <span class="habit-icon">🎯</span>
+          <span class="habit-label">Produtividade</span>
+          <span class="habit-check" id="hc-produtividade">○</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RELATÓRIO SEMANAL (aparece aos sábados) -->
+    <div id="dash-weekly-report" class="dash-section" style="display:none;"></div>
+
+  </div>
+</div><!-- /tab-dashboard -->
 
     <!-- ══════════════════════════════
          ABA: ROTINA
@@ -409,6 +413,17 @@
         </div>
       </div>
     </div><!-- /tab-macros -->
+
+    <!-- ══════════════════════════════
+         ABA: DIETA
+    ══════════════════════════════ -->
+    <div id="tab-dieta" class="tab">
+      <div class="static-wrap">
+        <h2 class="static-title">🥗 Minha Dieta</h2>
+        <p class="static-sub">Monte seu plano alimentar do dia.</p>
+        <div class="dieta-refeicoes" id="dieta-refeicoes"></div>
+      </div>
+    </div><!-- /tab-dieta -->
 
     <!-- ══════════════════════════════
          ABA: ESTATÍSTICAS
