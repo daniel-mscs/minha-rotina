@@ -29,7 +29,8 @@
         <button class="side-tab" data-tab="agua">💧 Água</button>
         <button class="side-tab" data-tab="peso">⚖️ Peso</button>
         <button class="side-tab" data-tab="macros">🍽️ Macros</button>
-        <button class="side-tab" data-tab="dieta">🥗 Dieta</button>        
+        <button class="side-tab" data-tab="dieta">🥗 Dieta</button>
+        <button class="side-tab" data-tab="suplementos">💊 Suplementos</button>      
         <button class="side-tab" data-tab="stats">📊 Estatísticas</button>
         <button class="side-tab" data-tab="ajuda">❓ Ajuda</button>
         <button class="side-tab" data-tab="contato">📬 Contato</button>
@@ -104,6 +105,9 @@
 
     <!-- refeição atual por horário -->
     <div class="dash-section" id="dash-dieta" style="display:none;"></div>
+
+    <!-- suplementos do dia -->
+    <div class="dash-section" id="dash-suplementos" style="display:none;"></div>
 
     <!-- hábitos do dia -->
     <div class="dash-section">
@@ -426,6 +430,28 @@
     </div><!-- /tab-dieta -->
 
     <!-- ══════════════════════════════
+         ABA: SUPLEMENTOS
+    ══════════════════════════════ -->
+    <div id="tab-suplementos" class="tab">
+      <div class="static-wrap">
+        <h2 class="static-title">💊 Suplementação</h2>
+        <p class="static-sub">Cadastre seus suplementos e acompanhe no dashboard.</p>
+        <div class="water-section-block">
+          <h3 class="water-block-title">Adicionar suplemento</h3>
+          <div class="supl-add-row">
+            <input type="text" id="supl-nome-input" placeholder="Nome (ex: Creatina)" autocomplete="off" />
+            <input type="text" id="supl-dose-input" placeholder="Dose (ex: 5g, 1 cápsula)" autocomplete="off" />
+            <button id="supl-add-btn">+</button>
+          </div>
+        </div>
+        <div class="water-section-block">
+          <h3 class="water-block-title">Meus suplementos</h3>
+          <div id="supl-lista"></div>
+        </div>
+      </div>
+    </div><!-- /tab-suplementos -->
+
+    <!-- ══════════════════════════════
          ABA: ESTATÍSTICAS
     ══════════════════════════════ -->
     <div id="tab-stats" class="tab">
@@ -464,35 +490,192 @@
       </div>
     </div><!-- /tab-stats -->
 
-    <!-- ══════════════════════════════
-         ABA: AJUDA
-    ══════════════════════════════ -->
-    <div id="tab-ajuda" class="tab">
-      <div class="static-wrap">
-        <h2 class="static-title">❓ Como usar o app</h2>
-        <div class="help-group-title">🏠 Início (Dashboard)</div>
-        <div class="help-item"><div class="help-num">1</div><div class="help-body"><strong>Visão geral do seu dia</strong><p>Saudação, data, contador de dias até fim do ano, frase motivacional, cards de água e peso, hábitos do dia e tarefas de hoje.</p></div></div>
-        <div class="help-item"><div class="help-num">2</div><div class="help-body"><strong>Hábitos diários</strong><p>Toque em qualquer hábito (Treino, Estudo, Sono, Hidratação, Alimentação, Produtividade) para marcá-lo. Reseta automaticamente todo dia.</p></div></div>
-        <div class="help-item"><div class="help-num">3</div><div class="help-body"><strong>Streak 🔥</strong><p>Mostra quantos dias seguidos você usou o app e marcou pelo menos um hábito.</p></div></div>
-        <div class="help-item"><div class="help-num">4</div><div class="help-body"><strong>Relatório semanal 📊</strong><p>Todo sábado aparece automaticamente com média de água, variação de peso, % de hábitos e média calórica da semana.</p></div></div>
-        <div class="help-group-title">📋 Rotina</div>
-        <div class="help-item"><div class="help-num">5</div><div class="help-body"><strong>Gerar rotina</strong><p>Escolha datas e clique em <strong>Gerar Rotina</strong>. Um bloco por dia com 4 períodos: Acordar, Manhã, Tarde e Noite.</p></div></div>
-        <div class="help-item"><div class="help-num">6</div><div class="help-body"><strong>Tarefas</strong><p>Clique em <strong>+ Nova tarefa</strong> para adicionar. Enter cria a próxima. ✕ exclui. ⠿ arrasta para reordenar.</p></div></div>
-        <div class="help-item"><div class="help-num">7</div><div class="help-body"><strong>Resetar rotina</strong><p>Apaga apenas a rotina. Água, peso, macros, hábitos e perfil <strong>não são apagados</strong>.</p></div></div>
-        <div class="help-group-title">💧 Controle de Água</div>
-        <div class="help-item"><div class="help-num">8</div><div class="help-body"><strong>Meta e registro</strong><p>Meta padrão: peso × 35 ml. Botões rápidos: 180ml, 300ml, 500ml, 1000ml. Cada registro tem horário exato.</p></div></div>
-        <div class="help-group-title">⚖️ Controle de Peso</div>
-        <div class="help-item"><div class="help-num">9</div><div class="help-body"><strong>IMC e gordura</strong><p>Configure altura e idade. Cálculo automático de IMC, gordura estimada (Deurenberg), peso ideal e projeção da meta.</p></div></div>
-        <div class="help-group-title">🍽️ Controle de Macros</div>
-        <div class="help-item"><div class="help-num">10</div><div class="help-body"><strong>35 alimentos com autocomplete</strong><p>Digite para buscar, selecione, informe os gramas e veja o preview de kcal, proteína, carbo e gordura antes de adicionar.</p></div></div>
-        <div class="help-group-title">📊 Estatísticas</div>
-        <div class="help-item"><div class="help-num">11</div><div class="help-body"><strong>Visão de 30 dias</strong><p>Gráficos de água, peso, calorias e heatmap de hábitos dos últimos 30 dias. Acesse pelo menu lateral.</p></div></div>
-        <div class="help-group-title">⚙️ Geral</div>
-        <div class="help-item"><div class="help-num">12</div><div class="help-body"><strong>Menu lateral</strong><p>Clique no ≡ no canto superior esquerdo para navegar entre as abas. Perfil, tema e PDF ficam no rodapé do menu.</p></div></div>
-        <div class="help-item"><div class="help-num">13</div><div class="help-body"><strong>PWA 📱</strong><p><strong>Android:</strong> três pontinhos → Instalar aplicativo. <strong>iPhone:</strong> Compartilhar → Adicionar à Tela de Início.</p></div></div>
-      </div>
-    </div><!-- /tab-ajuda -->
+   <!-- ══════════════════════════════
+     ABA: AJUDA
+══════════════════════════════ -->
+<div id="tab-ajuda" class="tab">
+  <div class="static-wrap">
+    <h2 class="static-title">❓ Ajuda & Saúde</h2>
+    <p class="static-sub">Como usar o app + conhecimento para você performar melhor.</p>
 
+    <!-- COMO USAR O APP -->
+    <div class="help-group-title">🏠 Início (Dashboard)</div>
+    <div class="help-item"><div class="help-num">1</div><div class="help-body"><strong>Visão geral do seu dia</strong><p>Saudação, frase motivacional, contador de dias até fim do ano, tarefas de hoje, cards de água e peso, refeição atual e hábitos do dia.</p></div></div>
+    <div class="help-item"><div class="help-num">2</div><div class="help-body"><strong>Hábitos diários</strong><p>Toque em qualquer hábito (Treino, Estudo, Sono, Hidratação, Alimentação, Produtividade) para marcá-lo. Reseta automaticamente todo dia.</p></div></div>
+    <div class="help-item"><div class="help-num">3</div><div class="help-body"><strong>Streak 🔥</strong><p>Mostra quantos dias seguidos você usou o app e marcou pelo menos um hábito.</p></div></div>
+    <div class="help-item"><div class="help-num">4</div><div class="help-body"><strong>Relatório semanal 📊</strong><p>Todo sábado aparece automaticamente com média de água, variação de peso, % de hábitos e média calórica da semana.</p></div></div>
+
+    <div class="help-group-title">📋 Rotina</div>
+    <div class="help-item"><div class="help-num">5</div><div class="help-body"><strong>Gerar rotina</strong><p>Escolha datas e clique em <strong>Gerar Rotina</strong>. Um bloco por dia com 4 períodos: Acordar, Manhã, Tarde e Noite.</p></div></div>
+    <div class="help-item"><div class="help-num">6</div><div class="help-body"><strong>Tarefas</strong><p>Clique em <strong>+ Nova tarefa</strong> para adicionar. Enter cria a próxima. ✕ exclui. ⠿ arrasta para reordenar.</p></div></div>
+    <div class="help-item"><div class="help-num">7</div><div class="help-body"><strong>Resetar rotina</strong><p>Apaga apenas a rotina. Água, peso, macros, hábitos e perfil <strong>não são apagados</strong>.</p></div></div>
+
+    <div class="help-group-title">💧 Controle de Água</div>
+    <div class="help-item"><div class="help-num">8</div><div class="help-body"><strong>Meta e registro</strong><p>Meta padrão: peso × 35 ml. Botões rápidos: 180ml, 300ml, 500ml, 1000ml. Cada registro tem horário exato.</p></div></div>
+
+    <div class="help-group-title">⚖️ Controle de Peso</div>
+    <div class="help-item"><div class="help-num">9</div><div class="help-body"><strong>IMC e gordura</strong><p>Configure altura e idade. Cálculo automático de IMC, gordura estimada (Deurenberg), peso ideal e projeção da meta.</p></div></div>
+
+    <div class="help-group-title">🍽️ Macros e Dieta</div>
+    <div class="help-item"><div class="help-num">10</div><div class="help-body"><strong>Controle de macros</strong><p>35 alimentos com autocomplete. Digite para buscar, informe os gramas e veja o preview de kcal, proteína, carbo e gordura antes de adicionar.</p></div></div>
+    <div class="help-item"><div class="help-num">11</div><div class="help-body"><strong>Minha Dieta</strong><p>Monte seu plano alimentar fixo por refeição. O dashboard exibe automaticamente a refeição do momento baseada no horário.</p></div></div>
+
+    <div class="help-group-title">📊 Estatísticas</div>
+    <div class="help-item"><div class="help-num">12</div><div class="help-body"><strong>Visão de 30 dias</strong><p>Gráficos de água, peso, calorias e heatmap de hábitos dos últimos 30 dias.</p></div></div>
+
+    <div class="help-group-title">⚙️ Geral</div>
+    <div class="help-item"><div class="help-num">13</div><div class="help-body"><strong>Menu lateral</strong><p>Clique no ≡ para navegar entre as abas. Perfil, tema, exportar PDF e backup ficam no rodapé do menu.</p></div></div>
+    <div class="help-item"><div class="help-num">14</div><div class="help-body"><strong>Backup 💾</strong><p>Exportar salva um arquivo JSON com toda sua rotina, água, peso, macros, hábitos, dieta, perfil e tema. Use para transferir entre dispositivos ou guardar seus dados.</p></div></div>
+    <div class="help-item"><div class="help-num">15</div><div class="help-body"><strong>PWA 📱</strong><p><strong>Android:</strong> três pontinhos → Instalar aplicativo. <strong>iPhone:</strong> Compartilhar → Adicionar à Tela de Início.</p></div></div>
+
+    <!-- CONHECIMENTO DE SAÚDE -->
+    <div class="help-group-title">🧠 Cortisol — o hormônio do estresse</div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>O que é o cortisol?</strong>
+        <p>O cortisol é um hormônio produzido pelas glândulas suprarrenais em resposta ao estresse físico ou emocional. Em doses normais ele é essencial — regula energia, metabolismo e inflamação. O problema é quando fica cronicamente elevado.</p>
+      </div>
+    </div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Cortisol alto: o que acontece no corpo?</strong>
+        <p>Cortisol cronicamente elevado causa retenção de líquido (você pode pesar até 1–2 kg a mais sem ter engordado de fato), dificulta a queima de gordura especialmente abdominal, prejudica o sono, aumenta o apetite por açúcar e carboidrato, e reduz a produção de testosterona e hormônio do crescimento.</p>
+      </div>
+    </div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Como reduzir o cortisol?</strong>
+        <p>Dormir 7–8h por noite é o principal regulador. Além disso: treinos de força moderados (evite treinar mais de 1h por sessão), alimentação equilibrada sem deficit calórico agressivo, hidratação adequada, e gerenciamento de estresse emocional. O app ajuda a controlar exatamente esses fatores.</p>
+      </div>
+    </div>
+
+    <div class="help-group-title">😴 Sono — por que 7 a 8 horas importam</div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>O que acontece enquanto você dorme?</strong>
+        <p>Durante o sono o corpo libera hormônio do crescimento (GH), que é responsável pela recuperação muscular e queima de gordura. Também consolida memória, regula insulina e reseta os níveis de cortisol para o dia seguinte.</p>
+      </div>
+    </div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Menos de 6h de sono: os efeitos</strong>
+        <p>Com pouco sono o cortisol sobe, a grelina (hormônio da fome) aumenta, a leptina (saciedade) cai — você come mais, guarda mais gordura e perde mais músculo. Dois dias de sono ruim já afetam performance física e cognitiva de forma mensurável.</p>
+      </div>
+    </div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Dica prática</strong>
+        <p>Acorde sempre no mesmo horário, mesmo no fim de semana. Evite telas 30 minutos antes de dormir. O hábito "Sono ok" do app existe exatamente para você monitorar sua consistência.</p>
+      </div>
+    </div>
+
+    <div class="help-group-title">🏋️ Musculação — benefícios além da estética</div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Metabolismo acelerado</strong>
+        <p>Cada kg de músculo queima entre 13–20 kcal por dia em repouso. Quanto mais massa muscular você tem, mais calorias você gasta mesmo sem fazer nada. Isso facilita a manutenção do peso a longo prazo.</p>
+      </div>
+    </div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Sensibilidade à insulina</strong>
+        <p>O músculo é o maior consumidor de glicose do corpo. Treinar regularmente melhora a sensibilidade à insulina, reduz risco de diabetes tipo 2 e ajuda a direcionar os carboidratos para energia em vez de gordura.</p>
+      </div>
+    </div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Saúde mental e hormonal</strong>
+        <p>O treino de força aumenta testosterona, serotonina e dopamina. Reduz cortisol pós-treino (quando bem executado), melhora autoestima e reduz sintomas de ansiedade e depressão. 3–4x por semana já gera benefício comprovado.</p>
+      </div>
+    </div>
+
+    <div class="help-group-title">💧 Hidratação — mais do que sede</div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Por que 35 ml por kg?</strong>
+        <p>O cálculo peso × 35 ml é a referência básica para adultos sedentários. Se você treina, adicione mais 500–750 ml nos dias de treino. Desidratação de apenas 2% já reduz performance física em até 20% e prejudica concentração.</p>
+      </div>
+    </div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Água e cortisol</strong>
+        <p>O cortisol elevado faz o corpo reter sódio e água nos tecidos. Paradoxalmente, beber mais água ajuda a reduzir essa retenção — o corpo para de "guardar" quando percebe que o suprimento é constante. Retenção hídrica pode mascarar até 2 kg na balança.</p>
+      </div>
+    </div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Sinais de desidratação</strong>
+        <p>Urina escura, dor de cabeça no fim do dia, cansaço sem motivo aparente e fome excessiva (o corpo confunde sede com fome) são sinais clássicos. Comece o dia com 500 ml em jejum — é simples e faz diferença.</p>
+      </div>
+    </div>
+
+    <div class="help-group-title">🥗 Dieta — como funciona o emagrecimento</div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Deficit calórico: o único jeito de emagrecer</strong>
+        <p>Para perder gordura é preciso consumir menos calorias do que gasta. 1 kg de gordura equivale a aproximadamente 7.700 kcal. Um deficit de 500–800 kcal por dia resulta em perda de 0,5–0,8 kg por semana — ritmo saudável e sustentável sem perder músculo.</p>
+      </div>
+    </div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Proteína: prioridade número 1</strong>
+        <p>Em deficit calórico o corpo tende a quebrar músculo para obter energia. Consumir 1,8–2,2 g de proteína por kg de peso corporal protege a massa muscular durante o emagrecimento. Proteína também tem maior saciedade e gasto térmico que carbo e gordura.</p>
+      </div>
+    </div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Não corte demais</strong>
+        <p>Deficit acima de 1.000 kcal por dia aumenta cortisol, queima músculo, derruba testosterona e metabolismo. O resultado é rápido no começo mas insustentável. Prefira 500–800 kcal de deficit e treine para preservar músculo.</p>
+      </div>
+    </div>
+
+    <div class="help-group-title">⚖️ Pesagem diária — como interpretar o peso</div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Por que pesar todo dia?</strong>
+        <p>O peso diário oscila naturalmente entre 1–3 kg dependendo de resíduo gástrico, hidratação, sódio na alimentação, fase do ciclo menstrual (mulheres) e nível de glicogênio muscular. Essas variações não representam gordura — representam fluidos e conteúdo intestinal.</p>
+      </div>
+    </div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>A média de 7 dias é o que importa</strong>
+        <p>Registrar o peso por 7 dias e calcular a média semanal elimina essas oscilações. Se a média da semana 2 for menor que a da semana 1, você emagreceu. Se for maior, engordou. Um único dia nunca conta a história real.</p>
+      </div>
+    </div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Como se pesar corretamente</strong>
+        <p>Sempre em jejum logo após acordar, após urinar, sem roupa ou com roupa leve sempre igual. No mesmo horário todo dia. Assim você elimina a variável de resíduo gástrico e garante que está comparando condições iguais. O botão "Ver média" na aba Peso já faz esse cálculo pra você.</p>
+      </div>
+    </div>
+    <div class="help-item">
+      <div class="help-num">💡</div>
+      <div class="help-body">
+        <strong>Exemplo prático</strong>
+        <p>Segunda: 82,0 kg · Terça: 81,2 kg · Quarta: 82,5 kg · Quinta: 81,8 kg · Sexta: 80,9 kg · Sábado: 81,5 kg · Domingo: 81,1 kg → Média: 81,6 kg. Se na semana anterior a média foi 82,3 kg, você perdeu 0,7 kg de gordura real na semana. Consistência é tudo.</p>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /tab-ajuda -->
     <!-- ══════════════════════════════
          ABA: CONTATO
     ══════════════════════════════ -->

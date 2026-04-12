@@ -28,7 +28,8 @@ themeBtn.addEventListener('click', () => {
 const TAB_TITLES = {
     dashboard: 'Início', rotina: 'Rotina', agua: 'Água',
     peso: 'Peso', macros: 'Macros', dieta: 'Dieta',
-    stats: 'Estatísticas', ajuda: 'Ajuda', contato: 'Contato'
+    suplementos: 'Suplementos', stats: 'Estatísticas',
+    ajuda: 'Ajuda', contato: 'Contato'
 };
 
 function openMenu() {
@@ -58,6 +59,7 @@ document.querySelectorAll('.side-tab').forEach(tab => {
         if (alvo === 'dashboard') setTimeout(renderDashboard, 50);
         if (alvo === 'stats') setTimeout(renderStats, 100);
         if (alvo === 'dieta') setTimeout(renderDieta, 50);
+        if (alvo === 'suplementos') setTimeout(renderSupl, 50);
     });
 });
 
@@ -1533,6 +1535,7 @@ document.getElementById('generateDays').addEventListener('click', () => {
     // Atualiza dashboard imediatamente após gerar
     renderDashTasks();
     renderDashDieta();
+    renderDashSupl();
 });
 
 // ============================================
@@ -2118,6 +2121,157 @@ function renderDashDieta() {
     const plano = getDietaPlano();
     const hora  = new Date().getHours();
 
+    const horarios = [
+        { id: 'cafe',      de: 5,  ate: 9  },
+        { id: 'lanche1',   de: 10, ate: 11 },
+        { id: 'almoco',    de: 12, ate: 13 },
+        { id: 'cafetarde', de: 14, ate: 17 },
+        { id: 'janta',     de: 18, ate: 22 },
+    ];
+
+    const atual = horarios.find(h => hora >= h.de && hora <= h.ate);
+    if (!atual) { el.style.display = 'none'; return; }
+
+    const ref   = REFEICOES.find(r => r.id === atual.id);
+    const texto = plano[atual.id] ? plano[atual.id].trim() : '';
+    if (!texto) { el.style.display = 'none'; return; }
+
+    const linhas = texto.split('\n').filter(l => l.trim());
+
+    el.style.display = 'block';
+    el.innerHTML = `
+        <div class="dash-section-title">🥗 ${ref.label}</div>
+        ${linhas.map(l => `<div class="dieta-dash-texto">· ${l.trim()}</div>`).join('')}
+    `;
+}
+
+// ============================================
+// SUPLEMENTAÇÃO
+// ============================================
+
+const SUPL_KEY        = 'supl_lista';
+const SUPL_CHECK_KEY  = 'supl_check';
+
+function getSuplLista() {
+    const raw = localStorage.getItem(SUPL_KEY);
+    return raw ? JSON.parse(raw) : [];
+}
+
+function saveSuplLista(data) {
+    localStorage.setItem(SUPL_KEY, JSON.stringify(data));
+}
+
+function getSuplCheck() {
+    const raw = localStorage.getItem(SUPL_CHECK_KEY);
+    return raw ? JSON.parse(raw) : {};
+}
+
+function saveSuplCheck(data) {
+    localStorage.setItem(SUPL_CHECK_KEY, JSON.stringify(data));
+}
+
+function getTodaySuplKey() {
+    return 'supl_' + new Date().toLocaleDateString('pt-BR');
+}
+
+function renderSupl() {
+    const lista = getSuplLista();
+    const container = document.getElementById('supl-lista');
+    if (!container) return;
+
+    if (lista.length === 0) {
+        container.innerHTML = '<div class="w-log-empty">Nenhum suplemento cadastrado ainda.</div>';
+        return;
+    }
+
+    container.innerHTML = '';
+    lista.forEach((s, idx) => {
+        const div = document.createElement('div');
+        div.className = 'supl-item';
+        div.innerHTML = `
+            <div class="supl-item-info">
+                <span class="supl-item-nome">${s.nome}</span>
+                <span class="supl-item-dose">${s.dose}</span>
+            </div>
+            <button class="dieta-item-del supl-del-btn" data-idx="${idx}">✕</button>
+        `;
+        div.querySelector('.supl-del-btn').addEventListener('click', () => {
+            const l = getSuplLista();
+            l.splice(idx, 1);
+            saveSuplLista(l);
+            renderSupl();
+            renderDashSupl();
+        });
+        container.appendChild(div);
+    });
+}
+
+document.getElementById('supl-add-btn').addEventListener('click', () => {
+    const nome = document.getElementById('supl-nome-input').value.trim();
+    const dose = document.getElementById('supl-dose-input').value.trim();
+    if (!nome || !dose) { alert('Preencha o nome e a dose!'); return; }
+    const lista = getSuplLista();
+    lista.push({ nome, dose });
+    saveSuplLista(lista);
+    document.getElementById('supl-nome-input').value = '';
+    document.getElementById('supl-dose-input').value = '';
+    renderSupl();
+    renderDashSupl();
+});
+
+document.getElementById('supl-dose-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('supl-add-btn').click();
+});
+
+function renderDashSupl() {
+    const el = document.getElementById('dash-suplementos');
+    if (!el) return;
+
+    const lista = getSuplLista();
+    if (lista.length === 0) { el.style.display = 'none'; return; }
+
+    const todayKey = getTodaySuplKey();
+    const checks   = getSuplCheck();
+    const todayChecks = checks[todayKey] || {};
+
+    el.style.display = 'block';
+
+    const allDone = lista.every((_, idx) => todayChecks[idx]);
+
+    let html = `<div class="dash-section-title">💊 Suplementos${allDone ? ' ✅' : ''}</div>`;
+
+    lista.forEach((s, idx) => {
+        const done = !!todayChecks[idx];
+        html += `
+            <label class="supl-check-row ${done ? 'done' : ''}" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:7px 4px;border-radius:8px;font-size:14px;user-select:none;">
+                <input type="checkbox" ${done ? 'checked' : ''}
+                    style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;touch-action:manipulation;"
+                    onchange="toggleSupl(${idx})">
+                <span style="${done ? 'text-decoration:line-through;color:var(--muted)' : 'color:var(--text)'}">
+                    ${s.nome} — <strong>${s.dose}</strong>
+                </span>
+            </label>`;
+    });
+
+    el.innerHTML = html;
+}
+
+function toggleSupl(idx) {
+    const todayKey = getTodaySuplKey();
+    const checks   = getSuplCheck();
+    if (!checks[todayKey]) checks[todayKey] = {};
+    checks[todayKey][idx] = !checks[todayKey][idx];
+    saveSuplCheck(checks);
+    renderDashSupl();
+}
+
+function renderDashDieta() {
+    const el = document.getElementById('dash-dieta');
+    if (!el) return;
+
+    const plano = getDietaPlano();
+    const hora  = new Date().getHours();
+
     // Descobre qual refeição está no horário agora
     const horarios = [
         { id: 'cafe',      de: 5,  ate: 9  },
@@ -2162,7 +2316,9 @@ const BACKUP_KEYS = [
     'habits_data',
     'user_perfil',
     'custom_foods',
-    'dieta_plano', 
+    'dieta_plano',
+    'supl_lista',
+    'supl_check', 
     'tema',
 ];
 
